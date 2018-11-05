@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "672198199608",
+    "firebase_url": "https://autonomos-app-e7df6.firebaseio.com",
+    "project_id": "autonomos-app-e7df6",
+    "storage_bucket": "autonomos-app-e7df6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:672198199608:android:719a13c703fcbf63",
+        "android_client_info": {
+          "package_name": "autonomos.com.br.jopeb.autonosapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "672198199608-reccd9kttmq0nrvfvr7g0jvs3u8fp6bi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "autonomos.com.br.jopeb.autonosapp",
+            "certificate_hash": "5e4b8ef2ca7ff9f7f8ad33df9b54481a502f5492"
+          }
+        },
+        {
+          "client_id": "672198199608-tcgo00f9p4pvud8cnl1f84t8p9l3dhu1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-_lvquLrxYYpmovDAyygJkK2BIZeIiBs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "672198199608-tcgo00f9p4pvud8cnl1f84t8p9l3dhu1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
