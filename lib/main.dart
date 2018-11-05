@@ -1,4 +1,4 @@
-import 'package:autonos_app/cadastro_usuario.dart';
+import 'package:autonos_app/ui/cadastro_usuario.dart';
 import 'package:flutter/material.dart';
 import 'package:autonos_app/ui/LoginScreen.dart';
 

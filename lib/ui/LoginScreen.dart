@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'LoggedTESTScreen.dart';
-import 'package:autonos_app/cadastro_usuario.dart';
+import 'package:autonos_app/ui/cadastro_usuario.dart';
 
 class LoginScreen extends StatelessWidget {
   @override
@@ -20,7 +20,7 @@ class InputGroup extends StatelessWidget {
   Widget build(BuildContext context) {
     final logo = Container(
       //padding: EdgeInsets.all(26.0),
-      width: double.infinity,
+      width: MediaQuery.of(context).size.width,
       height: 150.0,
       child: Center(
         child: Text(
@@ -182,8 +182,6 @@ class InputGroup extends StatelessWidget {
       Navigator.of(context).pop();
     } else
       Navigator.of(context)
-          .push(MaterialPageRoute<Null>(builder: (BuildContext context) {
-        return CadastroUsuarioActivity();
-      }));
+          .push(MaterialPageRoute(builder: (context) => CadastroUsuarioActivity()));
   }
 } // InputGroup
