@@ -1,5 +1,6 @@
 import 'package:autonos_app/cadastro_usuario.dart';
 import 'package:flutter/material.dart';
+import 'package:autonos_app/ui/LoginScreen.dart';
 
 void main() => runApp(new MyApp());
 
@@ -8,7 +9,10 @@ class MyApp extends StatelessWidget {
       @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: CadastroUsuarioActivity()
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        body: LoginScreen(),
+      ),
     );
   }
 }
