@@ -174,9 +174,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen>{
               password: password).then((firebaseUser){
                 print ("Registrado: ${firebaseUser.email}  ${firebaseUser.uid}");
           });
-          //_emailController.dispose();
-          //_passwordController.dispose();
-          //_confirmControler.dispose();
+        
         },
 
         minWidth: 130.0,
