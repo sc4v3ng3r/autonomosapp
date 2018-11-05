@@ -3,21 +3,25 @@ import 'LoggedTESTScreen.dart';
 import 'package:autonos_app/cadastro_usuario.dart';
 import 'UserRegisterScreen.dart';
 
-class LoginScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
+class LoginScreen extends StatefulWidget {
 
-    return Container(
-      child: InputGroup(),
-    );
-  }
+
+  @override
+  State createState() => _LoginScreenState();
 }
 
-class InputGroup extends StatelessWidget {
-  final FocusNode _emailFocus = FocusNode();
-  final FocusNode _passwordFocus = FocusNode();
+class _LoginScreenState extends State<LoginScreen> {
   final SizedBox _VERTICAL_SEPARATOR = SizedBox(height: 16.0,);
+  FocusNode _emailFocus;
+  FocusNode _passwordFocus;
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    _emailFocus = FocusNode();
+    _passwordFocus = FocusNode();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     final logo = Container(
@@ -73,6 +77,7 @@ class InputGroup extends StatelessWidget {
 
     final passwordField = Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.0),
+
       child: Material(
       child: TextFormField(
         maxLines: 1,
@@ -142,7 +147,6 @@ class InputGroup extends StatelessWidget {
     Container(
       width: 150.0,
       child: FlatButton(
-
         onPressed: () {
           print("Esqueceu a senha...");
         },
@@ -155,9 +159,9 @@ class InputGroup extends StatelessWidget {
     );
 
     return
-      Center(
+    Container(
+      child: Center(
         child: ListView(
-
           children: <Widget>[
             _VERTICAL_SEPARATOR,
             logo,
@@ -170,7 +174,7 @@ class InputGroup extends StatelessWidget {
             forgotPassword
           ],
         ),
-
+    ),
     );
   }
 
