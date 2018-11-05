@@ -1,26 +1,32 @@
 import 'package:flutter/material.dart';
 import 'LoggedTESTScreen.dart';
-import 'package:autonos_app/ui/cadastro_usuario.dart';
+import 'package:autonos_app/cadastro_usuario.dart';
+import 'UserRegisterScreen.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
+
+
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: InputGroup(),
-    );
-  }
+  State createState() => _LoginScreenState();
 }
 
-class InputGroup extends StatelessWidget {
-  final FocusNode _emailFocus = FocusNode();
-  final FocusNode _passwordFocus = FocusNode();
+class _LoginScreenState extends State<LoginScreen> {
   final SizedBox _VERTICAL_SEPARATOR = SizedBox(height: 16.0,);
+  FocusNode _emailFocus;
+  FocusNode _passwordFocus;
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    _emailFocus = FocusNode();
+    _passwordFocus = FocusNode();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     final logo = Container(
       //padding: EdgeInsets.all(26.0),
-      width: MediaQuery.of(context).size.width,
+      width: double.infinity,
       height: 150.0,
       child: Center(
         child: Text(
@@ -38,36 +44,40 @@ class InputGroup extends StatelessWidget {
 
     final emailField = Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.0),
-     child: Material(
-      child: TextFormField(
-        maxLines: 1,
-        autofocus: false,
-        keyboardType: TextInputType.emailAddress,
-        textInputAction: TextInputAction.next,
-        focusNode: _emailFocus,
-        onFieldSubmitted: (dataTyped) {
-          print(dataTyped);
-          _emailFocus.unfocus();
-          FocusScope.of(context).requestFocus(_passwordFocus);
-        },
-        style: TextStyle(
-          fontSize: 20.0,
-          color: Colors.black,
-        ),
+      child: Material(
+        child: TextFormField(
+          maxLines: 1,
+          autofocus: false,
+          keyboardType: TextInputType.emailAddress,
+          textInputAction: TextInputAction.next,
+          focusNode: _emailFocus,
+          onFieldSubmitted: (dataTyped) {
+            print(dataTyped);
+            _emailFocus.unfocus();
+            FocusScope.of(context).requestFocus(_passwordFocus);
+          },
+
+          style: TextStyle(
+            fontSize: 20.0,
+            color: Colors.black,
+          ),
+
         decoration: InputDecoration(
             labelText: "E-mail",
             labelStyle: TextStyle(
               fontSize: 18.0,
             ),
+
             contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
             border:
-                OutlineInputBorder(borderRadius: BorderRadius.circular(22.0))),
+                OutlineInputBorder( borderRadius: BorderRadius.circular(22.0)) ),
       ),
      ),
     );
 
     final passwordField = Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.0),
+
       child: Material(
       child: TextFormField(
         maxLines: 1,
@@ -80,6 +90,7 @@ class InputGroup extends StatelessWidget {
           fontSize: 20.0,
           color: Colors.black,
         ),
+
         decoration: InputDecoration(
             labelText: "Senha",
             labelStyle: TextStyle(
@@ -87,8 +98,9 @@ class InputGroup extends StatelessWidget {
             ),
             contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
             border:
-                OutlineInputBorder(borderRadius: BorderRadius.circular(22.0))),
-      ),
+                OutlineInputBorder(borderRadius: BorderRadius.circular(22.0))
+        ),
+        ),
       ),
     );
 
@@ -135,7 +147,6 @@ class InputGroup extends StatelessWidget {
     Container(
       width: 150.0,
       child: FlatButton(
-
         onPressed: () {
           print("Esqueceu a senha...");
         },
@@ -148,9 +159,9 @@ class InputGroup extends StatelessWidget {
     );
 
     return
-      Center(
+    Container(
+      child: Center(
         child: ListView(
-
           children: <Widget>[
             _VERTICAL_SEPARATOR,
             logo,
@@ -163,7 +174,7 @@ class InputGroup extends StatelessWidget {
             forgotPassword
           ],
         ),
-
+    ),
     );
   }
 
@@ -182,6 +193,8 @@ class InputGroup extends StatelessWidget {
       Navigator.of(context).pop();
     } else
       Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => CadastroUsuarioActivity()));
+          .push(MaterialPageRoute<Null>(builder: (BuildContext context) {
+        return UserRegisterScreen();
+      }));
   }
 } // InputGroup
