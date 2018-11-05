@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'LoggedTESTScreen.dart';
 import 'package:autonos_app/cadastro_usuario.dart';
+import 'UserRegisterScreen.dart';
 
 class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+
     return Container(
       child: InputGroup(),
     );
@@ -38,30 +40,33 @@ class InputGroup extends StatelessWidget {
 
     final emailField = Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.0),
-     child: Material(
-      child: TextFormField(
-        maxLines: 1,
-        autofocus: false,
-        keyboardType: TextInputType.emailAddress,
-        textInputAction: TextInputAction.next,
-        focusNode: _emailFocus,
-        onFieldSubmitted: (dataTyped) {
-          print(dataTyped);
-          _emailFocus.unfocus();
-          FocusScope.of(context).requestFocus(_passwordFocus);
-        },
-        style: TextStyle(
-          fontSize: 20.0,
-          color: Colors.black,
-        ),
+      child: Material(
+        child: TextFormField(
+          maxLines: 1,
+          autofocus: false,
+          keyboardType: TextInputType.emailAddress,
+          textInputAction: TextInputAction.next,
+          focusNode: _emailFocus,
+          onFieldSubmitted: (dataTyped) {
+            print(dataTyped);
+            _emailFocus.unfocus();
+            FocusScope.of(context).requestFocus(_passwordFocus);
+          },
+
+          style: TextStyle(
+            fontSize: 20.0,
+            color: Colors.black,
+          ),
+
         decoration: InputDecoration(
             labelText: "E-mail",
             labelStyle: TextStyle(
               fontSize: 18.0,
             ),
+
             contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
             border:
-                OutlineInputBorder(borderRadius: BorderRadius.circular(22.0))),
+                OutlineInputBorder( borderRadius: BorderRadius.circular(22.0)) ),
       ),
      ),
     );
@@ -80,6 +85,7 @@ class InputGroup extends StatelessWidget {
           fontSize: 20.0,
           color: Colors.black,
         ),
+
         decoration: InputDecoration(
             labelText: "Senha",
             labelStyle: TextStyle(
@@ -87,8 +93,9 @@ class InputGroup extends StatelessWidget {
             ),
             contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
             border:
-                OutlineInputBorder(borderRadius: BorderRadius.circular(22.0))),
-      ),
+                OutlineInputBorder(borderRadius: BorderRadius.circular(22.0))
+        ),
+        ),
       ),
     );
 
@@ -183,7 +190,7 @@ class InputGroup extends StatelessWidget {
     } else
       Navigator.of(context)
           .push(MaterialPageRoute<Null>(builder: (BuildContext context) {
-        return CadastroUsuarioActivity();
+        return UserRegisterScreen();
       }));
   }
 } // InputGroup
