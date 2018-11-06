@@ -2,16 +2,17 @@ import 'package:flutter/material.dart';
 import 'LoggedTESTScreen.dart';
 //import 'package:autonos_app/cadastro_usuario.dart';
 import 'UserRegisterScreen.dart';
+import 'package:autonos_app/utility/RegExpPatterns.dart';
 
 class LoginScreen extends StatefulWidget {
-
-
   @override
   State createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final SizedBox _VERTICAL_SEPARATOR = SizedBox(height: 16.0,);
+  final SizedBox _VERTICAL_SEPARATOR = SizedBox(
+    height: 16.0,
+  );
   FocusNode _emailFocus;
   FocusNode _passwordFocus;
 
@@ -22,6 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
     _passwordFocus = FocusNode();
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     final logo = Container(
@@ -51,55 +53,44 @@ class _LoginScreenState extends State<LoginScreen> {
           keyboardType: TextInputType.emailAddress,
           textInputAction: TextInputAction.next,
           focusNode: _emailFocus,
-          onFieldSubmitted: (dataTyped) {
-            print(dataTyped);
-            _emailFocus.unfocus();
-            FocusScope.of(context).requestFocus(_passwordFocus);
-          },
-
           style: TextStyle(
             fontSize: 20.0,
             color: Colors.black,
           ),
-
-        decoration: InputDecoration(
-            labelText: "E-mail",
-            labelStyle: TextStyle(
-              fontSize: 18.0,
-            ),
-
-            contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-            border:
-                OutlineInputBorder( borderRadius: BorderRadius.circular(22.0)) ),
+          decoration: InputDecoration(
+              labelText: "E-mail",
+              labelStyle: TextStyle(
+                fontSize: 18.0,
+              ),
+              contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(22.0))),
+        ),
       ),
-     ),
     );
 
     final passwordField = Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.0),
-
       child: Material(
-      child: TextFormField(
-        maxLines: 1,
-        autofocus: false,
-        obscureText: true,
-        keyboardType: TextInputType.text,
-        textInputAction: TextInputAction.done,
-        focusNode: _passwordFocus,
-        style: TextStyle(
-          fontSize: 20.0,
-          color: Colors.black,
-        ),
-
-        decoration: InputDecoration(
-            labelText: "Senha",
-            labelStyle: TextStyle(
-              fontSize: 18.0,
-            ),
-            contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-            border:
-                OutlineInputBorder(borderRadius: BorderRadius.circular(22.0))
-        ),
+        child: TextFormField(
+          maxLines: 1,
+          autofocus: false,
+          obscureText: true,
+          keyboardType: TextInputType.text,
+          textInputAction: TextInputAction.done,
+          focusNode: _passwordFocus,
+          style: TextStyle(
+            fontSize: 20.0,
+            color: Colors.black,
+          ),
+          decoration: InputDecoration(
+              labelText: "Senha",
+              labelStyle: TextStyle(
+                fontSize: 18.0,
+              ),
+              contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(22.0))),
         ),
       ),
     );
@@ -108,43 +99,41 @@ class _LoginScreenState extends State<LoginScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Material(
-            borderRadius: BorderRadius.circular(30.0),
-            child: MaterialButton(
-              splashColor: Colors.yellowAccent,
-              onPressed: () {
-                logar(context);
-              },
-              minWidth: 130.0,
-              color: Colors.green,
-              child: Text(
-                "Entrar",
-                style: TextStyle(fontSize: 16.0),
-              ),
+          borderRadius: BorderRadius.circular(30.0),
+          child: MaterialButton(
+            splashColor: Colors.yellowAccent,
+            onPressed: () {
+              logar(context);
+            },
+            minWidth: 130.0,
+            color: Colors.green,
+            child: Text(
+              "Entrar",
+              style: TextStyle(fontSize: 16.0),
             ),
           ),
-
+        ),
         SizedBox(width: 5.0),
-          Material(
-            borderRadius: BorderRadius.circular(30.0),
-            child: MaterialButton(
-              splashColor: Colors.greenAccent,
-              onPressed: () {
-                print("realizar cadastro");
-                cadastrar(context);
-              },
-              minWidth: 130.0,
-              color: Colors.yellow,
-              child: Text(
-                "Cadastre-se",
-                style: TextStyle(fontSize: 16.0),
-              ),
+        Material(
+          borderRadius: BorderRadius.circular(30.0),
+          child: MaterialButton(
+            splashColor: Colors.greenAccent,
+            onPressed: () {
+              print("realizar cadastro");
+              cadastrar(context);
+            },
+            minWidth: 130.0,
+            color: Colors.yellow,
+            child: Text(
+              "Cadastre-se",
+              style: TextStyle(fontSize: 16.0),
             ),
           ),
-        ],
-      );
+        ),
+      ],
+    );
 
-    final forgotPassword =
-    Container(
+    final forgotPassword = Container(
       width: 150.0,
       child: FlatButton(
         onPressed: () {
@@ -158,8 +147,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
 
-    return
-    Container(
+    return Container(
       child: Center(
         child: ListView(
           children: <Widget>[
@@ -174,21 +162,23 @@ class _LoginScreenState extends State<LoginScreen> {
             forgotPassword
           ],
         ),
-    ),
+      ),
     );
   }
 
   void logar(BuildContext context) {
     if (Navigator.of(context).canPop()) {
       Navigator.of(context).pop();
-    } else
+    }
+
+    else
       Navigator.of(context)
           .push(MaterialPageRoute<Null>(builder: (BuildContext context) {
         return LoggedScreen();
       }));
   }
 
-  void cadastrar(BuildContext context){
+  void cadastrar(BuildContext context) {
     if (Navigator.of(context).canPop()) {
       Navigator.of(context).pop();
     } else
@@ -197,4 +187,6 @@ class _LoginScreenState extends State<LoginScreen> {
         return UserRegisterScreen();
       }));
   }
+
+
 } // InputGroup

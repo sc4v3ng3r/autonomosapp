@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:autonos_app/utility/InputValidator.dart';
 
 class UserRegisterScreen extends StatefulWidget{
 
@@ -8,16 +9,22 @@ class UserRegisterScreen extends StatefulWidget{
 
 }
 
-class UserRegisterScreenState extends State<UserRegisterScreen>{
+class UserRegisterScreenState extends State<UserRegisterScreen> {
+
   FocusNode _emailFocus;
   TextEditingController _emailController;
   FocusNode _passwordFocus;
   TextEditingController _passwordController;
   FocusNode _passwordConfirmFocus;
-  TextEditingController _confirmController;
+  TextEditingController _passwordConfirmController;
+
   final SizedBox _verticalSeparator = new SizedBox(height: 24.0,);
-  var email, password;
-  var passwordConf;
+
+  var _email, _password;
+  var _passwordConfirmation;
+
+  bool _autoValidate = false;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -27,7 +34,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen>{
 
     _emailController = new TextEditingController();
     _passwordController = new TextEditingController();
-    _confirmController = TextEditingController();
+    _passwordConfirmController = TextEditingController();
   }
 
   @override
@@ -37,7 +44,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen>{
     _passwordConfirmFocus.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-    _confirmController.dispose();
+    _passwordConfirmController.dispose();
     super.dispose();
   }
 
@@ -54,17 +61,20 @@ class UserRegisterScreenState extends State<UserRegisterScreen>{
           textInputAction: TextInputAction.next,
           focusNode: _emailFocus,
 
-          onEditingComplete: () {
+          validator: InputValidator.validadeEmail,
+          /*
+          onSaved: (String emailValid){
             setState(() {
-              email = _emailController.text;
+              _email = emailValid;
             });
 
-            print("EMail field: $email");
-          },
+          },*/
+
           onFieldSubmitted: (dataTyped) {
-            print(dataTyped);
-            _emailFocus.unfocus();
-            FocusScope.of(context).requestFocus(_passwordFocus);
+            setState(() {
+              _emailFocus.unfocus();
+              FocusScope.of(context).requestFocus(_passwordFocus);
+            });
           },
 
           style: TextStyle(
@@ -79,8 +89,8 @@ class UserRegisterScreenState extends State<UserRegisterScreen>{
               ),
 
               contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-              border:
-              OutlineInputBorder( borderRadius: BorderRadius.circular(22.0)) ),
+              border: OutlineInputBorder( borderRadius: BorderRadius.circular(22.0))
+          ),
         ),
       ),
     );
@@ -88,25 +98,34 @@ class UserRegisterScreenState extends State<UserRegisterScreen>{
     final passwordField = Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.0),
       child: Material(
+
         child: TextFormField(
           maxLines: 1,
           controller: _passwordController,
-          onEditingComplete: (){
-            setState(() {
-              password = _passwordController.text;
-            });
-
-            print("Password Field: $password");
-          },
           autofocus: false,
           obscureText: true,
           keyboardType: TextInputType.text,
           textInputAction: TextInputAction.next,
           focusNode: _passwordFocus,
+
+          validator: InputValidator.validadePassword,
+
+          /*
+          onSaved: (passwordValid) {
+            setState(() {
+              _password = passwordValid;
+            });
+
+            print("password valid: $_password");
+          },*/
+
           onFieldSubmitted: (dataTyped){
-            _passwordFocus.unfocus();
-            FocusScope.of(context).requestFocus(_passwordConfirmFocus);
+            setState(() {
+              _passwordFocus.unfocus();
+              FocusScope.of(context).requestFocus(_passwordConfirmFocus);
+            });
           },
+
           style: TextStyle(
             fontSize: 20.0,
             color: Colors.black,
@@ -130,18 +149,27 @@ class UserRegisterScreenState extends State<UserRegisterScreen>{
       child: Material(
         child: TextFormField(
           maxLines: 1,
-          controller: _confirmController,
-          onEditingComplete: () {
-            setState(() {
-              passwordConf = _confirmController.text;
-            });
-            print("Confirm Field: $passwordConf");
-          },
+          controller: _passwordConfirmController,
           obscureText: true,
           autofocus: false,
           keyboardType: TextInputType.text,
           textInputAction: TextInputAction.done,
           focusNode: _passwordConfirmFocus,
+          validator: _confirmPassword,
+
+          /*
+          onSaved: (confirmOk) {
+            setState(() {
+              _passwordConf = confirmOk;
+            });
+            //print("password: $_password Confirmation: $_passwordConf");
+          },*/
+
+          onFieldSubmitted: (dataTyped) {
+            setState(() {
+              _passwordConfirmFocus.unfocus();
+            });
+          },
           style: TextStyle(
             fontSize: 20.0,
             color: Colors.black,
@@ -160,30 +188,44 @@ class UserRegisterScreenState extends State<UserRegisterScreen>{
       ),
     );
 
-    final registerButton = Material(
-      borderRadius: BorderRadius.circular(30.0),
-      child: MaterialButton(
-        splashColor: Colors.greenAccent,
-        onPressed: () {
-          print("Email: $email " );
-          print("Senha: $password");
-          print("Confirmacao: $passwordConf");
+    final registerButton = Builder (
+        builder: (BuildContext context){
+          return Material(
+            borderRadius: BorderRadius.circular(30.0),
+            child: MaterialButton(
+              splashColor: Colors.greenAccent,
+              onPressed: () {
+                if ( _validadeInput() == true ){
+                  FirebaseAuth auth = FirebaseAuth.instance;
 
-          FirebaseAuth auth = FirebaseAuth.instance;
-          auth.createUserWithEmailAndPassword(email: email,
-              password: password).then((firebaseUser){
-                print ("Registrado: ${firebaseUser.email}  ${firebaseUser.uid}");
-          });
-        
-        },
+                  auth.createUserWithEmailAndPassword(
+                      email: _email,
+                      password: _password).then(
+                          (firebaseUser){
+                        if (firebaseUser == null){
+                          _showSnackBar(context, "Usuário não registrado!");
+                          print ("Registrado: ${firebaseUser.email}  ${firebaseUser.uid}");
+                        }
 
-        minWidth: 130.0,
-        color: Colors.yellow,
-        child: Text(
-          "Confirmar",
-          style: TextStyle(fontSize: 16.0),
-        ),
-      ),
+                        else {
+                          _showSnackBar(context, "Usuário registrado!");
+                        }
+
+                      }).catchError((onError) {
+                    print(onError.toString());
+                  });
+                }
+              },
+
+              minWidth: 130.0,
+              color: Colors.yellow,
+              child: Text(
+                "Confirmar",
+                style: TextStyle(fontSize: 16.0),
+              ),
+            ),
+          );
+        }
     );
 
     final cancelButton = Material(
@@ -224,9 +266,13 @@ class UserRegisterScreenState extends State<UserRegisterScreen>{
         Container(
           padding: EdgeInsets.only(top: 24.0),
           child: Center(
-            child: ListView(
-              shrinkWrap: true,
-              children: <Widget>[
+            child: Form(
+              autovalidate: _autoValidate,
+              key: _formKey,
+              child:
+              ListView(
+                shrinkWrap: true,
+                children: <Widget>[
                 emailField,
                 _verticalSeparator,
                 passwordField,
@@ -234,24 +280,51 @@ class UserRegisterScreenState extends State<UserRegisterScreen>{
                 passwordConfirm,
                 _verticalSeparator,
                 buttonsGroup
-              ],
+                ],
+              ),
             ),
-            /*child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                emailField,
-                _verticalSeparator,
-                passwordField,
-                _verticalSeparator,
-                passwordConfirm,
-                _verticalSeparator,
-                buttonsGroup
-              ],
-            ),*/
           ),
         ),
 
       );
+  }
 
+  void _showSnackBar(BuildContext ctx, String msg){
+    var snack = SnackBar(
+      content: Text(msg),
+    );
+
+    Scaffold.of(ctx).showSnackBar( snack );
+  }
+
+  String _confirmPassword(String confirm){
+    final String msg = "Senhas incompatíveis";
+    print("validating confirm");
+    if (confirm == null || _passwordController.text == null )
+      return msg;
+
+    if (_passwordController.text.compareTo(confirm) != 0)
+      return msg;
+
+    return null;
+  }
+
+  bool _validadeInput(){
+    if (_formKey.currentState.validate() ){
+      _email = _emailController.text;
+      _password = _passwordController.text;
+      _passwordConfirmation = _passwordConfirmController.text;
+      /*nao vou usaro onsave, vou para uma abordagem manual!*/
+      //formKey.currentState.save();
+      return true;
+      // REALIZA O CADASTRO!
+    }
+
+    // se ha dados invalidos, inicializamos
+    // a validacao automatica!
+    setState(() {
+      _autoValidate = true;
+    });
+    return false;
   }
 }
