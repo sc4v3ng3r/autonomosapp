@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'LoggedTESTScreen.dart';
-import 'package:autonos_app/cadastro_usuario.dart';
+//import 'package:autonos_app/cadastro_usuario.dart';
 import 'UserRegisterScreen.dart';
 import 'package:autonos_app/utility/RegExpPatterns.dart';
 
