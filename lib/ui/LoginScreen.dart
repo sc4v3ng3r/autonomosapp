@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'LoggedTESTScreen.dart';
 //import 'package:autonos_app/cadastro_usuario.dart';
 import 'UserRegisterScreen.dart';
-import 'package:autonos_app/utility/RegExpPatterns.dart';
+import 'package:autonos_app/utility/InputValidator.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -13,14 +14,22 @@ class _LoginScreenState extends State<LoginScreen> {
   final SizedBox _VERTICAL_SEPARATOR = SizedBox(
     height: 16.0,
   );
+
   FocusNode _emailFocus;
   FocusNode _passwordFocus;
+  TextEditingController _emailController;
+  TextEditingController _passwordController;
+
+  GlobalKey<FormState> _globalKey = GlobalKey();
+  bool _autoValidate = false;
+  var _email, _password;
 
   @override
   void initState() {
-    // TODO: implement initState
     _emailFocus = FocusNode();
     _passwordFocus = FocusNode();
+    _emailController = TextEditingController();
+    _passwordController = TextEditingController();
     super.initState();
   }
 
@@ -52,7 +61,14 @@ class _LoginScreenState extends State<LoginScreen> {
           autofocus: false,
           keyboardType: TextInputType.emailAddress,
           textInputAction: TextInputAction.next,
+          controller: _emailController,
+          validator: InputValidator.validadeEmail,
           focusNode: _emailFocus,
+          onFieldSubmitted: (dataTyped) {
+            _emailFocus.unfocus();
+            FocusScope.of(context).requestFocus(_passwordFocus);
+          },
+
           style: TextStyle(
             fontSize: 20.0,
             color: Colors.black,
@@ -78,11 +94,17 @@ class _LoginScreenState extends State<LoginScreen> {
           obscureText: true,
           keyboardType: TextInputType.text,
           textInputAction: TextInputAction.done,
+          controller: _passwordController,
           focusNode: _passwordFocus,
+          onFieldSubmitted: (dataTyped){
+            _passwordFocus.unfocus();
+          },
+
           style: TextStyle(
             fontSize: 20.0,
             color: Colors.black,
           ),
+
           decoration: InputDecoration(
               labelText: "Senha",
               labelStyle: TextStyle(
@@ -103,7 +125,9 @@ class _LoginScreenState extends State<LoginScreen> {
           child: MaterialButton(
             splashColor: Colors.yellowAccent,
             onPressed: () {
-              logar(context);
+
+              if (validate())
+                logar(context);
             },
             minWidth: 130.0,
             color: Colors.green,
@@ -113,7 +137,9 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
         ),
+
         SizedBox(width: 5.0),
+
         Material(
           borderRadius: BorderRadius.circular(30.0),
           child: MaterialButton(
@@ -149,24 +175,63 @@ class _LoginScreenState extends State<LoginScreen> {
 
     return Container(
       child: Center(
-        child: ListView(
-          children: <Widget>[
-            _VERTICAL_SEPARATOR,
-            logo,
-            _VERTICAL_SEPARATOR,
-            emailField,
-            _VERTICAL_SEPARATOR,
-            passwordField,
-            _VERTICAL_SEPARATOR,
-            buttonGroup,
-            forgotPassword
-          ],
+        child: Form(
+          key: _globalKey,
+          autovalidate: _autoValidate,
+          child:
+            ListView(
+              children: <Widget>[
+              _VERTICAL_SEPARATOR,
+              logo,
+              _VERTICAL_SEPARATOR,
+              emailField,
+              _VERTICAL_SEPARATOR,
+              passwordField,
+              _VERTICAL_SEPARATOR,
+              buttonGroup,
+              forgotPassword
+            ],
+          ),
         ),
       ),
     );
   }
 
+
+  bool validate(){
+    if (_globalKey.currentState.validate()){
+      setState(() {
+        _email = _emailController.text;
+        _password = _passwordController.text;
+      });
+      return true;
+    }
+
+    else {
+      setState(() {
+        _autoValidate = true;
+      });
+    }
+
+    return false;
+  }
+
+  // TODO esse metodo sera boolean
   void logar(BuildContext context) {
+
+    /*FirebaseAuth auth = FirebaseAuth.instance;
+    auth.linkWithEmailAndPassword(
+        email: _email,
+        password: _password).then((user){
+          if (user == null){
+            _showSnackBarInfo(context, "Login Inválido");
+          } else {
+            String msg = "Bem vindo ${user.displayName} ";
+            _showSnackBarInfo(context, msg);
+          }
+        });
+  */
+
     if (Navigator.of(context).canPop()) {
       Navigator.of(context).pop();
     }
@@ -176,6 +241,12 @@ class _LoginScreenState extends State<LoginScreen> {
           .push(MaterialPageRoute<Null>(builder: (BuildContext context) {
         return LoggedScreen();
       }));
+  }
+
+  void _showSnackBarInfo(BuildContext ctx, String msg){
+    Scaffold.of(ctx).showSnackBar(
+      SnackBar(content: Text(msg))
+    );
   }
 
   void cadastrar(BuildContext context) {
