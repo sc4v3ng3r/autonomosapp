@@ -28,22 +28,29 @@ class LoggedScreenState extends State<LoggedScreen> {
 //          actions: <Widget>[IconButton(onPressed: () {_scaffoldKey.currentState.openDrawer();}, icon: Icon(Icons.menu),)],
           title:Text("Logged Screen"),
           automaticallyImplyLeading: false,
-          backgroundColor: Colors.green,
+          backgroundColor: Colors.indigo[400],
         ),
         drawer:new Drawer(
         child: ListView(
 //          padding: EdgeInsets.all(1.0),
           children: <Widget>[
-            DrawerHeader(
+            Container(
+              height: 128.0,
+            child: DrawerHeader(
+
+
               decoration: BoxDecoration(
-                color: Colors.green,
+                color: Colors.cyanAccent[400],
               ),
+              margin: EdgeInsets.all(.0),
+              padding: EdgeInsets.all(.0),
               child: Row(
 //              mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Padding(
                     padding: EdgeInsets.fromLTRB(0.0, .0, 12.0, .0),
                     child: CircleAvatar(
+                      backgroundColor: Colors.indigo[400],
                       backgroundImage: AssetImage('assets/usuario_drawer.png'),
                       maxRadius: 48.0,),
                   ),
@@ -54,26 +61,44 @@ class LoggedScreenState extends State<LoggedScreen> {
                        mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Padding(
-                          padding: EdgeInsets.fromLTRB(.0, 5.0, 0.0, 0.0),
-                          child: Text('Nome Completo',style: TextStyle(color: Colors.white),),
+                          padding: EdgeInsets.fromLTRB(.0, 8.0, 0.0, 0.0),
+                          child: Text('Nome Completo Da Silva',style: TextStyle(color: Colors.white),),
                         ),
                         Padding(
-                          padding: EdgeInsets.fromLTRB(.0, 5.0, 0.0, 0.0),
+                          padding: EdgeInsets.fromLTRB(.0, 8.0, 0.0, 0.0),
                           child: Text('user@email.com',style: TextStyle(color: Colors.white)),
                         ),
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(.0, 5.0, 0.0, 0.0),
-                          child: new StarRating(
-                            rating: rating,
+                        Row(
+                         children: <Widget>[
+                           Padding(
+                             padding: EdgeInsets.fromLTRB(.0, 8.0, .0, .0),
+                             child: StarRating(
+                               rating: rating,
 //                          onRatingChanged: (rating) => setState(() => this.rating = rating),
-                          ),
+                             ),
+                           ),
+
+                           Padding(
+                             padding: EdgeInsets.fromLTRB(4.0, 8.0, .0, .0),
+                             child: Text('($rating)',style: TextStyle(color: Colors.white),),
+                           ),
+
+                         ],
                         )
+//                          padding: EdgeInsets.fromLTRB(.0, 5.0, 0.0, 0.0),
+
+//                          new StarRating(
+//                            rating: rating,
+////                          onRatingChanged: (rating) => setState(() => this.rating = rating),
+//                          ),
+
 
                       ],
                     ),
                  )
                 ],
               ),
+            )
             ),
             ListTile(
               leading: Icon(Icons.person),
@@ -99,7 +124,7 @@ class LoggedScreenState extends State<LoggedScreen> {
               leading: Icon(Icons.navigate_before),
               title: Text('Sair'),
               onTap: (){
-                _sairDoLogged(context);
+//                _sairDoLogged(context);
               },
 
             ),
