@@ -22,6 +22,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
 
   var _email, _password;
   var _passwordConfirmation;
+  var _requesting = false;
 
   bool _autoValidate = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -35,6 +36,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
     _emailController = new TextEditingController();
     _passwordController = new TextEditingController();
     _passwordConfirmController = TextEditingController();
+
   }
 
   @override
@@ -48,8 +50,10 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
+  List<Widget> _createLayout(){
+    print("UserRegisterScreen::_createLayout");
+    List<Widget> list = new List();
+
     final emailField = Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.0),
       child: Material(
@@ -62,14 +66,6 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
           focusNode: _emailFocus,
 
           validator: InputValidator.validadeEmail,
-          /*
-          onSaved: (String emailValid){
-            setState(() {
-              _email = emailValid;
-            });
-
-          },*/
-
           onFieldSubmitted: (dataTyped) {
             setState(() {
               _emailFocus.unfocus();
@@ -110,15 +106,6 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
 
           validator: InputValidator.validadePassword,
 
-          /*
-          onSaved: (passwordValid) {
-            setState(() {
-              _password = passwordValid;
-            });
-
-            print("password valid: $_password");
-          },*/
-
           onFieldSubmitted: (dataTyped){
             setState(() {
               _passwordFocus.unfocus();
@@ -157,14 +144,6 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
           focusNode: _passwordConfirmFocus,
           validator: _confirmPassword,
 
-          /*
-          onSaved: (confirmOk) {
-            setState(() {
-              _passwordConf = confirmOk;
-            });
-            //print("password: $_password Confirmation: $_passwordConf");
-          },*/
-
           onFieldSubmitted: (dataTyped) {
             setState(() {
               _passwordConfirmFocus.unfocus();
@@ -195,24 +174,29 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
             child: MaterialButton(
               splashColor: Colors.greenAccent,
               onPressed: () {
+
+                //TODO registrar usuario METODO
+
                 if ( _validadeInput() == true ){
+                  setState(() {
+                    _requesting = true;
+                  });
+
                   FirebaseAuth auth = FirebaseAuth.instance;
+                  auth.createUserWithEmailAndPassword(email: _email,
+                      password: _password).then((user){
+                    setState(() {
+                      _requesting = false;
+                    });
+                    _showSnackBar(context, "Usuário registrado!");
+                    print("Registrado: ${user.email}");
 
-                  auth.createUserWithEmailAndPassword(
-                      email: _email,
-                      password: _password).then(
-                          (firebaseUser){
-                        if (firebaseUser == null){
-                          _showSnackBar(context, "Usuário não registrado!");
-                          print ("Registrado: ${firebaseUser.email}  ${firebaseUser.uid}");
-                        }
-
-                        else {
-                          _showSnackBar(context, "Usuário registrado!");
-                        }
-
-                      }).catchError((onError) {
-                    print(onError.toString());
+                  }).catchError((error){
+                    _showSnackBar(context, "Usuário já estar registrado!", Colors.redAccent);
+                    print("ERRO NO REGISTRO " + error.toString());
+                    setState(() {
+                      _requesting = false;
+                    });
                   });
                 }
               },
@@ -256,6 +240,40 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
       ],
     );
 
+
+    list.add( emailField );
+    list.add(_verticalSeparator);
+    list.add(passwordField);
+    list.add(_verticalSeparator);
+    list.add( passwordConfirm );
+    list.add(_verticalSeparator);
+    list.add(buttonsGroup);
+
+    /*if (_requesting){
+      var modal = Stack(
+        children: <Widget>[
+          Opacity(
+            opacity: 0.3,
+            child: ModalBarrier(
+              dismissible: false,
+              color: Colors.grey,
+            ),
+          ),
+          Center(
+            child: CircularProgressIndicator(),
+          ),
+        ],
+      );
+
+      list.add(modal);
+    }*/
+    return list;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var list = _createLayout();
+
     return
       Scaffold(
         appBar: AppBar(
@@ -272,15 +290,17 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
               child:
               ListView(
                 shrinkWrap: true,
-                children: <Widget>[
-                emailField,
-                _verticalSeparator,
-                passwordField,
-                _verticalSeparator,
-                passwordConfirm,
-                _verticalSeparator,
-                buttonsGroup
-                ],
+                children: list,
+                /*children: <Widget>[
+                  l
+                //emailField,
+                //_verticalSeparator,
+                //passwordField,
+                //_verticalSeparator,
+                //passwordConfirm,
+                //_verticalSeparator,
+                //buttonsGroup,
+                ],*/
               ),
             ),
           ),
@@ -289,9 +309,10 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
       );
   }
 
-  void _showSnackBar(BuildContext ctx, String msg){
+  void _showSnackBar(BuildContext ctx, String msg, [Color color = Colors.grey] ){
     var snack = SnackBar(
       content: Text(msg),
+      backgroundColor: color,
     );
 
     Scaffold.of(ctx).showSnackBar( snack );
@@ -300,6 +321,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
   String _confirmPassword(String confirm){
     final String msg = "Senhas incompatíveis";
     print("validating confirm");
+
     if (confirm == null || _passwordController.text == null )
       return msg;
 
@@ -327,4 +349,5 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
     });
     return false;
   }
+
 }

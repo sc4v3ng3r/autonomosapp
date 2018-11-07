@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'LoggedTESTScreen.dart';
 //import 'package:autonos_app/cadastro_usuario.dart';
 import 'UserRegisterScreen.dart';
@@ -21,12 +20,14 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController _emailController;
   TextEditingController _passwordController;
 
-  GlobalKey<FormState> _globalKey = GlobalKey();
-  bool _autoValidate = false;
+  GlobalKey<FormState> _globalKey;
+  bool _autoValidate;
   var _email, _password;
 
   @override
   void initState() {
+    _globalKey = GlobalKey();
+    _autoValidate = false;
     _emailFocus = FocusNode();
     _passwordFocus = FocusNode();
     _emailController = TextEditingController();
@@ -63,7 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
           keyboardType: TextInputType.emailAddress,
           textInputAction: TextInputAction.next,
           controller: _emailController,
-//          validator: InputValidator.validadeEmail,
+          validator: InputValidator.validadeEmail,
           focusNode: _emailFocus,
           onFieldSubmitted: (dataTyped) {
             _emailFocus.unfocus();
@@ -160,7 +161,9 @@ class _LoginScreenState extends State<LoginScreen> {
       ],
     );
 
-    final forgotPassword = FlatButton(
+    final forgotPassword = Container(
+      width: 150.0,
+      child: FlatButton(
         onPressed: () {
           print("Esqueceu a senha...");
         },
@@ -169,10 +172,11 @@ class _LoginScreenState extends State<LoginScreen> {
           "Esqueceu a Senha?",
           style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
         ),
+      ),
     );
 
     return
-    Scaffold(
+      Scaffold(
      body: Container(
       child: Center(
         child: Form(
@@ -197,7 +201,6 @@ class _LoginScreenState extends State<LoginScreen> {
     ));
   }
 
-
   bool validate(){
     if (_globalKey.currentState.validate()){
       setState(() {
@@ -219,31 +222,30 @@ class _LoginScreenState extends State<LoginScreen> {
   // TODO esse metodo sera boolean
   void logar(BuildContext context) {
 
-    /*FirebaseAuth auth = FirebaseAuth.instance;
-    auth.linkWithEmailAndPassword(
-        email: _email,
-        password: _password).then((user){
-          if (user == null){
-            _showSnackBarInfo(context, "Login Inválido");
-          } else {
-            String msg = "Bem vindo ${user.displayName} ";
-            _showSnackBarInfo(context, msg);
-          }
-        });
-  */
+    FirebaseAuth auth = FirebaseAuth.instance;
+    //FirebaseUser user;
 
-    if (Navigator.of(context).canPop()) {
-      Navigator.of(context).pop();
+
+    print("EMAIL: $_email");
+    print("SENHA: $_password");
+    FirebaseUser currentUser = null;
+
+    if (auth != null) {
+      print("AUTH IS NOT NULL!!!!!!");
+
+      auth.signInWithEmailAndPassword(
+          email: _email,
+          password: _password).then((user) {
+          String msg = "Bem vindo ${user.email} ";
+          _showSnackBarInfo(context, msg);
+      }).catchError((onError) {
+        _showSnackBarInfo(context, "Login Inválido");
+      });
+
+    } else {
+      print("LASCOU & LASCOU!");
     }
-
-    else {
       Navigator.pushReplacementNamed(context, '/logedScreen');
-    }
-//      Navigator.of(context).pop();
-//      Navigator.of(context)
-//          .push(MaterialPageRoute<Null>(builder: (BuildContext context) {
-//        return LoggedScreen();
-//      }));}
   }
 
   void _showSnackBarInfo(BuildContext ctx, String msg){
