@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'LoggedTESTScreen.dart';
+
 //import 'package:autonos_app/cadastro_usuario.dart';
 import 'UserRegisterScreen.dart';
 import 'package:autonos_app/utility/InputValidator.dart';
@@ -64,13 +65,12 @@ class _LoginScreenState extends State<LoginScreen> {
           keyboardType: TextInputType.emailAddress,
           textInputAction: TextInputAction.next,
           controller: _emailController,
-          validator: InputValidator.validadeEmail,
+//          validator: InputValidator.validadeEmail,
           focusNode: _emailFocus,
           onFieldSubmitted: (dataTyped) {
             _emailFocus.unfocus();
             FocusScope.of(context).requestFocus(_passwordFocus);
           },
-
           style: TextStyle(
             fontSize: 20.0,
             color: Colors.black,
@@ -98,15 +98,13 @@ class _LoginScreenState extends State<LoginScreen> {
           textInputAction: TextInputAction.done,
           controller: _passwordController,
           focusNode: _passwordFocus,
-          onFieldSubmitted: (dataTyped){
+          onFieldSubmitted: (dataTyped) {
             _passwordFocus.unfocus();
           },
-
           style: TextStyle(
             fontSize: 20.0,
             color: Colors.black,
           ),
-
           decoration: InputDecoration(
               labelText: "Senha",
               labelStyle: TextStyle(
@@ -127,9 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
           child: MaterialButton(
             splashColor: Colors.yellowAccent,
             onPressed: () {
-
-              if (validate())
-                logar(context);
+              if (validate()) logar(context);
             },
             minWidth: 130.0,
             color: Colors.green,
@@ -139,9 +135,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
         ),
-
         SizedBox(width: 5.0),
-
         Material(
           borderRadius: BorderRadius.circular(30.0),
           child: MaterialButton(
@@ -175,16 +169,14 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
 
-    return
-      Scaffold(
-     body: Container(
+    return new Scaffold(
+        body: Container(
       child: Center(
         child: Form(
           key: _globalKey,
           autovalidate: _autoValidate,
-          child:
-            ListView(
-              children: <Widget>[
+          child: ListView(
+            children: <Widget>[
               _VERTICAL_SEPARATOR,
               logo,
               _VERTICAL_SEPARATOR,
@@ -201,16 +193,14 @@ class _LoginScreenState extends State<LoginScreen> {
     ));
   }
 
-  bool validate(){
-    if (_globalKey.currentState.validate()){
+  bool validate() {
+    if (_globalKey.currentState.validate()) {
       setState(() {
         _email = _emailController.text;
         _password = _passwordController.text;
       });
       return true;
-    }
-
-    else {
+    } else {
       setState(() {
         _autoValidate = true;
       });
@@ -221,10 +211,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   // TODO esse metodo sera boolean
   void logar(BuildContext context) {
-
     FirebaseAuth auth = FirebaseAuth.instance;
     //FirebaseUser user;
-
 
     print("EMAIL: $_email");
     print("SENHA: $_password");
@@ -233,25 +221,25 @@ class _LoginScreenState extends State<LoginScreen> {
     if (auth != null) {
       print("AUTH IS NOT NULL!!!!!!");
 
-      auth.signInWithEmailAndPassword(
-          email: _email,
-          password: _password).then((user) {
-          String msg = "Bem vindo ${user.email} ";
-          _showSnackBarInfo(context, msg);
+      auth
+          .signInWithEmailAndPassword(email: _email, password: _password)
+          .then((user) {
+        String msg = "Bem vindo ${user.email} ";
+        _showSnackBarInfo(context, msg);
       }).catchError((onError) {
         _showSnackBarInfo(context, "Login Inválido");
       });
-
     } else {
       print("LASCOU & LASCOU!");
     }
-      Navigator.pushReplacementNamed(context, '/logedScreen');
+    if (Navigator.of(context).canPop()) {
+      Navigator.of(context).pop();
+    }else
+    Navigator.pushReplacementNamed(context,'/logedScreen');
   }
 
-  void _showSnackBarInfo(BuildContext ctx, String msg){
-    Scaffold.of(ctx).showSnackBar(
-      SnackBar(content: Text(msg))
-    );
+  void _showSnackBarInfo(BuildContext ctx, String msg) {
+    Scaffold.of(ctx).showSnackBar(SnackBar(content: Text(msg)));
   }
 
   void cadastrar(BuildContext context) {
@@ -263,6 +251,4 @@ class _LoginScreenState extends State<LoginScreen> {
         return UserRegisterScreen();
       }));
   }
-
-
 } // InputGroup

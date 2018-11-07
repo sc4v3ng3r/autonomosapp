@@ -13,7 +13,7 @@ class LoggedScreenState extends State<LoggedScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return new Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
           leading: IconButton(

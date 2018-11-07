@@ -18,28 +18,17 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
         return MaterialApp(
             home:SplashScreen(
-            seconds: 2,
-          title: Text('Autonomos',style: TextStyle(fontFamily: 'cursive',fontSize: 22.0),),
+            seconds: 4,
+          title: Text('Autônomos',style: TextStyle(fontFamily: 'cursive',fontSize: 48.0),),
           backgroundColor: Colors.white,
           photoSize: 100.0,
           loaderColor: Colors.cyanAccent,
               navigateAfterSeconds: new SeletorTelas(),
         ));
-//    return MaterialApp(
-//      debugShowCheckedModeBanner: false,
-//      initialRoute: '/',
-//      routes: {
-//        '/loginScreen': (context) => LoginScreen(),
-//        '/logedScreen': (context) => LoggedScreen()
-//      },
-//      home: SplashScreen(
-//
-//      )
-//    );
   }
 }
 
-class SeletorTelas extends StatelessWidget{
+class SeletorTelas extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -48,9 +37,13 @@ class SeletorTelas extends StatelessWidget{
         '/loginScreen': (context) => LoginScreen(),
         '/logedScreen': (context) => LoggedScreen()
       },
-      home: new LoginScreen(),
+      home: _selection(),
 
     );
   }
 
+  Widget _selection() {
+    //if()
+    return LoginScreen();
+  }
 }
