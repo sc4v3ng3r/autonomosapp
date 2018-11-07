@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'LoggedTESTScreen.dart';
 //import 'package:autonos_app/cadastro_usuario.dart';
 import 'UserRegisterScreen.dart';
@@ -62,7 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
           keyboardType: TextInputType.emailAddress,
           textInputAction: TextInputAction.next,
           controller: _emailController,
-          validator: InputValidator.validadeEmail,
+//          validator: InputValidator.validadeEmail,
           focusNode: _emailFocus,
           onFieldSubmitted: (dataTyped) {
             _emailFocus.unfocus();
@@ -159,9 +160,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ],
     );
 
-    final forgotPassword = Container(
-      width: 150.0,
-      child: FlatButton(
+    final forgotPassword = FlatButton(
         onPressed: () {
           print("Esqueceu a senha...");
         },
@@ -170,10 +169,11 @@ class _LoginScreenState extends State<LoginScreen> {
           "Esqueceu a Senha?",
           style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
         ),
-      ),
     );
 
-    return Container(
+    return
+    Scaffold(
+     body: Container(
       child: Center(
         child: Form(
           key: _globalKey,
@@ -194,7 +194,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
       ),
-    );
+    ));
   }
 
 
@@ -236,11 +236,14 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.of(context).pop();
     }
 
-    else
-      Navigator.of(context)
-          .push(MaterialPageRoute<Null>(builder: (BuildContext context) {
-        return LoggedScreen();
-      }));
+    else {
+      Navigator.pushReplacementNamed(context, '/logedScreen');
+    }
+//      Navigator.of(context).pop();
+//      Navigator.of(context)
+//          .push(MaterialPageRoute<Null>(builder: (BuildContext context) {
+//        return LoggedScreen();
+//      }));}
   }
 
   void _showSnackBarInfo(BuildContext ctx, String msg){
