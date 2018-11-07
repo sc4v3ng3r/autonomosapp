@@ -195,24 +195,16 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
             child: MaterialButton(
               splashColor: Colors.greenAccent,
               onPressed: () {
+
                 if ( _validadeInput() == true ){
                   FirebaseAuth auth = FirebaseAuth.instance;
-
-                  auth.createUserWithEmailAndPassword(
-                      email: _email,
-                      password: _password).then(
-                          (firebaseUser){
-                        if (firebaseUser == null){
-                          _showSnackBar(context, "Usuário não registrado!");
-                          print ("Registrado: ${firebaseUser.email}  ${firebaseUser.uid}");
-                        }
-
-                        else {
-                          _showSnackBar(context, "Usuário registrado!");
-                        }
-
-                      }).catchError((onError) {
-                    print(onError.toString());
+                  auth.createUserWithEmailAndPassword(email: _email,
+                      password: _password).then((user){
+                        _showSnackBar(context, "Usuário registrado!");
+                        print("Registrado: ${user.email}");
+                  }).catchError((error){
+                      _showSnackBar(context, "Usuário já estar registrado!", Colors.redAccent);
+                      print("ERRO NO REGISTRO " + error.toString());
                   });
                 }
               },
@@ -289,10 +281,12 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
       );
   }
 
-  void _showSnackBar(BuildContext ctx, String msg){
+  void _showSnackBar(BuildContext ctx, String msg, [Color color = Colors.grey] ){
     var snack = SnackBar(
       content: Text(msg),
+      backgroundColor: color,
     );
+
 
     Scaffold.of(ctx).showSnackBar( snack );
   }
