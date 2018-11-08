@@ -1,9 +1,8 @@
 
-import 'package:autonos_app/ui/LoggedTESTScreen.dart';
+import 'package:autonos_app/ui/LoggedScreen.dart';
 import 'package:autonos_app/ui/LoginScreen.dart';
 import 'package:flutter/material.dart';
-import 'package:splashscreen/splashscreen.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 
 void main() => runApp(new MyApp());
 
@@ -17,33 +16,61 @@ class _MyAppState extends State<MyApp> {
       @override
   Widget build(BuildContext context) {
         return MaterialApp(
-            home:SplashScreen(
-            seconds: 4,
-          title: Text('Autônomos',style: TextStyle(fontFamily: 'cursive',fontSize: 48.0),),
-          backgroundColor: Colors.white,
-          photoSize: 100.0,
-          loaderColor: Colors.cyanAccent,
-              navigateAfterSeconds: new SeletorTelas(),
-        ));
+            debugShowCheckedModeBanner: false,
+            initialRoute: '/',
+            routes: {
+              '/loginScreen': (context) => LoginScreen(),
+              '/logedScreen': (context) => LoggedScreen(),
+            },
+            home: ScreenSelector(),
+        ); //);
   }
 }
 
-class SeletorTelas extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      initialRoute: '/',
-      routes: {
-        '/loginScreen': (context) => LoginScreen(),
-        '/logedScreen': (context) => LoggedScreen()
-      },
-      home: _selection(),
+class ScreenSelector extends StatefulWidget {
 
-    );
+  @override
+  State createState() => ScreenSelectorState();
+
+}
+
+
+class ScreenSelectorState extends State<ScreenSelector>{
+
+  static final _container = Container(color: Colors.transparent,);
+  Future<FirebaseUser> _future;
+  @override
+  void initState() {
+    super.initState();
+    _future = FirebaseAuth.instance.currentUser();
   }
 
-  Widget _selection() {
-    //if()
-    return LoginScreen();
+  @override
+  Widget build(BuildContext context) {
+
+    return FutureBuilder<FirebaseUser>(
+      future: _future,
+      builder: (BuildContext context, AsyncSnapshot<FirebaseUser> snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.none:
+          case ConnectionState.active:
+          case ConnectionState.waiting:
+            print("STATE ${snapshot.connectionState.toString()}");
+            return _container;
+
+          case ConnectionState.done:
+            print("STATE ${snapshot.connectionState.toString()}");
+            if (snapshot.data == null){
+              print("NO USER!!!");
+              return LoginScreen();
+            }
+
+            print("${snapshot.data.email}");
+            return LoggedScreen();
+        }
+        //TODO fazer uma tela especial, pois provavelmente nao ha conexao!!
+        return LoginScreen();
+      },
+    );
   }
 }
