@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'LoggedTESTScreen.dart';
+import 'LoggedScreen.dart';
 
 //import 'package:autonos_app/cadastro_usuario.dart';
 import 'UserRegisterScreen.dart';
 import 'package:autonos_app/utility/InputValidator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+
+// TODO tratar os FUTURES NA HORA DO LOGIN DA FORMA CORRETA!!
 class LoginScreen extends StatefulWidget {
   @override
   State createState() => _LoginScreenState();
@@ -65,7 +67,7 @@ class _LoginScreenState extends State<LoginScreen> {
           keyboardType: TextInputType.emailAddress,
           textInputAction: TextInputAction.next,
           controller: _emailController,
-//          validator: InputValidator.validadeEmail,
+          validator: InputValidator.validadeEmail,
           focusNode: _emailFocus,
           onFieldSubmitted: (dataTyped) {
             _emailFocus.unfocus();
@@ -225,9 +227,9 @@ class _LoginScreenState extends State<LoginScreen> {
           .signInWithEmailAndPassword(email: _email, password: _password)
           .then((user) {
         String msg = "Bem vindo ${user.email} ";
-        _showSnackBarInfo(context, msg);
+        //_showSnackBarInfo(context, msg);
       }).catchError((onError) {
-        _showSnackBarInfo(context, "Login Inválido");
+        //_showSnackBarInfo(context, "Login Inválido");
       });
     } else {
       print("LASCOU & LASCOU!");

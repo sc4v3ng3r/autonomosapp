@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:autonos_app/utility/InputValidator.dart';
 
+//TODO olhar navegacao e rotas
+//TODO  implementar verificacao se o usuario estar logado na aplicacao! e selecionar a tela correta!
+// TODO implementar progress bar quando realizar login & cadastro no firebase!
+
 class UserRegisterScreen extends StatefulWidget{
 
   @override

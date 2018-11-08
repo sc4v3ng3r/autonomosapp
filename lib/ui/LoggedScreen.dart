@@ -1,5 +1,6 @@
 import 'package:autonos_app/util/RatingBar.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoggedScreen extends StatefulWidget {
   @override
@@ -10,6 +11,7 @@ class LoggedScreenState extends State<LoggedScreen> {
   GlobalKey<ScaffoldState> _scaffoldKey;
   double rating = 3.5;
   final bool sair = false;
+  FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -136,7 +138,16 @@ class LoggedScreenState extends State<LoggedScreen> {
             title: Text('Sair'),
             onTap: () {
 //              AlertDialog(title: Text('Tem certeza que você quer sair?'),).build(context);
-              Navigator.pushReplacementNamed(context, '/loginScreen');
+
+
+              //SOMENTE TESTE!
+              _auth.signOut().then((_){
+                Navigator.pushReplacementNamed(context, '/loginScreen');
+              }).catchError( (onError) {
+                Navigator.pushReplacementNamed(context, '/loginScreen');
+              });
+
+
             },
           ),
         ],
