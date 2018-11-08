@@ -1,3 +1,4 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:autonos_app/utility/InputValidator.dart';
@@ -21,6 +22,9 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
   TextEditingController _passwordController;
   FocusNode _passwordConfirmFocus;
   TextEditingController _passwordConfirmController;
+  DatabaseReference _mReferencia;
+
+
 
   final SizedBox _verticalSeparator = new SizedBox(height: 24.0,);
 
@@ -40,6 +44,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
     _emailController = new TextEditingController();
     _passwordController = new TextEditingController();
     _passwordConfirmController = TextEditingController();
+    _mReferencia = FirebaseDatabase.instance.reference().child('usuarios');
 
   }
 
@@ -202,6 +207,8 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
                       _requesting = false;
                     });
                   });
+                  _mReferencia.child('2187357812').child('email').set(_email);
+                  _mReferencia.child('2187357812').child('nota').set('4.2');
                 }
               },
 

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'LoggedScreen.dart';
-
-//import 'package:autonos_app/cadastro_usuario.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'UserRegisterScreen.dart';
-import 'package:autonos_app/utility/InputValidator.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 
@@ -14,6 +13,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+
   final SizedBox _VERTICAL_SEPARATOR = SizedBox(
     height: 16.0,
   );
@@ -22,6 +22,9 @@ class _LoginScreenState extends State<LoginScreen> {
   FocusNode _passwordFocus;
   TextEditingController _emailController;
   TextEditingController _passwordController;
+  DatabaseReference _mReferencia;
+  DatabaseReference _mMensagem;
+  DatabaseError _error;
 
   GlobalKey<FormState> _globalKey;
   bool _autoValidate;
@@ -35,7 +38,15 @@ class _LoginScreenState extends State<LoginScreen> {
     _passwordFocus = FocusNode();
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
+    final FirebaseDatabase database = FirebaseDatabase();
+    database.reference().child('usuarios').once().then((DataSnapshot snapshot){
+      print('Connected to second database and read ${snapshot.value}');
+    });
+
+
     super.initState();
+
+
   }
 
   @override
@@ -67,7 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
           keyboardType: TextInputType.emailAddress,
           textInputAction: TextInputAction.next,
           controller: _emailController,
-          validator: InputValidator.validadeEmail,
+//          validator: InputValidator.validadeEmail,
           focusNode: _emailFocus,
           onFieldSubmitted: (dataTyped) {
             _emailFocus.unfocus();
@@ -223,6 +234,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (auth != null) {
       print("AUTH IS NOT NULL!!!!!!");
 
+
       auth
           .signInWithEmailAndPassword(email: _email, password: _password)
           .then((user) {
@@ -231,6 +243,9 @@ class _LoginScreenState extends State<LoginScreen> {
       }).catchError((onError) {
         //_showSnackBarInfo(context, "Login Inválido");
       });
+
+
+
     } else {
       print("LASCOU & LASCOU!");
     }
