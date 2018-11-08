@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:splashscreen/splashscreen.dart';
 
 
+
 void main() => runApp(new MyApp());
 
 class MyApp extends StatefulWidget{
@@ -44,6 +45,9 @@ class SeletorTelas extends StatelessWidget {
 
   Widget _selection() {
     //if()
-    return LoginScreen();
+    return Scaffold(
+      body: LoginScreen(),
+    );
+//      LoginScreen();
   }
 }
