@@ -4,18 +4,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:autonos_app/utility/InputValidator.dart';
 
 //TODO olhar navegacao e rotas
-//TODO  implementar verificacao se o usuario estar logado na aplicacao! e selecionar a tela correta!
 // TODO implementar progress bar quando realizar login & cadastro no firebase!
 
-class UserRegisterScreen extends StatefulWidget{
-
+class UserRegisterScreen extends StatefulWidget {
   @override
   State createState() => UserRegisterScreenState();
-
 }
 
 class UserRegisterScreenState extends State<UserRegisterScreen> {
-
   FocusNode _emailFocus;
   TextEditingController _emailController;
   FocusNode _passwordFocus;
@@ -24,9 +20,9 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
   TextEditingController _passwordConfirmController;
   DatabaseReference _mReferencia;
 
-
-
-  final SizedBox _verticalSeparator = new SizedBox(height: 24.0,);
+  final SizedBox _verticalSeparator = new SizedBox(
+    height: 24.0,
+  );
 
   var _email, _password;
   var _passwordConfirmation;
@@ -45,7 +41,16 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
     _passwordController = new TextEditingController();
     _passwordConfirmController = TextEditingController();
     _mReferencia = FirebaseDatabase.instance.reference().child('usuarios');
+  }
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: new Stack(
+        fit: StackFit.expand,
+        children: _buildForm(),
+      ),
+    );
   }
 
   @override
@@ -59,291 +64,29 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
     super.dispose();
   }
 
-  List<Widget> _createLayout(){
-    print("UserRegisterScreen::_createLayout");
-    List<Widget> list = new List();
-
-    final emailField = Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.0),
-      child: Material(
-        child: TextFormField(
-          maxLines: 1,
-          controller: _emailController,
-          autofocus: false,
-          keyboardType: TextInputType.emailAddress,
-          textInputAction: TextInputAction.next,
-          focusNode: _emailFocus,
-
-          validator: InputValidator.validadeEmail,
-          onFieldSubmitted: (dataTyped) {
-            setState(() {
-              _emailFocus.unfocus();
-              FocusScope.of(context).requestFocus(_passwordFocus);
-            });
-          },
-
-          style: TextStyle(
-            fontSize: 20.0,
-            color: Colors.black,
-          ),
-
-          decoration: InputDecoration(
-              labelText: "E-mail",
-              labelStyle: TextStyle(
-                fontSize: 18.0,
-              ),
-
-              contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-              border: OutlineInputBorder( borderRadius: BorderRadius.circular(22.0))
-          ),
-        ),
-      ),
-    );
-
-    final passwordField = Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.0),
-      child: Material(
-
-        child: TextFormField(
-          maxLines: 1,
-          controller: _passwordController,
-          autofocus: false,
-          obscureText: true,
-          keyboardType: TextInputType.text,
-          textInputAction: TextInputAction.next,
-          focusNode: _passwordFocus,
-
-          validator: InputValidator.validadePassword,
-
-          onFieldSubmitted: (dataTyped){
-            setState(() {
-              _passwordFocus.unfocus();
-              FocusScope.of(context).requestFocus(_passwordConfirmFocus);
-            });
-          },
-
-          style: TextStyle(
-            fontSize: 20.0,
-            color: Colors.black,
-          ),
-
-          decoration: InputDecoration(
-              labelText: "Senha",
-              labelStyle: TextStyle(
-                fontSize: 18.0,
-              ),
-              contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-              border:
-              OutlineInputBorder(borderRadius: BorderRadius.circular(22.0))
-          ),
-        ),
-      ),
-    );
-
-    final passwordConfirm = Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.0),
-      child: Material(
-        child: TextFormField(
-          maxLines: 1,
-          controller: _passwordConfirmController,
-          obscureText: true,
-          autofocus: false,
-          keyboardType: TextInputType.text,
-          textInputAction: TextInputAction.done,
-          focusNode: _passwordConfirmFocus,
-          validator: _confirmPassword,
-
-          onFieldSubmitted: (dataTyped) {
-            setState(() {
-              _passwordConfirmFocus.unfocus();
-            });
-          },
-          style: TextStyle(
-            fontSize: 20.0,
-            color: Colors.black,
-          ),
-
-          decoration: InputDecoration(
-              labelText: "Confirmar Senha",
-              labelStyle: TextStyle(
-                fontSize: 18.0,
-              ),
-              contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-              border:
-              OutlineInputBorder(borderRadius: BorderRadius.circular(22.0))
-          ),
-        ),
-      ),
-    );
-
-    final registerButton = Builder (
-        builder: (BuildContext context){
-          return Material(
-            borderRadius: BorderRadius.circular(30.0),
-            child: MaterialButton(
-              splashColor: Colors.greenAccent,
-              onPressed: () {
-
-                //TODO registrar usuario METODO
-
-                if ( _validadeInput() == true ){
-                  setState(() {
-                    _requesting = true;
-                  });
-
-                  FirebaseAuth auth = FirebaseAuth.instance;
-                  auth.createUserWithEmailAndPassword(email: _email,
-                      password: _password).then((user){
-                    setState(() {
-                      _requesting = false;
-                    });
-                    _showSnackBar(context, "Usuário registrado!");
-                    print("Registrado: ${user.email}");
-
-                  }).catchError((error){
-                    _showSnackBar(context, "Usuário já estar registrado!", Colors.redAccent);
-                    print("ERRO NO REGISTRO " + error.toString());
-                    setState(() {
-                      _requesting = false;
-                    });
-                  });
-                  _mReferencia.child('2187357812').child('email').set(_email);
-                  _mReferencia.child('2187357812').child('nota').set('4.2');
-                }
-              },
-
-              minWidth: 130.0,
-              color: Colors.yellow,
-              child: Text(
-                "Confirmar",
-                style: TextStyle(fontSize: 16.0),
-              ),
-            ),
-          );
-        }
-    );
-
-    final cancelButton = Material(
-      borderRadius: BorderRadius.circular(30.0),
-      child: MaterialButton(
-        splashColor: Colors.red,
-        onPressed: () {
-          print("cancelar cadastro");
-          Navigator.pop(context);
-        },
-
-        minWidth: 130.0,
-        color: Colors.redAccent,
-        child: Text(
-          "Cancelar",
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 16.0, color: Colors.white,),
-        ),
-      ),
-    );
-
-    final buttonsGroup = Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        registerButton,
-        SizedBox(width: 5.0,),
-        cancelButton
-      ],
-    );
-
-
-    list.add( emailField );
-    list.add(_verticalSeparator);
-    list.add(passwordField);
-    list.add(_verticalSeparator);
-    list.add( passwordConfirm );
-    list.add(_verticalSeparator);
-    list.add(buttonsGroup);
-
-    /*if (_requesting){
-      var modal = Stack(
-        children: <Widget>[
-          Opacity(
-            opacity: 0.3,
-            child: ModalBarrier(
-              dismissible: false,
-              color: Colors.grey,
-            ),
-          ),
-          Center(
-            child: CircularProgressIndicator(),
-          ),
-        ],
-      );
-
-      list.add(modal);
-    }*/
-    return list;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    var list = _createLayout();
-
-    return
-      Scaffold(
-        appBar: AppBar(
-          title: Text("Registrar"),
-
-        ),
-        body:
-        Container(
-          padding: EdgeInsets.only(top: 24.0),
-          child: Center(
-            child: Form(
-              autovalidate: _autoValidate,
-              key: _formKey,
-              child:
-              ListView(
-                shrinkWrap: true,
-                children: list,
-                /*children: <Widget>[
-                  l
-                //emailField,
-                //_verticalSeparator,
-                //passwordField,
-                //_verticalSeparator,
-                //passwordConfirm,
-                //_verticalSeparator,
-                //buttonsGroup,
-                ],*/
-              ),
-            ),
-          ),
-        ),
-
-      );
-  }
-
-  void _showSnackBar(BuildContext ctx, String msg, [Color color = Colors.grey] ){
+  void _showSnackBar(BuildContext ctx, String msg,
+      [Color color = Colors.grey]) {
     var snack = SnackBar(
       content: Text(msg),
       backgroundColor: color,
     );
 
-    Scaffold.of(ctx).showSnackBar( snack );
+    Scaffold.of(ctx).showSnackBar(snack);
   }
 
-  String _confirmPassword(String confirm){
+  String _confirmPassword(String confirm) {
     final String msg = "Senhas incompatíveis";
     print("validating confirm");
 
-    if (confirm == null || _passwordController.text == null )
-      return msg;
+    if (confirm == null || _passwordController.text == null) return msg;
 
-    if (_passwordController.text.compareTo(confirm) != 0)
-      return msg;
+    if (_passwordController.text.compareTo(confirm) != 0) return msg;
 
     return null;
   }
 
-  bool _validadeInput(){
-    if (_formKey.currentState.validate() ){
+  bool _validadeInput() {
+    if (_formKey.currentState.validate()) {
       _email = _emailController.text;
       _password = _passwordController.text;
       _passwordConfirmation = _passwordConfirmController.text;
@@ -361,4 +104,234 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
     return false;
   }
 
+  List<Widget> _buildForm() {
+    final emailField = Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.0),
+      child: Material(
+        child: TextFormField(
+          maxLines: 1,
+          controller: _emailController,
+          autofocus: false,
+          keyboardType: TextInputType.emailAddress,
+          textInputAction: TextInputAction.next,
+          focusNode: _emailFocus,
+          validator: InputValidator.validadeEmail,
+          onFieldSubmitted: (dataTyped) {
+            setState(() {
+              _emailFocus.unfocus();
+              FocusScope.of(context).requestFocus(_passwordFocus);
+            });
+          },
+          style: TextStyle(
+            fontSize: 20.0,
+            color: Colors.black,
+          ),
+          decoration: InputDecoration(
+              labelText: "E-mail",
+              labelStyle: TextStyle(
+                fontSize: 18.0,
+              ),
+              contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(22.0))),
+        ),
+      ),
+    );
+
+    final passwordField = Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.0),
+      child: Material(
+        child: TextFormField(
+          maxLines: 1,
+          controller: _passwordController,
+          autofocus: false,
+          obscureText: true,
+          keyboardType: TextInputType.text,
+          textInputAction: TextInputAction.next,
+          focusNode: _passwordFocus,
+          validator: InputValidator.validadePassword,
+          onFieldSubmitted: (dataTyped) {
+            setState(() {
+              _passwordFocus.unfocus();
+              FocusScope.of(context).requestFocus(_passwordConfirmFocus);
+            });
+          },
+          style: TextStyle(
+            fontSize: 20.0,
+            color: Colors.black,
+          ),
+          decoration: InputDecoration(
+              labelText: "Senha",
+              labelStyle: TextStyle(
+                fontSize: 18.0,
+              ),
+              contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(22.0))),
+        ),
+      ),
+    );
+
+    final passwordConfirm = Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.0),
+      child: Material(
+        child: TextFormField(
+          maxLines: 1,
+          controller: _passwordConfirmController,
+          obscureText: true,
+          autofocus: false,
+          keyboardType: TextInputType.text,
+          textInputAction: TextInputAction.done,
+          focusNode: _passwordConfirmFocus,
+          validator: _confirmPassword,
+          onFieldSubmitted: (dataTyped) {
+            setState(() {
+              _passwordConfirmFocus.unfocus();
+            });
+          },
+          style: TextStyle(
+            fontSize: 20.0,
+            color: Colors.black,
+          ),
+          decoration: InputDecoration(
+              labelText: "Confirmar Senha",
+              labelStyle: TextStyle(
+                fontSize: 18.0,
+              ),
+              contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(22.0))),
+        ),
+      ),
+    );
+
+    final registerButton = Builder(builder: (BuildContext context) {
+      return Material(
+        borderRadius: BorderRadius.circular(30.0),
+        child: MaterialButton(
+          splashColor: Colors.greenAccent,
+          onPressed: () {
+            //TODO registrar usuario METODO
+
+            if (_validadeInput() == true) {
+              setState(() {
+                _requesting = true;
+              });
+
+              FirebaseAuth auth = FirebaseAuth.instance;
+              auth
+                  .createUserWithEmailAndPassword(
+                      email: _email, password: _password)
+                  .then((user) {
+                setState(() {
+                  _requesting = false;
+                });
+
+                //TODO criar um modelo de dados para o usuario
+                _mReferencia
+                    .child(user.uid)
+                    .child('email')
+                    .set(user.email)
+                    .then((_) {
+                  _showSnackBar(context, "Usuário registrado!");
+                  print("Registrado: ${user.email}");
+                }).catchError((onError) {});
+
+              }).catchError((error) {
+                _showSnackBar(
+                    context, "Usuário já estar registrado!", Colors.redAccent);
+                setState(() {
+                  _requesting = false;
+                });
+              });
+            }
+          },
+          minWidth: 130.0,
+          color: Colors.yellow,
+          child: Text(
+            "Confirmar",
+            style: TextStyle(fontSize: 16.0),
+          ),
+        ),
+      );
+    });
+
+    final cancelButton = Material(
+      borderRadius: BorderRadius.circular(30.0),
+      child: MaterialButton(
+        splashColor: Colors.red,
+        onPressed: () {
+          print("cancelar cadastro");
+          Navigator.pop(context);
+        },
+        minWidth: 130.0,
+        color: Colors.redAccent,
+        child: Text(
+          "Cancelar",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 16.0,
+            color: Colors.white,
+          ),
+        ),
+      ),
+    );
+
+    final buttonsGroup = Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        registerButton,
+        SizedBox(
+          width: 5.0,
+        ),
+        cancelButton
+      ],
+    );
+
+    final form = Form(
+      autovalidate: _autoValidate,
+      key: _formKey,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          ListView(
+            shrinkWrap: true,
+            children: <Widget>[
+              emailField,
+              _verticalSeparator,
+              passwordField,
+              _verticalSeparator,
+              passwordConfirm,
+              _verticalSeparator,
+              buttonsGroup
+            ],
+          ),
+        ],
+      ),
+    );
+
+    var list = new List<Widget>();
+    list.add(form);
+
+    if (_requesting) {
+      var modal = Stack(
+        children: <Widget>[
+          Opacity(
+            opacity: 0.3,
+            child: ModalBarrier(
+              dismissible: false,
+              color: Colors.grey,
+            ),
+          ),
+          Center(
+            child: CircularProgressIndicator(),
+          ),
+        ],
+      );
+
+      list.add(modal);
+    }
+    return list;
+  }
 }
