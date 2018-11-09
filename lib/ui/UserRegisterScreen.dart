@@ -2,9 +2,11 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:autonos_app/utility/InputValidator.dart';
+import 'package:autonos_app/model/User.dart';
+import 'dart:convert';
 
 //TODO olhar navegacao e rotas
-// TODO implementar progress bar quando realizar login & cadastro no firebase!
+// TODO ADICIONAR OS DEMAIS CAMPOS DE REGISTRO
 
 class UserRegisterScreen extends StatefulWidget {
   @override
@@ -12,6 +14,9 @@ class UserRegisterScreen extends StatefulWidget {
 }
 
 class UserRegisterScreenState extends State<UserRegisterScreen> {
+  FocusNode _nameFocus;
+  TextEditingController _nameController;
+
   FocusNode _emailFocus;
   TextEditingController _emailController;
   FocusNode _passwordFocus;
@@ -20,11 +25,11 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
   TextEditingController _passwordConfirmController;
   DatabaseReference _mReferencia;
 
-  final SizedBox _verticalSeparator = new SizedBox(
-    height: 24.0,
+  static final SizedBox _verticalSeparator = new SizedBox(
+    height: 20.0,
   );
 
-  var _email, _password;
+  var _email, _password, _name;
   var _passwordConfirmation;
   var _requesting = false;
 
@@ -33,10 +38,12 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
 
   @override
   void initState() {
+    _nameFocus = new FocusNode();
     _emailFocus = new FocusNode();
     _passwordFocus = new FocusNode();
     _passwordConfirmFocus = new FocusNode();
 
+    _nameController = new TextEditingController();
     _emailController = new TextEditingController();
     _passwordController = new TextEditingController();
     _passwordConfirmController = TextEditingController();
@@ -47,7 +54,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: new Stack(
-        fit: StackFit.expand,
+        overflow: Overflow.clip,
         children: _buildForm(),
       ),
     );
@@ -85,8 +92,9 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
     return null;
   }
 
-  bool _validadeInput() {
+  bool _inputValidation() {
     if (_formKey.currentState.validate()) {
+      _name = _nameController.text;
       _email = _emailController.text;
       _password = _passwordController.text;
       _passwordConfirmation = _passwordConfirmController.text;
@@ -105,6 +113,40 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
   }
 
   List<Widget> _buildForm() {
+    //TODO nameField ainda estar sem validação de dados!
+    final nameField = Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.0),
+      child: Material(
+        child: TextFormField(
+          maxLines: 1,
+          controller: _nameController,
+          autofocus: false,
+          keyboardType: TextInputType.text,
+          textInputAction: TextInputAction.next,
+          focusNode: _nameFocus,
+          validator: InputValidator.nameValidation,
+          onFieldSubmitted: (dataTyped) {
+            setState(() {
+              _nameFocus.unfocus();
+              FocusScope.of(context).requestFocus(_emailFocus);
+            });
+          },
+          style: TextStyle(
+            fontSize: 20.0,
+            color: Colors.black,
+          ),
+          decoration: InputDecoration(
+              labelText: "Nome",
+              labelStyle: TextStyle(
+                fontSize: 18.0,
+              ),
+              contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(22.0))),
+        ),
+      ),
+    );
+
     final emailField = Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.0),
       child: Material(
@@ -115,7 +157,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
           keyboardType: TextInputType.emailAddress,
           textInputAction: TextInputAction.next,
           focusNode: _emailFocus,
-          validator: InputValidator.validadeEmail,
+          validator: InputValidator.emailValidation,
           onFieldSubmitted: (dataTyped) {
             setState(() {
               _emailFocus.unfocus();
@@ -149,7 +191,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
           keyboardType: TextInputType.text,
           textInputAction: TextInputAction.next,
           focusNode: _passwordFocus,
-          validator: InputValidator.validadePassword,
+          validator: InputValidator.passwordValidation,
           onFieldSubmitted: (dataTyped) {
             setState(() {
               _passwordFocus.unfocus();
@@ -162,6 +204,14 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
           ),
           decoration: InputDecoration(
               labelText: "Senha",
+              suffixIcon: Padding(
+                padding: EdgeInsetsDirectional.only(end: 12.0),
+                child: IconButton(
+                    icon: Icon(Icons.remove_red_eye),
+                    onPressed: () {
+                      print("eye clicked!");
+                    }),
+              ),
               labelStyle: TextStyle(
                 fontSize: 18.0,
               ),
@@ -213,37 +263,46 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
           onPressed: () {
             //TODO registrar usuario METODO
 
-            if (_validadeInput() == true) {
+            if (_inputValidation() == true) {
               setState(() {
                 _requesting = true;
               });
-
+              //UserUpdateInfo info = new UserUpdateInfo();
               FirebaseAuth auth = FirebaseAuth.instance;
-              auth
-                  .createUserWithEmailAndPassword(
-                      email: _email, password: _password)
-                  .then((user) {
-                setState(() {
-                  _requesting = false;
-                });
+              print("Creating user on authentication system!!");
+              auth.createUserWithEmailAndPassword(
+                      email: _email, password: _password).then( (firebaseUser) {
+                        //info.displayName = _name;
+                print("User CREATED!!!");
+                print("REGISTRING USER ON DATABASE...");
+                User user = new User(firebaseUser.uid, _name, firebaseUser.email, 5.0);
 
-                //TODO criar um modelo de dados para o usuario
-                _mReferencia
-                    .child(user.uid)
-                    .child('email')
-                    .set(user.email)
-                    .then((_) {
+                  _mReferencia.child(firebaseUser.uid).set( {
+                    'name' : '${user.name}',
+                    'email' : '${user.email}',
+                    'rating' : '${user.rating}',
+                    'uid' : '${user.uid}'
+                  }).then((_) {
+                  setState(() {
+                    _requesting = false;
+                  });
+                  print("USER REGISTRED ON DATABASE!!");
                   _showSnackBar(context, "Usuário registrado!");
                   print("Registrado: ${user.email}");
-                }).catchError((onError) {});
-
+                }).catchError((onError) {
+                    print("FAIL ON REGISTER USER ON DATABASE!!!!!");
+                    print(onError.toString());
+                    auth.signOut();
+                  });
               }).catchError((error) {
-                _showSnackBar(
+                print("FAIL TO CREATE USER ON AUTH SYSTEM!!!!!");
+                  _showSnackBar(
                     context, "Usuário já estar registrado!", Colors.redAccent);
                 setState(() {
                   _requesting = false;
                 });
               });
+
             }
           },
           minWidth: 130.0,
@@ -291,23 +350,23 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
     final form = Form(
       autovalidate: _autoValidate,
       key: _formKey,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          ListView(
-            shrinkWrap: true,
-            children: <Widget>[
-              emailField,
-              _verticalSeparator,
-              passwordField,
-              _verticalSeparator,
-              passwordConfirm,
-              _verticalSeparator,
-              buttonsGroup
-            ],
-          ),
-        ],
+      child: Center(
+        //mainAxisAlignment: MainAxisAlignment.center,
+        //crossAxisAlignment: CrossAxisAlignment.center,
+        child: ListView(
+          shrinkWrap: true,
+          children: <Widget>[
+            nameField,
+            _verticalSeparator,
+            emailField,
+            _verticalSeparator,
+            passwordField,
+            _verticalSeparator,
+            passwordConfirm,
+            _verticalSeparator,
+            buttonsGroup
+          ],
+        ),
       ),
     );
 

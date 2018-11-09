@@ -38,18 +38,18 @@ class ScreenSelector extends StatefulWidget {
 class ScreenSelectorState extends State<ScreenSelector>{
 
   static final _container = Container(color: Colors.transparent,);
-  Future<FirebaseUser> _future;
+  //Future<FirebaseUser> _future;
   @override
   void initState() {
     super.initState();
-    _future = FirebaseAuth.instance.currentUser();
+    //_future = ;
   }
 
   @override
   Widget build(BuildContext context) {
 
     return FutureBuilder<FirebaseUser>(
-      future: _future,
+      future: FirebaseAuth.instance.currentUser(),/*_future,*/
       builder: (BuildContext context, AsyncSnapshot<FirebaseUser> snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.none:

@@ -8,6 +8,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 
 // TODO tratar os FUTURES NA HORA DO LOGIN DA FORMA CORRETA!!
+// TODO REALIZAR BUGFIX dos SNACKBARS
+// TODO IMPLEMENTAR ROUNDED PROGRESS BAR
 class LoginScreen extends StatefulWidget {
   @override
   State createState() => _LoginScreenState();
@@ -22,7 +24,6 @@ class _LoginScreenState extends State<LoginScreen> {
   FocusNode _passwordFocus;
   TextEditingController _emailController;
   TextEditingController _passwordController;
-
   GlobalKey<FormState> _globalKey;
   bool _autoValidate;
   var _email, _password;
@@ -67,7 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
           keyboardType: TextInputType.emailAddress,
           textInputAction: TextInputAction.next,
           controller: _emailController,
-          validator: InputValidator.validadeEmail,
+          validator: InputValidator.emailValidation,
           focusNode: _emailFocus,
           onFieldSubmitted: (dataTyped) {
             _emailFocus.unfocus();
@@ -109,9 +110,19 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           decoration: InputDecoration(
               labelText: "Senha",
+              suffixIcon: Padding(padding: EdgeInsetsDirectional.only(end: 12.0),
+                child: IconButton(
+                    icon: Icon(Icons.remove_red_eye),
+                    onPressed: () {
+
+                      print("eye clicked!");
+                    }),
+              ),
+
               labelStyle: TextStyle(
                 fontSize: 18.0,
               ),
+
               contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
               border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(22.0))),
