@@ -234,7 +234,7 @@ class _LoginScreenState extends State<LoginScreen> {
               forgotPassword,
               _VERTICAL_SEPARATOR,
               RaisedButton(
-                child: Text("Login with Facebook"),
+                child: Text("Entrar com o Facebook"),
                 onPressed: () => initiateFacebookLogin(),
               ),
             ],
