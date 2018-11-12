@@ -5,6 +5,7 @@ import 'LoggedScreen.dart';
 import 'UserRegisterScreen.dart';
 import 'package:autonos_app/utility/InputValidator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'widget/ModalRoundedProgressBar.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:autonos_app/model/User.dart';
@@ -44,6 +45,39 @@ class _LoginScreenState extends State<LoginScreen> {
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
     _usersReference = FirebaseDatabase.instance.reference().child('usuarios');
+  }
+  void initiateFacebookLogin() async {
+    final facebookLogin = new FacebookLogin();
+    final facebookLoginResult =
+    await facebookLogin.logInWithReadPermissions(['email','public_profile']);
+    switch (facebookLoginResult.status) {
+      case FacebookLoginStatus.error:
+        print("Error");
+        onLoginStatusChanged(false);
+        break;
+      case FacebookLoginStatus.cancelledByUser:
+        print("CancelledByUser");
+        onLoginStatusChanged(false);
+        break;
+      case FacebookLoginStatus.loggedIn:
+        print("LoggedIn");
+        FirebaseAuth.instance.signInWithFacebook(accessToken: facebookLoginResult.accessToken.token);
+        onLoginStatusChanged(true);
+        break;
+    }
+  }
+
+  void _firebaseAuthWithFacebook(final String token){
+    print("FirebaseAuth -> Token:"+token);
+
+  }
+
+  bool isLoggedIn = false;
+
+  void onLoginStatusChanged(bool isLoggedIn) {
+    setState(() {
+      this.isLoggedIn = isLoggedIn;
+    });
   }
 
 
@@ -137,46 +171,41 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
 
-    final loginButton = Material(
-      borderRadius: BorderRadius.circular(30.0),
-      child: MaterialButton(
-        splashColor: Colors.yellowAccent,
-        onPressed: () {
-          if (validate())
-            firebaseLogin(context);
-        },
-        minWidth: 130.0,
-        color: Colors.green,
-        child: Text(
-          "Entrar",
-          style: TextStyle(fontSize: 16.0),
-        ),
-      ),
-    );
-
-    final registerButton = Material(
-      borderRadius: BorderRadius.circular(30.0),
-      child: MaterialButton(
-        splashColor: Colors.greenAccent,
-        onPressed: () {
-          print("realizar cadastro");
-          cadastrar(context);
-        },
-        minWidth: 130.0,
-        color: Colors.yellow,
-        child: Text(
-          "Cadastre-se",
-          style: TextStyle(fontSize: 16.0),
-        ),
-      ),
-    );
-
     final buttonGroup = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        loginButton,
+        Material(
+          borderRadius: BorderRadius.circular(30.0),
+          child: MaterialButton(
+            splashColor: Colors.yellowAccent,
+            onPressed: () {
+              if (validate()) logar(context);
+            },
+            minWidth: 130.0,
+            color: Colors.green,
+            child: Text(
+              "Entrar",
+              style: TextStyle(fontSize: 16.0),
+            ),
+          ),
+        ),
         SizedBox(width: 5.0),
-        registerButton,
+        Material(
+          borderRadius: BorderRadius.circular(30.0),
+          child: MaterialButton(
+            splashColor: Colors.greenAccent,
+            onPressed: () {
+              print("realizar cadastro");
+              cadastrar(context);
+            },
+            minWidth: 130.0,
+            color: Colors.yellow,
+            child: Text(
+              "Cadastre-se",
+              style: TextStyle(fontSize: 16.0),
+            ),
+          ),
+        ),
       ],
     );
 
@@ -194,21 +223,31 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
 
-    Form form = new Form(
-      key: _globalKey,
-      autovalidate: _autoValidate,
-      child: ListView(
-        children: <Widget>[
-          _VERTICAL_SEPARATOR,
-          logo,
-          _VERTICAL_SEPARATOR,
-          emailField,
-          _VERTICAL_SEPARATOR,
-          passwordField,
-          _VERTICAL_SEPARATOR,
-          buttonGroup,
-          forgotPassword,
-        ],
+    return new Scaffold(
+        body: Container(
+      child: Center(
+        child: Form(
+          key: _globalKey,
+          autovalidate: _autoValidate,
+          child: ListView(
+            children: <Widget>[
+              _VERTICAL_SEPARATOR,
+              logo,
+              _VERTICAL_SEPARATOR,
+              emailField,
+              _VERTICAL_SEPARATOR,
+              passwordField,
+              _VERTICAL_SEPARATOR,
+              buttonGroup,
+              forgotPassword,
+              _VERTICAL_SEPARATOR,
+              RaisedButton(
+                child: Text("Entrar com o Facebook"),
+                onPressed: () => initiateFacebookLogin(),
+              ),
+            ],
+          ),
+        ),
       ),
     );
 
@@ -239,8 +278,7 @@ class _LoginScreenState extends State<LoginScreen> {
         _password = _passwordController.text;
       });
       return true;
-    }
-    else {
+    } else {
       setState(() {
         _autoValidate = true;
       });
@@ -293,11 +331,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
         //_showSnackBarInfo(context, msg);
       }).catchError((onError) {
-        showProgressBar(false);
         //_showSnackBarInfo(context, "Login Inválido");
       });
     }
-
     else {
       print("LASCOU & LASCOU!");
     }

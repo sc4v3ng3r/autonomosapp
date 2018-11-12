@@ -1,0 +1,9 @@
+{
+   "servicos" : [  {  
+          "geral": [ 
+                 { "nome" : "eletricista" },
+                 {"nome" : "baba"},
+          ],
+      } 
+   ],
+}
