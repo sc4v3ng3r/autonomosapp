@@ -399,6 +399,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
     }
 
     catch ( ex ){
+
       print("Erro ao registar conta do Database");
       recentCreatedUser.delete()
           .then( (onValue) => FirebaseAuth.instance.signOut() )

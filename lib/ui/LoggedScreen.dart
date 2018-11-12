@@ -1,17 +1,21 @@
 import 'package:autonos_app/ui/widget/RatingBar.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:autonos_app/model/User.dart';
 
 class LoggedScreen extends StatefulWidget {
+
   @override
-  LoggedScreenState createState() => new LoggedScreenState();
+  _LoggedScreenState createState() => _LoggedScreenState();
+
 }
 
-class LoggedScreenState extends State<LoggedScreen> {
+class _LoggedScreenState extends State<LoggedScreen> {
   GlobalKey<ScaffoldState> _scaffoldKey;
   double rating = 3.5;
   final bool sair = false;
   FirebaseAuth _auth = FirebaseAuth.instance;
+  User _currentLoggedUser;
 
   @override
   Widget build(BuildContext context) {
@@ -79,14 +83,13 @@ class LoggedScreenState extends State<LoggedScreen> {
                         children: <Widget>[
                           Padding(
                             padding: EdgeInsets.fromLTRB(.0, 8.0, 0.0, 0.0),
-                            child: Text(
-                              'Nome Completo Da Silva',
+                            child: Text( _currentLoggedUser.name,
                               style: TextStyle(color: Colors.white),
                             ),
                           ),
                           Padding(
                             padding: EdgeInsets.fromLTRB(.0, 8.0, 0.0, 0.0),
-                            child: Text('user@email.com',
+                            child: Text( _currentLoggedUser.email,
                                 style: TextStyle(color: Colors.white)),
                           ),
                           Row(
@@ -94,14 +97,13 @@ class LoggedScreenState extends State<LoggedScreen> {
                               Padding(
                                 padding: EdgeInsets.fromLTRB(.0, 8.0, .0, .0),
                                 child: StarRating(
-                                  rating: rating,
+                                  rating: _currentLoggedUser.rating,
 //                          onRatingChanged: (rating) => setState(() => this.rating = rating),
                                 ),
                               ),
                               Padding(
                                 padding: EdgeInsets.fromLTRB(4.0, 8.0, .0, .0),
-                                child: Text(
-                                  '($rating)',
+                                child: Text( "${_currentLoggedUser.rating}",
                                   style: TextStyle(color: Colors.white),
                                 ),
                               ),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 /**
  * Apesar de ser StatefulWidget ainda nao ha interace para mudar seu estado!!
  * Entretando, a estrutura ja estar pronta para realizar mudancas de texto & cor
@@ -8,22 +7,19 @@ import 'package:flutter/material.dart';
  */
 class ModalRoundedProgressBar extends StatefulWidget {
   @override
-  State createState() => ModalRoundedProgressBarState();
-
+  State createState() => _ModalRoundedProgressBarState();
 }
 
-class ModalRoundedProgressBarState extends State<ModalRoundedProgressBar> {
- // String _textMessage;
+class _ModalRoundedProgressBarState extends State<ModalRoundedProgressBar> {
+  // String _textMessage;
 
-
- /* ModalRoundedProgressBarState( {String message =""} ) :
+  /* ModalRoundedProgressBarState( {String message =""} ) :
       _textMessage = message;
       */
   @override
   void initState() {
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -41,12 +37,11 @@ class ModalRoundedProgressBarState extends State<ModalRoundedProgressBar> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            CircularProgressIndicator(),
-            //Text("Registrando"),
-          ],
-        )
-
+            children: <Widget>[
+              CircularProgressIndicator(),
+              //Text("Registrando"),
+            ],
+          ),
         ),
       ],
     );

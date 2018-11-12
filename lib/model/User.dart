@@ -1,16 +1,13 @@
 //import 'package:meta/meta.dart';
 
-class User {
-  String _name;
-  String _email;
-  //String _picturePath;
-  String _uid;
-  double _rating;
+import 'package:firebase_database/firebase_database.dart';
 
-  String get name => _name;
-  String get email => _email;
-  String get uid => _uid;
-  double get rating => _rating;
+class User {
+  String name;
+  String email;
+  //String _picturePath;
+  String uid;
+  double rating;
 
   static final String EMAIL = "email";
   static final String NAME = "name";
@@ -18,28 +15,30 @@ class User {
   static final String RATING = "rating";
   static final String PHOTO_PATH = "photo_path";
 
-  set name(String name) => _name = name;
-  set email(String email) => _email = email;
-  set rating(double rating) => _rating = rating;
-
-
   User(String uid, String name, String email, double rating) :
-    _uid = uid,
-    _name = name,
-    _email = email,
-    _rating = rating;
+    uid = uid,
+    name = name,
+    email = email,
+    rating = rating;
 
   User.fromJson(Map<String, dynamic> json) :
-      _name = json[NAME],
-      _email = json[EMAIL],
-      _uid = json[UID],
-      _rating = json[RATING];
+      name = json[NAME],
+      email = json[EMAIL],
+      uid = json[UID],
+      rating = json[RATING];
 
   Map<String, dynamic> toJson() => {
-    'name' : _name,
-    'email' : _email,
-    'rating' : _rating,
-    'uid' : _uid,
+    'name' : name,
+    'email' : email,
+    'rating' : rating,
+    'uid' : uid,
   };
+
+  User.fromDataSnapshot(DataSnapshot snapshot ) :
+    name = snapshot.value[NAME],
+    email = snapshot.value[EMAIL],
+    rating = double.parse( (snapshot.value[RATING]).toString() ),
+    uid =   snapshot.value[UID];
+
 
 }

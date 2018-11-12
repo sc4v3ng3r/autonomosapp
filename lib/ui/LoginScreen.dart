@@ -6,6 +6,10 @@ import 'UserRegisterScreen.dart';
 import 'package:autonos_app/utility/InputValidator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'widget/ModalRoundedProgressBar.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:autonos_app/model/User.dart';
+import 'dart:convert';
+
 
 // TODO tratar os FUTURES NA HORA DO LOGIN DA FORMA CORRETA!!
 // TODO REALIZAR BUGFIX dos SNACKBARS
@@ -28,16 +32,18 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _autoValidate;
   bool _showProgressBar = false;
   var _email, _password;
+  DatabaseReference _usersReference;
 
   @override
   void initState() {
+    super.initState();
     _globalKey = GlobalKey();
     _autoValidate = false;
     _emailFocus = FocusNode();
     _passwordFocus = FocusNode();
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
-    super.initState();
+    _usersReference = FirebaseDatabase.instance.reference().child('usuarios');
   }
 
 
@@ -137,7 +143,7 @@ class _LoginScreenState extends State<LoginScreen> {
         splashColor: Colors.yellowAccent,
         onPressed: () {
           if (validate())
-            logar(context);
+            firebaseLogin(context);
         },
         minWidth: 130.0,
         color: Colors.green,
@@ -244,7 +250,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   // TODO esse metodo sera boolean
-  void logar(BuildContext context) {
+  void firebaseLogin(BuildContext context) {
     showProgressBar(true);
     FirebaseAuth auth = FirebaseAuth.instance;
     //FirebaseUser user;
@@ -256,18 +262,34 @@ class _LoginScreenState extends State<LoginScreen> {
     if (auth != null) {
       print("AUTH IS NOT NULL!!!!!!");
       auth.signInWithEmailAndPassword(email: _email, password: _password)
-          .then((user) {
-        String msg = "Bem vindo ${user.email} ";
+          .then((firebaseUser) {
+        String msg = "Bem vindo ${firebaseUser.email} ";
 
-        if (Navigator.of(context).canPop()) {
-          showProgressBar(false);
-          Navigator.of(context).pop();
+        _usersReference.child( firebaseUser.uid ).once().then(
+            (snapshot) {
 
-        }
-        else{
-          showProgressBar(false);
-          Navigator.pushReplacementNamed(context,'/logedScreen');
-        }
+              print("DB READED: ${snapshot.value}");
+              User user = User.fromDataSnapshot(snapshot);
+
+              if (Navigator.of(context).canPop()) {
+                showProgressBar(false);
+                Navigator.of(context).pop();
+
+              }
+              else{
+                showProgressBar(false);
+                Navigator.push(context, MaterialPageRoute(
+                    builder: (context) => new LoggedScreen())
+                );
+                //Navigator.pushReplacementNamed(context,'/logedScreen');
+              }
+
+            }
+
+            ).catchError(  (error) {
+              print("ERRO AO RECUPERAR USUARIO DO DB " + error.toString());
+              auth.signOut();
+            });
 
         //_showSnackBarInfo(context, msg);
       }).catchError((onError) {
@@ -301,7 +323,7 @@ class _LoginScreenState extends State<LoginScreen> {
         return UserRegisterScreen();
       }));
   }
-  
+
   void showProgressBar(bool flag){
     setState(() {
       _showProgressBar = flag;

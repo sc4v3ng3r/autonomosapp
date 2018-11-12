@@ -66,6 +66,7 @@ class ScreenSelectorState extends State<ScreenSelector>{
             }
 
             print("${snapshot.data.email}");
+            // se ja estar logado tem que ler o usuario!
             return LoggedScreen();
         }
         //TODO fazer uma tela especial, pois provavelmente nao ha conexao!!
