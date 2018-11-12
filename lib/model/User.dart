@@ -18,7 +18,6 @@ class User {
   static final String RATING = "rating";
   static final String PHOTO_PATH = "photo_path";
 
-
   set name(String name) => _name = name;
   set email(String email) => _email = email;
   set rating(double rating) => _rating = rating;

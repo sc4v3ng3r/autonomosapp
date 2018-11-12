@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:autonos_app/utility/InputValidator.dart';
 import 'package:autonos_app/model/User.dart';
-import 'dart:convert';
+import 'widget/ModalRoundedProgressBar.dart';
 
 //TODO olhar navegacao e rotas
 // TODO ADICIONAR OS DEMAIS CAMPOS DE REGISTRO
@@ -34,7 +34,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
 
   var _email, _password, _name;
   var _passwordConfirmation;
-  var _requesting = false;
+  var _showProgressBar = false;
 
   bool _autoValidate = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -266,22 +266,21 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
         child: MaterialButton(
           splashColor: Colors.greenAccent,
           onPressed: () {
+
             if ( _inputValidation() == true) {
-              setState(() {
-                _requesting = true;
-              });
+              showProgressBar(true);
 
               _createUserAccount( _email,  _password).then(
                       (results) {
-                        setState(() {
-                          _requesting = false;
-                        });
-
-                        if (results)
+                        showProgressBar(false);
+                        if (results) {
                           _showSnackBar(context, "Usuário registrado com sucesso!");
-                        else
+                          // TODO redirecionar usuario para tela de logado!
+                        }
+
+                        else // o usuario pode ja estar registrado ou dar erro na hora do registro!
                           _showSnackBar(
-                              context, "Usuário já estar registrado!", Colors.redAccent);
+                              context, "Registro não realizado!", Colors.redAccent);
                       });
             }
           },
@@ -353,23 +352,9 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
     var list = new List<Widget>();
     list.add(form);
 
-    if (_requesting) {
-      var modal = Stack(
-        children: <Widget>[
-          Opacity(
-            opacity: 0.3,
-            child: ModalBarrier(
-              dismissible: false,
-              color: Colors.grey,
-            ),
-          ),
-          Center(
-            child: CircularProgressIndicator(),
-          ),
-        ],
-      );
-
-      list.add(modal);
+    if ( _showProgressBar ) {
+      var progressBar = ModalRoundedProgressBar();
+      list.add(progressBar);
     }
     return list;
   }
@@ -378,28 +363,30 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
 
     bool returnFlag = false;
     FirebaseAuth auth = FirebaseAuth.instance;
-
+    FirebaseUser firebaseUser;
     try {
-      FirebaseUser firebaseUser = await auth.createUserWithEmailAndPassword(
+      firebaseUser = await auth.createUserWithEmailAndPassword(
           email: email, password: password);
 
+      //print("FIREBASE USER: ${firebaseUser}"  );
       User userCreated = await _createAccountDBRegister(firebaseUser);
+
       returnFlag = true;
       //essa atribuicao deve mesmo ficar aqui??
       _recentCreatedUser = userCreated;
     }
 
-    catch (ex){
-      print(ex.toString() );
-      auth.signOut();
+    catch ( ex ){
+      // NEsse caso aqui o usuario nao foi criado!
+      print(ex.toString()  + " ${firebaseUser} " );
     }
-
     return returnFlag;
   }
 
   Future<User> _createAccountDBRegister(FirebaseUser recentCreatedUser) async {
 
     try {
+      print("Registrando conta no DB!");
       User user = new User(
           recentCreatedUser.uid,
           _name, // dados do field name
@@ -411,11 +398,20 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
       return user;
     }
 
-    catch (ex){
+    catch ( ex ){
       print("Erro ao registar conta do Database");
+      recentCreatedUser.delete()
+          .then( (onValue) => FirebaseAuth.instance.signOut() )
+          .catchError( (error) => print("UserRegisterScreen:: _createAccountDBRegister "
+          + error.toString()));
     }
-
     return null;
+  }
+
+  void showProgressBar(bool flag){
+    setState(() {
+      _showProgressBar = flag;
+    });
   }
 
 }
