@@ -23,7 +23,10 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
   TextEditingController _passwordController;
   FocusNode _passwordConfirmFocus;
   TextEditingController _passwordConfirmController;
-  DatabaseReference _mReferencia;
+  User _recentCreatedUser;
+
+  DatabaseReference _userReference;
+  static final RATING_INIT_VALUE = 5.0;
 
   static final SizedBox _verticalSeparator = new SizedBox(
     height: 20.0,
@@ -47,7 +50,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
     _emailController = new TextEditingController();
     _passwordController = new TextEditingController();
     _passwordConfirmController = TextEditingController();
-    _mReferencia = FirebaseDatabase.instance.reference().child('usuarios');
+    _userReference = _userReference = FirebaseDatabase.instance.reference().child('usuarios');
   }
 
   @override
@@ -85,9 +88,11 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
     final String msg = "Senhas incompatíveis";
     print("validating confirm");
 
-    if (confirm == null || _passwordController.text == null) return msg;
+    if (confirm == null || _passwordController.text == null)
+      return msg;
 
-    if (_passwordController.text.compareTo(confirm) != 0) return msg;
+    if (_passwordController.text.compareTo(confirm) != 0)
+      return msg;
 
     return null;
   }
@@ -261,48 +266,23 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
         child: MaterialButton(
           splashColor: Colors.greenAccent,
           onPressed: () {
-            //TODO registrar usuario METODO
-
-            if (_inputValidation() == true) {
+            if ( _inputValidation() == true) {
               setState(() {
                 _requesting = true;
               });
-              //UserUpdateInfo info = new UserUpdateInfo();
-              FirebaseAuth auth = FirebaseAuth.instance;
-              print("Creating user on authentication system!!");
-              auth.createUserWithEmailAndPassword(
-                      email: _email, password: _password).then( (firebaseUser) {
-                        //info.displayName = _name;
-                print("User CREATED!!!");
-                print("REGISTRING USER ON DATABASE...");
-                User user = new User(firebaseUser.uid, _name, firebaseUser.email, 5.0);
 
-                  _mReferencia.child(firebaseUser.uid).set( {
-                    'name' : '${user.name}',
-                    'email' : '${user.email}',
-                    'rating' : '${user.rating}',
-                    'uid' : '${user.uid}'
-                  }).then((_) {
-                  setState(() {
-                    _requesting = false;
-                  });
-                  print("USER REGISTRED ON DATABASE!!");
-                  _showSnackBar(context, "Usuário registrado!");
-                  print("Registrado: ${user.email}");
-                }).catchError((onError) {
-                    print("FAIL ON REGISTER USER ON DATABASE!!!!!");
-                    print(onError.toString());
-                    auth.signOut();
-                  });
-              }).catchError((error) {
-                print("FAIL TO CREATE USER ON AUTH SYSTEM!!!!!");
-                  _showSnackBar(
-                    context, "Usuário já estar registrado!", Colors.redAccent);
-                setState(() {
-                  _requesting = false;
-                });
-              });
+              _createUserAccount( _email,  _password).then(
+                      (results) {
+                        setState(() {
+                          _requesting = false;
+                        });
 
+                        if (results)
+                          _showSnackBar(context, "Usuário registrado com sucesso!");
+                        else
+                          _showSnackBar(
+                              context, "Usuário já estar registrado!", Colors.redAccent);
+                      });
             }
           },
           minWidth: 130.0,
@@ -393,4 +373,49 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
     }
     return list;
   }
+
+  Future<bool> _createUserAccount( var email, var password ) async {
+
+    bool returnFlag = false;
+    FirebaseAuth auth = FirebaseAuth.instance;
+
+    try {
+      FirebaseUser firebaseUser = await auth.createUserWithEmailAndPassword(
+          email: email, password: password);
+
+      User userCreated = await _createAccountDBRegister(firebaseUser);
+      returnFlag = true;
+      //essa atribuicao deve mesmo ficar aqui??
+      _recentCreatedUser = userCreated;
+    }
+
+    catch (ex){
+      print(ex.toString() );
+      auth.signOut();
+    }
+
+    return returnFlag;
+  }
+
+  Future<User> _createAccountDBRegister(FirebaseUser recentCreatedUser) async {
+
+    try {
+      User user = new User(
+          recentCreatedUser.uid,
+          _name, // dados do field name
+          recentCreatedUser.email, RATING_INIT_VALUE);
+
+      await _userReference.child(recentCreatedUser.uid)
+          .set(user.toJson());
+
+      return user;
+    }
+
+    catch (ex){
+      print("Erro ao registar conta do Database");
+    }
+
+    return null;
+  }
+
 }
