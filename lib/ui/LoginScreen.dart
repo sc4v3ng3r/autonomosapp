@@ -5,11 +5,11 @@ import 'LoggedScreen.dart';
 import 'UserRegisterScreen.dart';
 import 'package:autonos_app/utility/InputValidator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'widget/ModalRoundedProgressBar.dart';
 
 // TODO tratar os FUTURES NA HORA DO LOGIN DA FORMA CORRETA!!
 // TODO REALIZAR BUGFIX dos SNACKBARS
-// TODO IMPLEMENTAR ROUNDED PROGRESS BAR
+
 class LoginScreen extends StatefulWidget {
   @override
   State createState() => _LoginScreenState();
@@ -26,6 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController _passwordController;
   GlobalKey<FormState> _globalKey;
   bool _autoValidate;
+  bool _showProgressBar = false;
   var _email, _password;
 
   @override
@@ -39,8 +40,8 @@ class _LoginScreenState extends State<LoginScreen> {
     super.initState();
   }
 
-  @override
-  Widget build(BuildContext context) {
+
+  List<Widget> _buildForm(){
     final logo = Container(
       //padding: EdgeInsets.all(26.0),
       width: double.infinity,
@@ -130,41 +131,46 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
 
+    final loginButton = Material(
+      borderRadius: BorderRadius.circular(30.0),
+      child: MaterialButton(
+        splashColor: Colors.yellowAccent,
+        onPressed: () {
+          if (validate())
+            logar(context);
+        },
+        minWidth: 130.0,
+        color: Colors.green,
+        child: Text(
+          "Entrar",
+          style: TextStyle(fontSize: 16.0),
+        ),
+      ),
+    );
+
+    final registerButton = Material(
+      borderRadius: BorderRadius.circular(30.0),
+      child: MaterialButton(
+        splashColor: Colors.greenAccent,
+        onPressed: () {
+          print("realizar cadastro");
+          cadastrar(context);
+        },
+        minWidth: 130.0,
+        color: Colors.yellow,
+        child: Text(
+          "Cadastre-se",
+          style: TextStyle(fontSize: 16.0),
+        ),
+      ),
+    );
+
     final buttonGroup = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Material(
-          borderRadius: BorderRadius.circular(30.0),
-          child: MaterialButton(
-            splashColor: Colors.yellowAccent,
-            onPressed: () {
-              if (validate()) logar(context);
-            },
-            minWidth: 130.0,
-            color: Colors.green,
-            child: Text(
-              "Entrar",
-              style: TextStyle(fontSize: 16.0),
-            ),
-          ),
-        ),
+        loginButton,
         SizedBox(width: 5.0),
-        Material(
-          borderRadius: BorderRadius.circular(30.0),
-          child: MaterialButton(
-            splashColor: Colors.greenAccent,
-            onPressed: () {
-              print("realizar cadastro");
-              cadastrar(context);
-            },
-            minWidth: 130.0,
-            color: Colors.yellow,
-            child: Text(
-              "Cadastre-se",
-              style: TextStyle(fontSize: 16.0),
-            ),
-          ),
-        ),
+        registerButton,
       ],
     );
 
@@ -182,28 +188,42 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
 
-    return new Scaffold(
-        body: Container(
-      child: Center(
-        child: Form(
-          key: _globalKey,
-          autovalidate: _autoValidate,
-          child: ListView(
-            children: <Widget>[
-              _VERTICAL_SEPARATOR,
-              logo,
-              _VERTICAL_SEPARATOR,
-              emailField,
-              _VERTICAL_SEPARATOR,
-              passwordField,
-              _VERTICAL_SEPARATOR,
-              buttonGroup,
-              forgotPassword
-            ],
-          ),
-        ),
+    Form form = new Form(
+      key: _globalKey,
+      autovalidate: _autoValidate,
+      child: ListView(
+        children: <Widget>[
+          _VERTICAL_SEPARATOR,
+          logo,
+          _VERTICAL_SEPARATOR,
+          emailField,
+          _VERTICAL_SEPARATOR,
+          passwordField,
+          _VERTICAL_SEPARATOR,
+          buttonGroup,
+          forgotPassword,
+        ],
       ),
-    ));
+    );
+
+    List<Widget> widgetList = new List();
+    widgetList.add( form );
+
+    if (_showProgressBar == true)
+      widgetList.add( new ModalRoundedProgressBar() );
+
+    return widgetList;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    return new Scaffold(
+      body: Stack(
+        //overflow: Overflow.clip,
+        children: _buildForm(),
+      )
+    );
   }
 
   bool validate() {
@@ -213,7 +233,8 @@ class _LoginScreenState extends State<LoginScreen> {
         _password = _passwordController.text;
       });
       return true;
-    } else {
+    }
+    else {
       setState(() {
         _autoValidate = true;
       });
@@ -224,28 +245,37 @@ class _LoginScreenState extends State<LoginScreen> {
 
   // TODO esse metodo sera boolean
   void logar(BuildContext context) {
+    showProgressBar(true);
     FirebaseAuth auth = FirebaseAuth.instance;
     //FirebaseUser user;
 
     print("EMAIL: $_email");
     print("SENHA: $_password");
-    FirebaseUser currentUser = null;
+    FirebaseUser currentUser;
 
     if (auth != null) {
       print("AUTH IS NOT NULL!!!!!!");
       auth.signInWithEmailAndPassword(email: _email, password: _password)
           .then((user) {
         String msg = "Bem vindo ${user.email} ";
+
         if (Navigator.of(context).canPop()) {
+          showProgressBar(false);
           Navigator.of(context).pop();
+
         }
-        else
+        else{
+          showProgressBar(false);
           Navigator.pushReplacementNamed(context,'/logedScreen');
+        }
+
         //_showSnackBarInfo(context, msg);
       }).catchError((onError) {
+        showProgressBar(false);
         //_showSnackBarInfo(context, "Login Inválido");
       });
     }
+
     else {
       print("LASCOU & LASCOU!");
     }
@@ -270,5 +300,11 @@ class _LoginScreenState extends State<LoginScreen> {
           .push(MaterialPageRoute<Null>(builder: (BuildContext context) {
         return UserRegisterScreen();
       }));
+  }
+  
+  void showProgressBar(bool flag){
+    setState(() {
+      _showProgressBar = flag;
+    });
   }
 } // InputGroup
