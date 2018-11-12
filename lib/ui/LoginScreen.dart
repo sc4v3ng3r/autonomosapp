@@ -5,7 +5,7 @@ import 'LoggedScreen.dart';
 import 'UserRegisterScreen.dart';
 import 'package:autonos_app/utility/InputValidator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 
 // TODO tratar os FUTURES NA HORA DO LOGIN DA FORMA CORRETA!!
 // TODO REALIZAR BUGFIX dos SNACKBARS
@@ -37,6 +37,39 @@ class _LoginScreenState extends State<LoginScreen> {
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
     super.initState();
+  }
+  void initiateFacebookLogin() async {
+    final facebookLogin = new FacebookLogin();
+    final facebookLoginResult =
+    await facebookLogin.logInWithReadPermissions(['email','public_profile']);
+    switch (facebookLoginResult.status) {
+      case FacebookLoginStatus.error:
+        print("Error");
+        onLoginStatusChanged(false);
+        break;
+      case FacebookLoginStatus.cancelledByUser:
+        print("CancelledByUser");
+        onLoginStatusChanged(false);
+        break;
+      case FacebookLoginStatus.loggedIn:
+        print("LoggedIn");
+        FirebaseAuth.instance.signInWithFacebook(accessToken: facebookLoginResult.accessToken.token);
+        onLoginStatusChanged(true);
+        break;
+    }
+  }
+
+  void _firebaseAuthWithFacebook(final String token){
+    print("FirebaseAuth -> Token:"+token);
+
+  }
+
+  bool isLoggedIn = false;
+
+  void onLoginStatusChanged(bool isLoggedIn) {
+    setState(() {
+      this.isLoggedIn = isLoggedIn;
+    });
   }
 
   @override
@@ -198,7 +231,12 @@ class _LoginScreenState extends State<LoginScreen> {
               passwordField,
               _VERTICAL_SEPARATOR,
               buttonGroup,
-              forgotPassword
+              forgotPassword,
+              _VERTICAL_SEPARATOR,
+              RaisedButton(
+                child: Text("Login with Facebook"),
+                onPressed: () => initiateFacebookLogin(),
+              ),
             ],
           ),
         ),

@@ -17,6 +17,7 @@ dependencies:
   firebase_auth: ^0.6.2+1
   flutter:
     sdk: flutter
+  flutter_facebook_login: ^1.1.1
   splashscreen:
   firebase_database:
   firebase_core: ^0.2.5+1
