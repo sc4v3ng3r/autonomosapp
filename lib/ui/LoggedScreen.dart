@@ -83,13 +83,13 @@ class _LoggedScreenState extends State<LoggedScreen> {
                         children: <Widget>[
                           Padding(
                             padding: EdgeInsets.fromLTRB(.0, 8.0, 0.0, 0.0),
-                            child: Text( _currentLoggedUser.name,
+                            child: Text( "User name",
                               style: TextStyle(color: Colors.white),
                             ),
                           ),
                           Padding(
                             padding: EdgeInsets.fromLTRB(.0, 8.0, 0.0, 0.0),
-                            child: Text( _currentLoggedUser.email,
+                            child: Text("user email",
                                 style: TextStyle(color: Colors.white)),
                           ),
                           Row(
@@ -97,13 +97,13 @@ class _LoggedScreenState extends State<LoggedScreen> {
                               Padding(
                                 padding: EdgeInsets.fromLTRB(.0, 8.0, .0, .0),
                                 child: StarRating(
-                                  rating: _currentLoggedUser.rating,
+                                  rating: 5.0,
 //                          onRatingChanged: (rating) => setState(() => this.rating = rating),
                                 ),
                               ),
                               Padding(
                                 padding: EdgeInsets.fromLTRB(4.0, 8.0, .0, .0),
-                                child: Text( "${_currentLoggedUser.rating}",
+                                child: Text( "5.0",
                                   style: TextStyle(color: Colors.white),
                                 ),
                               ),
@@ -140,8 +140,6 @@ class _LoggedScreenState extends State<LoggedScreen> {
             title: Text('Sair'),
             onTap: () {
 //              AlertDialog(title: Text('Tem certeza que você quer sair?'),).build(context);
-
-
               //SOMENTE TESTE!
               _auth.signOut().then((_){
                 Navigator.pushReplacementNamed(context, '/loginScreen');

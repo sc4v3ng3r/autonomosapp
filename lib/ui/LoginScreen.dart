@@ -10,11 +10,10 @@ import 'widget/ModalRoundedProgressBar.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:autonos_app/model/User.dart';
 import 'dart:convert';
+import 'package:autonos_app/firebase/FirebaseUserHelper.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 
-
-// TODO tratar os FUTURES NA HORA DO LOGIN DA FORMA CORRETA!!
 // TODO REALIZAR BUGFIX dos SNACKBARS
-
 class LoginScreen extends StatefulWidget {
   @override
   State createState() => _LoginScreenState();
@@ -34,6 +33,8 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _showProgressBar = false;
   var _email, _password;
   DatabaseReference _usersReference;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  bool isLoggedIn = false;
 
   @override
   void initState() {
@@ -46,33 +47,81 @@ class _LoginScreenState extends State<LoginScreen> {
     _passwordController = TextEditingController();
     _usersReference = FirebaseDatabase.instance.reference().child('usuarios');
   }
-  void initiateFacebookLogin() async {
+
+  void initiateFacebookLogin(BuildContext context) async {
     final facebookLogin = new FacebookLogin();
-    final facebookLoginResult =
-    await facebookLogin.logInWithReadPermissions(['email','public_profile']);
+    final facebookLoginResult = await facebookLogin
+        .logInWithReadPermissions(['email', 'public_profile']);
+
     switch (facebookLoginResult.status) {
       case FacebookLoginStatus.error:
         print("Error");
         onLoginStatusChanged(false);
         break;
+
       case FacebookLoginStatus.cancelledByUser:
         print("CancelledByUser");
         onLoginStatusChanged(false);
         break;
+
       case FacebookLoginStatus.loggedIn:
         print("LoggedIn");
-        FirebaseAuth.instance.signInWithFacebook(accessToken: facebookLoginResult.accessToken.token);
+        firebaseAuthWithFacebook(facebookLoginResult.accessToken.token, context);
         onLoginStatusChanged(true);
         break;
     }
   }
 
-  void _firebaseAuthWithFacebook(final String token){
-    print("FirebaseAuth -> Token:"+token);
+  void firebaseAuthWithFacebook(final String token, BuildContext context) {
+    print("FirebaseAuth -> Token:" + token);
+    _auth.signInWithFacebook(accessToken: token).then((firebaseUser) {
+      showProgressBar(true);
+      FirebaseUserHelper.readUserAccountData(firebaseUser.uid).then((user) {
+        print("LIDO COM FACEBOOK ${user.email} ${user.name}");
 
+        // TODO IR PARA NOVA TELA!
+        // ESSA NAVEGACAO ESTAR UMA MERDA!! TUDO ISSO VAI MUDAR!!
+        if (Navigator.of(context).canPop()) {
+          showProgressBar(false);
+          Navigator.of(context).pop();
+        }
+        else {
+          showProgressBar(false);
+          /*Navigator.push(context,
+              MaterialPageRoute(builder: (context) => new LoggedScreen()));*/
+          Navigator.pushReplacementNamed(context,'/logedScreen');
+        }
+
+      }).catchError((dataBaseError) {
+        FirebaseUserHelper.writeUserAccountData(firebaseUser)
+            .then((createdUser) {
+          print("USUARIO CRIADO COM SUCESSO!");
+          print("CREATED: ${createdUser.name}  ${createdUser.email}");
+
+          //TODO IR PARA PROXIMA TELA
+          // ESSA NAVEGACAO ESTAR UMA MERDA!! TUDO ISSO VAI MUDAR!!
+          if (Navigator.of(context).canPop()) {
+            showProgressBar(false);
+            Navigator.of(context).pop();
+          } else {
+            showProgressBar(false);
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => new LoggedScreen()));
+            ///Navigator.pushReplacementNamed(context,'/logedScreen');
+          }
+
+        }).catchError((error) {
+          print("ERRO AO CRIAR USUARIO NO DB COM FACEBOOK!");
+          print(error.toString());
+          //showProgressBar(false);
+        });
+      });
+    }).catchError((facebookError) {
+      print(facebookError.toString());
+    });
+
+    showProgressBar(false);
   }
-
-  bool isLoggedIn = false;
 
   void onLoginStatusChanged(bool isLoggedIn) {
     setState(() {
@@ -80,8 +129,7 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 
-
-  List<Widget> _buildForm(){
+  List<Widget> _buildForm() {
     final logo = Container(
       //padding: EdgeInsets.all(26.0),
       width: double.infinity,
@@ -151,19 +199,17 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           decoration: InputDecoration(
               labelText: "Senha",
-              suffixIcon: Padding(padding: EdgeInsetsDirectional.only(end: 12.0),
+              suffixIcon: Padding(
+                padding: EdgeInsetsDirectional.only(end: 12.0),
                 child: IconButton(
                     icon: Icon(Icons.remove_red_eye),
                     onPressed: () {
-
                       print("eye clicked!");
                     }),
               ),
-
               labelStyle: TextStyle(
                 fontSize: 18.0,
               ),
-
               contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
               border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(22.0))),
@@ -179,7 +225,7 @@ class _LoginScreenState extends State<LoginScreen> {
           child: MaterialButton(
             splashColor: Colors.yellowAccent,
             onPressed: () {
-              if (validate()) logar(context);
+              if (validate()) firebaseLogin(context);
             },
             minWidth: 130.0,
             color: Colors.green,
@@ -223,52 +269,46 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
 
-    return new Scaffold(
-        body: Container(
-      child: Center(
-        child: Form(
-          key: _globalKey,
-          autovalidate: _autoValidate,
-          child: ListView(
-            children: <Widget>[
-              _VERTICAL_SEPARATOR,
-              logo,
-              _VERTICAL_SEPARATOR,
-              emailField,
-              _VERTICAL_SEPARATOR,
-              passwordField,
-              _VERTICAL_SEPARATOR,
-              buttonGroup,
-              forgotPassword,
-              _VERTICAL_SEPARATOR,
-              RaisedButton(
-                child: Text("Entrar com o Facebook"),
-                onPressed: () => initiateFacebookLogin(),
-              ),
-            ],
-          ),
-        ),
+    final facebookLoginButton = RaisedButton(
+      child: Text("Entrar com o Facebook"),
+      onPressed: () => initiateFacebookLogin(context),
+    );
+
+    var form = Form(
+      key: _globalKey,
+      autovalidate: _autoValidate,
+      child: ListView(
+        children: <Widget>[
+          _VERTICAL_SEPARATOR,
+          logo,
+          _VERTICAL_SEPARATOR,
+          emailField,
+          _VERTICAL_SEPARATOR,
+          passwordField,
+          _VERTICAL_SEPARATOR,
+          buttonGroup,
+          forgotPassword,
+          _VERTICAL_SEPARATOR,
+          facebookLoginButton,
+        ],
       ),
     );
 
     List<Widget> widgetList = new List();
-    widgetList.add( form );
+    widgetList.add(form);
 
-    if (_showProgressBar == true)
-      widgetList.add( new ModalRoundedProgressBar() );
+    if (_showProgressBar == true) widgetList.add(new ModalRoundedProgressBar());
 
     return widgetList;
   }
 
   @override
   Widget build(BuildContext context) {
-
     return new Scaffold(
-      body: Stack(
-        //overflow: Overflow.clip,
-        children: _buildForm(),
-      )
-    );
+        body: Stack(
+      //overflow: Overflow.clip,
+      children: _buildForm(),
+    ));
   }
 
   bool validate() {
@@ -277,6 +317,7 @@ class _LoginScreenState extends State<LoginScreen> {
         _email = _emailController.text;
         _password = _passwordController.text;
       });
+
       return true;
     } else {
       setState(() {
@@ -287,64 +328,41 @@ class _LoginScreenState extends State<LoginScreen> {
     return false;
   }
 
-  // TODO esse metodo sera boolean
   void firebaseLogin(BuildContext context) {
     showProgressBar(true);
     FirebaseAuth auth = FirebaseAuth.instance;
-    //FirebaseUser user;
 
     print("EMAIL: $_email");
     print("SENHA: $_password");
-    FirebaseUser currentUser;
 
+    // esse if nao eh necessario!
     if (auth != null) {
-      print("AUTH IS NOT NULL!!!!!!");
-      auth.signInWithEmailAndPassword(email: _email, password: _password)
+      auth
+          .signInWithEmailAndPassword(email: _email, password: _password)
           .then((firebaseUser) {
-        String msg = "Bem vindo ${firebaseUser.email} ";
+        FirebaseUserHelper.readUserAccountData(firebaseUser.uid).then((user) {
+          print("LIDO ${user.name}  ${user.email}");
 
-        _usersReference.child( firebaseUser.uid ).once().then(
-            (snapshot) {
-
-              print("DB READED: ${snapshot.value}");
-              User user = User.fromDataSnapshot(snapshot);
-
-              if (Navigator.of(context).canPop()) {
-                showProgressBar(false);
-                Navigator.of(context).pop();
-
-              }
-              else{
-                showProgressBar(false);
-                Navigator.push(context, MaterialPageRoute(
-                    builder: (context) => new LoggedScreen())
-                );
-                //Navigator.pushReplacementNamed(context,'/logedScreen');
-              }
-
-            }
-
-            ).catchError(  (error) {
-              print("ERRO AO RECUPERAR USUARIO DO DB " + error.toString());
-              auth.signOut();
-            });
-
-        //_showSnackBarInfo(context, msg);
-      }).catchError((onError) {
-        //_showSnackBarInfo(context, "Login Inválido");
+          if (Navigator.of(context).canPop()) {
+            showProgressBar(false);
+            Navigator.of(context).pop();
+          } else {
+            showProgressBar(false);
+            /*Navigator.push(context,
+                MaterialPageRoute(builder: (context) => new LoggedScreen()));
+            */
+            Navigator.pushReplacementNamed(context,'/logedScreen');
+          }
+        }).catchError((onError) {
+          print(onError.toString());
+          showProgressBar(false);
+        });
+      }).catchError((firebaseError) {
+        print(firebaseError.toString());
+        showProgressBar(false);
       });
     }
-    else {
-      print("LASCOU & LASCOU!");
-    }
-
-    /*if (Navigator.of(context).canPop()) {
-      Navigator.of(context).pop();
-    }else
-    Navigator.pushReplacementNamed(context,'/logedScreen');
-    */
   }
-
 
   void _showSnackBarInfo(BuildContext ctx, String msg) {
     Scaffold.of(ctx).showSnackBar(SnackBar(content: Text(msg)));
@@ -360,9 +378,9 @@ class _LoginScreenState extends State<LoginScreen> {
       }));
   }
 
-  void showProgressBar(bool flag){
+  void showProgressBar(bool flag) {
     setState(() {
       _showProgressBar = flag;
     });
   }
-} // InputGroup
+} //end of class
