@@ -1,17 +1,10 @@
 import 'package:flutter/material.dart';
-import 'LoggedScreen.dart';
-
-//import 'package:autonos_app/cadastro_usuario.dart';
 import 'UserRegisterScreen.dart';
 import 'package:autonos_app/utility/InputValidator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'widget/ModalRoundedProgressBar.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:autonos_app/model/User.dart';
-import 'dart:convert';
 import 'package:autonos_app/firebase/FirebaseUserHelper.dart';
-import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 
 // TODO REALIZAR BUGFIX dos SNACKBARS
 class LoginScreen extends StatefulWidget {
@@ -32,9 +25,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _autoValidate;
   bool _showProgressBar = false;
   var _email, _password;
-  DatabaseReference _usersReference;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  bool isLoggedIn = false;
 
   @override
   void initState() {
@@ -45,10 +36,10 @@ class _LoginScreenState extends State<LoginScreen> {
     _passwordFocus = FocusNode();
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
-    _usersReference = FirebaseDatabase.instance.reference().child('usuarios');
   }
 
   void initiateFacebookLogin(BuildContext context) async {
+    showProgressBar(true);
     final facebookLogin = new FacebookLogin();
     final facebookLoginResult = await facebookLogin
         .logInWithReadPermissions(['email', 'public_profile']);
@@ -56,18 +47,22 @@ class _LoginScreenState extends State<LoginScreen> {
     switch (facebookLoginResult.status) {
       case FacebookLoginStatus.error:
         print("Error");
-        onLoginStatusChanged(false);
+        showProgressBar(false);
+        //onLoginStatusChanged(false);
         break;
 
       case FacebookLoginStatus.cancelledByUser:
         print("CancelledByUser");
-        onLoginStatusChanged(false);
+        showProgressBar(false);
+        //onLoginStatusChanged(false);
         break;
 
       case FacebookLoginStatus.loggedIn:
         print("LoggedIn");
-        firebaseAuthWithFacebook(facebookLoginResult.accessToken.token, context);
-        onLoginStatusChanged(true);
+        firebaseAuthWithFacebook(
+            facebookLoginResult.accessToken.token, context);
+        //onLoginStatusChanged(true);
+        //print("login status changed!");
         break;
     }
   }
@@ -75,64 +70,37 @@ class _LoginScreenState extends State<LoginScreen> {
   void firebaseAuthWithFacebook(final String token, BuildContext context) {
     print("FirebaseAuth -> Token:" + token);
     _auth.signInWithFacebook(accessToken: token).then((firebaseUser) {
-      showProgressBar(true);
       FirebaseUserHelper.readUserAccountData(firebaseUser.uid).then((user) {
         print("LIDO COM FACEBOOK ${user.email} ${user.name}");
 
         // TODO IR PARA NOVA TELA!
         // ESSA NAVEGACAO ESTAR UMA MERDA!! TUDO ISSO VAI MUDAR!!
-        if (Navigator.of(context).canPop()) {
-          showProgressBar(false);
-          Navigator.of(context).pop();
-        }
-        else {
-          showProgressBar(false);
-          /*Navigator.push(context,
-              MaterialPageRoute(builder: (context) => new LoggedScreen()));*/
-          Navigator.pushReplacementNamed(context,'/logedScreen');
-        }
+        // TODO PASSAR PARAMETRO (USUARIO_LOGADO!) PARA A LOGGED SCREEN
+        Navigator.pushReplacementNamed(context, '/logedScreen');
+      }).catchError( (dataBaseError) {
 
-      }).catchError((dataBaseError) {
+
         FirebaseUserHelper.writeUserAccountData(firebaseUser)
             .then((createdUser) {
           print("USUARIO CRIADO COM SUCESSO!");
           print("CREATED: ${createdUser.name}  ${createdUser.email}");
 
-          //TODO IR PARA PROXIMA TELA
-          // ESSA NAVEGACAO ESTAR UMA MERDA!! TUDO ISSO VAI MUDAR!!
-          if (Navigator.of(context).canPop()) {
-            showProgressBar(false);
-            Navigator.of(context).pop();
-          } else {
-            showProgressBar(false);
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => new LoggedScreen()));
-            ///Navigator.pushReplacementNamed(context,'/logedScreen');
-          }
-
+          // TODO ISSO VAI MUDAR!
+          Navigator.pushReplacementNamed(context, '/logedScreen');
         }).catchError((error) {
           print("ERRO AO CRIAR USUARIO NO DB COM FACEBOOK!");
           print(error.toString());
-          //showProgressBar(false);
+          showProgressBar(false);
         });
       });
-    }).catchError((facebookError) {
+    }).catchError( (facebookError) {
       print(facebookError.toString());
-    });
-
-    showProgressBar(false);
-  }
-
-  void onLoginStatusChanged(bool isLoggedIn) {
-    setState(() {
-      this.isLoggedIn = isLoggedIn;
+      showProgressBar(false);
     });
   }
 
   List<Widget> _buildForm() {
     final logo = Container(
-      //padding: EdgeInsets.all(26.0),
-      width: double.infinity,
       height: 150.0,
       child: Center(
         child: Text(
@@ -324,7 +292,6 @@ class _LoginScreenState extends State<LoginScreen> {
         _autoValidate = true;
       });
     }
-
     return false;
   }
 
@@ -332,36 +299,32 @@ class _LoginScreenState extends State<LoginScreen> {
     showProgressBar(true);
     FirebaseAuth auth = FirebaseAuth.instance;
 
-    print("EMAIL: $_email");
-    print("SENHA: $_password");
+    auth.signInWithEmailAndPassword(email: _email, password: _password)
+        .then((firebaseUser) {
+      FirebaseUserHelper.readUserAccountData(firebaseUser.uid).then((user) {
+        print("LIDO ${user.name}  ${user.email}");
 
-    // esse if nao eh necessario!
-    if (auth != null) {
-      auth
-          .signInWithEmailAndPassword(email: _email, password: _password)
-          .then((firebaseUser) {
-        FirebaseUserHelper.readUserAccountData(firebaseUser.uid).then((user) {
-          print("LIDO ${user.name}  ${user.email}");
-
-          if (Navigator.of(context).canPop()) {
-            showProgressBar(false);
-            Navigator.of(context).pop();
-          } else {
-            showProgressBar(false);
-            /*Navigator.push(context,
+        //TODO ESSA NAVEGACAO VAI MUDAR!
+        if (Navigator.of(context).canPop()) {
+          showProgressBar(false);
+          Navigator.of(context).pop();
+        }
+        else {
+          showProgressBar(false);
+          /*Navigator.push(context,
                 MaterialPageRoute(builder: (context) => new LoggedScreen()));
             */
-            Navigator.pushReplacementNamed(context,'/logedScreen');
-          }
-        }).catchError((onError) {
-          print(onError.toString());
-          showProgressBar(false);
-        });
-      }).catchError((firebaseError) {
-        print(firebaseError.toString());
+          Navigator.pushReplacementNamed(context, '/logedScreen');
+        }
+      }).catchError( (onError) {
+        print(onError.toString());
         showProgressBar(false);
       });
-    }
+
+    }).catchError( (firebaseError) {
+      print(firebaseError.toString());
+      showProgressBar(false);
+    });
   }
 
   void _showSnackBarInfo(BuildContext ctx, String msg) {
@@ -371,7 +334,9 @@ class _LoginScreenState extends State<LoginScreen> {
   void cadastrar(BuildContext context) {
     if (Navigator.of(context).canPop()) {
       Navigator.of(context).pop();
-    } else
+    }
+
+    else
       Navigator.of(context)
           .push(MaterialPageRoute<Null>(builder: (BuildContext context) {
         return UserRegisterScreen();
