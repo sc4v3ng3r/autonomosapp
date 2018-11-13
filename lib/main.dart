@@ -1,8 +1,9 @@
-import 'package:autonos_app/ui/LoggedScreen.dart';
 import 'package:autonos_app/ui/LoginScreen.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:autonos_app/ui/UserRegisterScreen.dart';
+import 'package:autonos_app/firebase/FirebaseUserHelper.dart';
+import 'package:autonos_app/model/User.dart';
+import 'package:autonos_app/ui/LoggedScreen.dart';
 
 void main() => runApp(new MyApp());
 
@@ -20,7 +21,7 @@ class _MyAppState extends State<MyApp> {
             initialRoute: '/',
             routes: {
               '/loginScreen': (context) => LoginScreen(),
-              '/logedScreen': (context) => LoggedScreen(),
+              //'/logedScreen': (context) => LoggedScreen(),
               '/userRegisterScreen' : (context) => UserRegisterScreen(),
             },
             home: ScreenSelector(),
@@ -31,12 +32,12 @@ class _MyAppState extends State<MyApp> {
 class ScreenSelector extends StatefulWidget {
 
   @override
-  State createState() => ScreenSelectorState();
+  State createState() => _ScreenSelectorState();
 
 }
 
 
-class ScreenSelectorState extends State<ScreenSelector>{
+class _ScreenSelectorState extends State<ScreenSelector>{
 
   static final _container = Container(color: Colors.transparent,);
   //Future<FirebaseUser> _future;
@@ -49,26 +50,24 @@ class ScreenSelectorState extends State<ScreenSelector>{
   @override
   Widget build(BuildContext context) {
 
-    return FutureBuilder<FirebaseUser>(
-      future: FirebaseAuth.instance.currentUser(),/*_future,*/
-      builder: (BuildContext context, AsyncSnapshot<FirebaseUser> snapshot) {
-        switch (snapshot.connectionState) {
+    return FutureBuilder<User>(
+      future: FirebaseUserHelper.currentLoggedUser(),/*_future,*/
+      builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
+        switch ( snapshot.connectionState ) {
           case ConnectionState.none:
           case ConnectionState.active:
           case ConnectionState.waiting:
             print("STATE ${snapshot.connectionState.toString()}");
             return _container;
 
+            //TODO MELHORAR ESSA VERIFICACAO!
           case ConnectionState.done:
             print("STATE ${snapshot.connectionState.toString()}");
-            if (snapshot.data == null){
-              print("NO USER!!!");
-              return LoginScreen();
+            print("Snapshot:  ${snapshot.data} ");
+            if (snapshot.data != null){
+              return LoggedScreen(user: snapshot.data);
             }
 
-            print("${snapshot.data.email}");
-            // se ja estar logado tem que ler o usuario!
-            return LoggedScreen();
         }
         //TODO fazer uma tela especial, pois provavelmente nao ha conexao!!
         return LoginScreen();

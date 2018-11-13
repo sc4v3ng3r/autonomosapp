@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:autonos_app/utility/InputValidator.dart';
 import 'package:autonos_app/model/User.dart';
+import 'package:autonos_app/ui/LoggedScreen.dart';
 import 'widget/ModalRoundedProgressBar.dart';
+
 
 //TODO olhar navegacao e rotas
 // TODO ADICIONAR OS DEMAIS CAMPOS DE REGISTRO
@@ -180,7 +182,9 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
               ),
               contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
               border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(22.0))),
+                  borderRadius: BorderRadius.circular(22.0)
+              )
+          ),
         ),
       ),
     );
@@ -275,11 +279,11 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
                         showProgressBar(false);
                         if (results) {
                           _showSnackBar(context, "Usuário registrado com sucesso!");
-                           //Navigator.
-                           Navigator.of(context).pushNamedAndRemoveUntil('/logedScreen',
-                               (Route<dynamic> route)  => false);
+                          Navigator.pushAndRemoveUntil(context,
+                              MaterialPageRoute(builder: (BuildContext context) =>
+                                  LoggedScreen(user: _recentCreatedUser)),
+                                  (Route<dynamic> route)  => false);
                         }
-
                         else // o usuario pode ja estar registrado ou dar erro na hora do registro!
                           _showSnackBar(
                               context, "Registro não realizado!", Colors.redAccent);

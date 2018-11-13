@@ -6,6 +6,7 @@ import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'widget/ModalRoundedProgressBar.dart';
 import 'package:autonos_app/firebase/FirebaseUserHelper.dart';
 import 'LoggedScreen.dart';
+import 'package:autonos_app/model/User.dart';
 
 // TODO REALIZAR BUGFIX dos SNACKBARS
 class LoginScreen extends StatefulWidget {
@@ -74,10 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
       FirebaseUserHelper.readUserAccountData(firebaseUser.uid).then((user) {
         print("LIDO COM FACEBOOK ${user.email} ${user.name}");
 
-        // TODO IR PARA NOVA TELA!
-        // ESSA NAVEGACAO ESTAR UMA MERDA!! TUDO ISSO VAI MUDAR!!
-        // TODO PASSAR PARAMETRO (USUARIO_LOGADO!) PARA A LOGGED SCREEN
-        Navigator.pushReplacementNamed(context, '/logedScreen');
+        _goToLoggedScreen(context, user);
       }).catchError( (dataBaseError) {
 
         FirebaseUserHelper.writeUserAccountData(firebaseUser)
@@ -85,8 +83,8 @@ class _LoginScreenState extends State<LoginScreen> {
           print("USUARIO CRIADO COM SUCESSO!");
           print("CREATED: ${createdUser.name}  ${createdUser.email}");
 
-          // TODO ISSO VAI MUDAR!
-          Navigator.pushReplacementNamed(context, '/logedScreen');
+          _goToLoggedScreen(context, createdUser);
+
         }).catchError((error) {
           print("ERRO AO CRIAR USUARIO NO DB COM FACEBOOK!");
           print(error.toString());
@@ -131,6 +129,7 @@ class _LoginScreenState extends State<LoginScreen> {
             _emailFocus.unfocus();
             FocusScope.of(context).requestFocus(_passwordFocus);
           },
+
           style: TextStyle(
             fontSize: 20.0,
             color: Colors.black,
@@ -180,7 +179,9 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
               border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(22.0))),
+                  borderRadius: BorderRadius.circular(22.0))
+          ),
+
         ),
       ),
     );
@@ -223,7 +224,7 @@ class _LoginScreenState extends State<LoginScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         loginButton,
-        SizedBox(width: 5.0),
+        SizedBox(width: 5.0),// buttons separator
         registerButton,
       ],
     );
@@ -278,14 +279,17 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-        body: Stack(
-      //overflow: Overflow.clip,
-      children: _buildForm(),
-    ));
+        body:Center(
+          child: Stack(
+            //overflow: Overflow.clip,
+            children: _buildForm(),
+          ),
+        ),
+    );
   }
 
   bool validate() {
-    if (_globalKey.currentState.validate()) {
+    if ( _globalKey.currentState.validate() ) {
       setState(() {
         _email = _emailController.text;
         _password = _passwordController.text;
@@ -309,19 +313,8 @@ class _LoginScreenState extends State<LoginScreen> {
       FirebaseUserHelper.readUserAccountData(firebaseUser.uid).then((user) {
         print("LIDO ${user.name}  ${user.email}");
 
-        //TODO ESSA NAVEGACAO VAI MUDAR!
-        Navigator.pushReplacementNamed(context, '/logedScreen');
-        /*if (Navigator.of(context).canPop()) {
-          showProgressBar(false);
-          Navigator.of(context).pop();
-        }
-        else {
-          showProgressBar(false);
-          Navigator.push(context,
-                MaterialPageRoute(builder: (context) => new LoggedScreen()));
+        _goToLoggedScreen(context, user);
 
-         // Navigator.pushReplacementNamed(context, '/logedScreen');
-        }*/
       }).catchError( (onError) {
         print(onError.toString());
         showProgressBar(false);
@@ -333,11 +326,16 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 
+  void _goToLoggedScreen(BuildContext context, User user){
+    Navigator.pushReplacement(context, MaterialPageRoute
+      (builder: (BuildContext context) => LoggedScreen( user:user )));
+  }
   void _showSnackBarInfo(BuildContext ctx, String msg) {
     Scaffold.of(ctx).showSnackBar(SnackBar(content: Text(msg)));
   }
 
   void cadastrar(BuildContext context) {
+    // POR ENQUANTO VOU DEIXAR ESSA NAVEGACAO MUITO LOUCA MESMO!
     if (Navigator.of(context).canPop()) {
       Navigator.of(context).pop();
     }

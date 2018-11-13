@@ -2,8 +2,13 @@ import 'package:autonos_app/ui/widget/RatingBar.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:autonos_app/model/User.dart';
+import 'package:autonos_app/model/User.dart';
 
 class LoggedScreen extends StatefulWidget {
+  final User user;
+
+  LoggedScreen( {Key key, @required this.user} ) : super(key: key);
+
   @override
   _LoggedScreenState createState() => _LoggedScreenState();
 }
@@ -13,7 +18,6 @@ class _LoggedScreenState extends State<LoggedScreen> {
   double rating = 3.5;
   final bool sair = false;
   FirebaseAuth _auth = FirebaseAuth.instance;
-  User _currentLoggedUser;
 
   @override
   Widget build(BuildContext context) {
@@ -82,13 +86,13 @@ class _LoggedScreenState extends State<LoggedScreen> {
                         children: <Widget>[
                           Padding(
                             padding: EdgeInsets.fromLTRB(.0, 8.0, 0.0, 0.0),
-                            child: Text( "User name",
+                            child: Text( widget.user.name,
                               style: TextStyle(color: Colors.white),
                             ),
                           ),
                           Padding(
                             padding: EdgeInsets.fromLTRB(.0, 8.0, 0.0, 0.0),
-                            child: Text("user email",
+                            child: Text( widget.user.email,
                                 style: TextStyle(color: Colors.white)),
                           ),
                           Row(
@@ -96,13 +100,13 @@ class _LoggedScreenState extends State<LoggedScreen> {
                               Padding(
                                 padding: EdgeInsets.fromLTRB(.0, 8.0, .0, .0),
                                 child: StarRating(
-                                  rating: 5.0,
+                                  rating: widget.user.rating,
 //                          onRatingChanged: (rating) => setState(() => this.rating = rating),
                                 ),
                               ),
                               Padding(
                                 padding: EdgeInsets.fromLTRB(4.0, 8.0, .0, .0),
-                                child: Text( "5.0",
+                                child: Text( "${widget.user.rating}",
                                   style: TextStyle(color: Colors.white),
                                 ),
                               ),

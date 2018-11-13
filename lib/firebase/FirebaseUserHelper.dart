@@ -51,4 +51,18 @@ class FirebaseUserHelper {
     }
   }
 
+  // TODO MELHORAR ESSE METODO
+  static Future<User> currentLoggedUser() async {
+    try {
+      FirebaseUser fbUser = await AUTH.currentUser();
+      return await readUserAccountData( fbUser.uid );
+      //return user;
+    }
+    catch (ex){
+      print("FirebaseUserHelper::" + ex.toString());
+      throw ex;
+    }
+
+  }
+
 }
