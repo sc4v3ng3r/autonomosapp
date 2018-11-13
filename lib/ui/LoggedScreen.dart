@@ -142,8 +142,10 @@ class _LoggedScreenState extends State<LoggedScreen> {
 //              AlertDialog(title: Text('Tem certeza que você quer sair?'),).build(context);
               //SOMENTE TESTE!
               _auth.signOut().then((_){
+                //Navigator.pop(context);
                 Navigator.pushReplacementNamed(context, '/loginScreen');
               }).catchError( (onError) {
+                //Navigator.pop(context);
                 Navigator.pushReplacementNamed(context, '/loginScreen');
               });
 

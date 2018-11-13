@@ -267,7 +267,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
           splashColor: Colors.greenAccent,
           onPressed: () {
 
-            if ( _inputValidation() == true) {
+            if ( _inputValidation() == true ) {
               showProgressBar(true);
 
               _createUserAccount( _email,  _password).then(
@@ -275,7 +275,9 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
                         showProgressBar(false);
                         if (results) {
                           _showSnackBar(context, "Usuário registrado com sucesso!");
-                          // TODO redirecionar usuario para tela de logado!
+                           //Navigator.
+                           Navigator.of(context).pushNamedAndRemoveUntil('/logedScreen',
+                               (Route<dynamic> route)  => false);
                         }
 
                         else // o usuario pode ja estar registrado ou dar erro na hora do registro!

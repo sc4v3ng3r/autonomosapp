@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'widget/ModalRoundedProgressBar.dart';
 import 'package:autonos_app/firebase/FirebaseUserHelper.dart';
+import 'LoggedScreen.dart';
 
 // TODO REALIZAR BUGFIX dos SNACKBARS
 class LoginScreen extends StatefulWidget {
@@ -78,7 +79,6 @@ class _LoginScreenState extends State<LoginScreen> {
         // TODO PASSAR PARAMETRO (USUARIO_LOGADO!) PARA A LOGGED SCREEN
         Navigator.pushReplacementNamed(context, '/logedScreen');
       }).catchError( (dataBaseError) {
-
 
         FirebaseUserHelper.writeUserAccountData(firebaseUser)
             .then((createdUser) {
@@ -185,41 +185,46 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
 
+    final loginButton = Material(
+      borderRadius: BorderRadius.circular(30.0),
+      child: MaterialButton(
+        splashColor: Colors.yellowAccent,
+        onPressed: () {
+          if (validate())
+            firebaseLogin(context);
+        },
+        minWidth: 130.0,
+        color: Colors.green,
+        child: Text(
+          "Entrar",
+          style: TextStyle(fontSize: 16.0),
+        ),
+      ),
+    );
+
+    final registerButton = Material(
+      borderRadius: BorderRadius.circular(30.0),
+      child: MaterialButton(
+        splashColor: Colors.greenAccent,
+        onPressed: () {
+          print("realizar cadastro");
+          cadastrar(context);
+        },
+        minWidth: 130.0,
+        color: Colors.yellow,
+        child: Text(
+          "Cadastre-se",
+          style: TextStyle(fontSize: 16.0),
+        ),
+      ),
+    );
+
     final buttonGroup = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Material(
-          borderRadius: BorderRadius.circular(30.0),
-          child: MaterialButton(
-            splashColor: Colors.yellowAccent,
-            onPressed: () {
-              if (validate()) firebaseLogin(context);
-            },
-            minWidth: 130.0,
-            color: Colors.green,
-            child: Text(
-              "Entrar",
-              style: TextStyle(fontSize: 16.0),
-            ),
-          ),
-        ),
+        loginButton,
         SizedBox(width: 5.0),
-        Material(
-          borderRadius: BorderRadius.circular(30.0),
-          child: MaterialButton(
-            splashColor: Colors.greenAccent,
-            onPressed: () {
-              print("realizar cadastro");
-              cadastrar(context);
-            },
-            minWidth: 130.0,
-            color: Colors.yellow,
-            child: Text(
-              "Cadastre-se",
-              style: TextStyle(fontSize: 16.0),
-            ),
-          ),
-        ),
+        registerButton,
       ],
     );
 
@@ -305,17 +310,18 @@ class _LoginScreenState extends State<LoginScreen> {
         print("LIDO ${user.name}  ${user.email}");
 
         //TODO ESSA NAVEGACAO VAI MUDAR!
-        if (Navigator.of(context).canPop()) {
+        Navigator.pushReplacementNamed(context, '/logedScreen');
+        /*if (Navigator.of(context).canPop()) {
           showProgressBar(false);
           Navigator.of(context).pop();
         }
         else {
           showProgressBar(false);
-          /*Navigator.push(context,
+          Navigator.push(context,
                 MaterialPageRoute(builder: (context) => new LoggedScreen()));
-            */
-          Navigator.pushReplacementNamed(context, '/logedScreen');
-        }
+
+         // Navigator.pushReplacementNamed(context, '/logedScreen');
+        }*/
       }).catchError( (onError) {
         print(onError.toString());
         showProgressBar(false);

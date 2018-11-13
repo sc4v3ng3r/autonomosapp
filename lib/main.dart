@@ -1,9 +1,8 @@
-
 import 'package:autonos_app/ui/LoggedScreen.dart';
 import 'package:autonos_app/ui/LoginScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'package:autonos_app/ui/UserRegisterScreen.dart';
 
 void main() => runApp(new MyApp());
 
@@ -22,6 +21,7 @@ class _MyAppState extends State<MyApp> {
             routes: {
               '/loginScreen': (context) => LoginScreen(),
               '/logedScreen': (context) => LoggedScreen(),
+              '/userRegisterScreen' : (context) => UserRegisterScreen(),
             },
             home: ScreenSelector(),
         ); //);
