@@ -4,10 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:autonos_app/model/User.dart';
 
 class LoggedScreen extends StatefulWidget {
-
   @override
   _LoggedScreenState createState() => _LoggedScreenState();
-
 }
 
 class _LoggedScreenState extends State<LoggedScreen> {
@@ -55,11 +53,11 @@ class _LoggedScreenState extends State<LoggedScreen> {
   Drawer _drawerMenu(BuildContext context) {
     return new Drawer(
       child: ListView(
-//          padding: EdgeInsets.all(1.0),
+        padding: EdgeInsets.all(.0),
         children: <Widget>[
           Container(
               height: 128.0,
-              color: Colors.cyanAccent,
+              color: Colors.cyanAccent[400],
               child: DrawerHeader(
                 decoration: BoxDecoration(
                   color: Colors.cyanAccent[400],
@@ -69,8 +67,9 @@ class _LoggedScreenState extends State<LoggedScreen> {
                 child: Row(
                   children: <Widget>[
                     Padding(
-                      padding: EdgeInsets.fromLTRB(0.0, .0, 12.0, .0),
+                      padding: EdgeInsets.fromLTRB(2.0, .0, 12.0, .0),
                       child: CircleAvatar(
+
                         backgroundColor: Colors.indigo[400],
                         backgroundImage:
                             AssetImage('assets/usuario_drawer.png'),
@@ -115,15 +114,21 @@ class _LoggedScreenState extends State<LoggedScreen> {
                   ],
                 ),
               )),
+
           ListTile(
+            contentPadding: EdgeInsets.fromLTRB(16.0, 16.0, .0, .0),
             leading: Icon(Icons.person),
             title: Text('Perfil'),
+
           ),
+
           ListTile(
+            
             leading: Icon(Icons.work),
             title: Text('Serviços'),
           ),
           ListTile(
+
             leading: Icon(Icons.history),
             title: Text('Histórico'),
           ),
