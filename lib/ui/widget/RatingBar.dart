@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 typedef void RatingChangeCallBack(double rating);
 
-class StarRating extends StatelessWidget{
+class RatingBar extends StatelessWidget{
   final int starCount;
   final double rating;
   final RatingChangeCallBack onRatingChanged;
   final Color cor;
 
-  StarRating({
+  RatingBar({
     this.starCount = 5, this.rating = .0,
     this.onRatingChanged, this.cor}
       );

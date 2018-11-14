@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:autonos_app/utility/InputValidator.dart';
 import 'package:autonos_app/model/User.dart';
-import 'package:autonos_app/ui/LoggedScreen.dart';
+import 'package:autonos_app/ui/MainScreen.dart';
 import 'widget/ModalRoundedProgressBar.dart';
 
 
@@ -281,7 +281,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
                           _showSnackBar(context, "Usuário registrado com sucesso!");
                           Navigator.pushAndRemoveUntil(context,
                               MaterialPageRoute(builder: (BuildContext context) =>
-                                  LoggedScreen(user: _recentCreatedUser)),
+                                  MainScreen(user: _recentCreatedUser)),
                                   (Route<dynamic> route)  => false);
                         }
                         else // o usuario pode ja estar registrado ou dar erro na hora do registro!

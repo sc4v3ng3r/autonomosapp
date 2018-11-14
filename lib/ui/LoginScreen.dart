@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'widget/ModalRoundedProgressBar.dart';
 import 'package:autonos_app/firebase/FirebaseUserHelper.dart';
-import 'LoggedScreen.dart';
+import 'MainScreen.dart';
 import 'package:autonos_app/model/User.dart';
 
 // TODO REALIZAR BUGFIX dos SNACKBARS
@@ -136,6 +136,12 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           decoration: InputDecoration(
               labelText: "E-mail",
+              suffixIcon:  Padding(
+                padding: EdgeInsetsDirectional.only(end: 12.0),
+                child: IconButton(
+                    icon: Icon(Icons.email),
+                    onPressed: () {}),
+              ),
               labelStyle: TextStyle(
                 fontSize: 18.0,
               ),
@@ -169,9 +175,10 @@ class _LoginScreenState extends State<LoginScreen> {
               suffixIcon: Padding(
                 padding: EdgeInsetsDirectional.only(end: 12.0),
                 child: IconButton(
-                    icon: Icon(Icons.remove_red_eye),
+                    icon: Icon(Icons.visibility_off),
                     onPressed: () {
                       print("eye clicked!");
+
                     }),
               ),
               labelStyle: TextStyle(
@@ -328,7 +335,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _goToLoggedScreen(BuildContext context, User user){
     Navigator.pushReplacement(context, MaterialPageRoute
-      (builder: (BuildContext context) => LoggedScreen( user:user )));
+      (builder: (BuildContext context) => MainScreen( user:user )));
   }
   void _showSnackBarInfo(BuildContext ctx, String msg) {
     Scaffold.of(ctx).showSnackBar(SnackBar(content: Text(msg)));

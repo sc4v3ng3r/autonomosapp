@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:autonos_app/ui/UserRegisterScreen.dart';
 import 'package:autonos_app/firebase/FirebaseUserHelper.dart';
 import 'package:autonos_app/model/User.dart';
-import 'package:autonos_app/ui/LoggedScreen.dart';
+import 'package:autonos_app/ui/MainScreen.dart';
 
 void main() => runApp(new MyApp());
 
@@ -65,7 +65,7 @@ class _ScreenSelectorState extends State<ScreenSelector>{
             print("STATE ${snapshot.connectionState.toString()}");
             print("Snapshot:  ${snapshot.data} ");
             if (snapshot.data != null){
-              return LoggedScreen(user: snapshot.data);
+              return MainScreen(user: snapshot.data);
             }
 
         }
