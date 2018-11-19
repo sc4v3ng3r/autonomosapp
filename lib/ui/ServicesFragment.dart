@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:autonos_app/firebase/FirebaseServicesHelper.dart';
-import 'package:autonos_app/firebase/FirebaseReferences.dart';
 import 'package:autonos_app/bloc/ServiceBloc.dart';
 
 class ServicesFragment extends StatefulWidget {
-
 
   @override
   State createState() => _ServicesFragmentState();
@@ -12,9 +9,9 @@ class ServicesFragment extends StatefulWidget {
 
 class _ServicesFragmentState extends State<ServicesFragment> {
   ServiceBlock bloc = new ServiceBlock();
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     bloc.getServices();
   }
@@ -22,10 +19,9 @@ class _ServicesFragmentState extends State<ServicesFragment> {
   @override
   Widget build(BuildContext context) {
 
-    return StreamBuilder< List<String> >(
+    return StreamBuilder< List<String> > (
       stream: bloc.allServices,
-
-      builder: ( BuildContext context, AsyncSnapshot< List<String> > snapshot ) {
+      builder: ( BuildContext context, AsyncSnapshot< List< String> > snapshot ) {
         switch( snapshot.connectionState ) {
           case ConnectionState.none:
           case ConnectionState.waiting:
@@ -42,7 +38,6 @@ class _ServicesFragmentState extends State<ServicesFragment> {
 
           case ConnectionState.active:
           case ConnectionState.done:
-            print("BLOC CONNECTION DONE!");
             return ListView(
                 shrinkWrap: true,
                 children: _generateListItens( snapshot.data  ),
@@ -54,6 +49,7 @@ class _ServicesFragmentState extends State<ServicesFragment> {
   }
 
   List<Card> _generateListItens(List<String> services){
+
     List<Card> list = List();
     for(int i=0; i < services.length; i++){
       list.add(
@@ -67,6 +63,7 @@ class _ServicesFragmentState extends State<ServicesFragment> {
         ),
       );
     }
+
     return list;
   }
 
