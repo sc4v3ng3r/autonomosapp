@@ -21,11 +21,10 @@ class _MyAppState extends State<MyApp> {
             initialRoute: '/',
             routes: {
               '/loginScreen': (context) => LoginScreen(),
-              //'/logedScreen': (context) => LoggedScreen(),
               '/userRegisterScreen' : (context) => UserRegisterScreen(),
             },
             home: ScreenSelector(),
-        ); //);
+        );
   }
 }
 

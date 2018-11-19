@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'widget/UserAccountsHackedDrawerHeader.dart';
 import 'widget/RatingBar.dart';
+import 'package:autonos_app/ui/ServicesFragment.dart';
+
 class MainScreen extends StatefulWidget {
   final User user;
 
@@ -38,17 +40,12 @@ class _MainScreenState extends State<MainScreen> {
         drawer: _drawerMenu(context),
 
         // aqui entram os "FRAGMENTS!"
-        body: new Container(
-          padding: EdgeInsets.all(16.0),
-          width: double.infinity,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text("Bem vindo: ${widget.user.email}"),
-            ],
-          ),
-        ));
+        body: _getFragment( _drawerCurrentPosition ),//new Container(
+          //padding: EdgeInsets.all(16.0),
+          //width: double.infinity,
+          //child: _getFragment( _drawerCurrentPosition ),
+          //),
+    );
   }
 
   @override
@@ -58,7 +55,122 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Drawer _drawerMenu(BuildContext context) {
-    var drawerHeader = Container(
+    return new Drawer(
+      child: ListView(
+        padding: EdgeInsets.all(.0),
+        children: <Widget>[
+
+          UserAccountsHackedDrawerHeader(
+            accountEmail: Text('${widget.user.email}'),
+            accountName: Text('${widget.user.name}'),
+            ratingBar: RatingBar(starCount: 5, rating: 4.3,),
+            currentAccountPicture: CircleAvatar(backgroundColor: Colors.red,),
+          ),
+
+          ListTile(
+            //contentPadding: EdgeInsets.fromLTRB(16.0, 16.0, .0, .0),
+            leading: Icon(Icons.person),
+            title: Text('Perfil'),
+            onTap: () => _setCurrentPosition(0),
+          ),
+
+          ListTile(
+            leading: Icon(Icons.work),
+            title: Text('Serviços'),
+            onTap: () {
+              _setCurrentPosition(1);
+            },
+          ),
+
+          ListTile(
+            leading: Icon(Icons.history),
+            title: Text('Histórico'),
+            onTap: () => _setCurrentPosition(2),
+          ),
+
+          ListTile(
+            leading: Icon(Icons.remove_red_eye),
+            title: Text('Visualizações'),
+            onTap: () => _setCurrentPosition(3),
+          ),
+
+          ListTile(
+            leading: Icon(Icons.favorite),
+            title: Text('Favoritos'),
+            onTap: () => _setCurrentPosition(4),
+          ),
+
+          Divider(),
+
+          ListTile(
+            leading: Icon(Icons.navigate_before),
+            title: Text('Sair'),
+            onTap: () {
+                _logout();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  _logout(){
+    _auth.signOut().then((_){
+      //Navigator.pop(context);
+      Navigator.pushReplacementNamed(context, '/loginScreen');
+    }).catchError( (onError) {
+      //Navigator.pop(context);
+      Navigator.pushReplacementNamed(context, '/loginScreen');
+    });
+  }
+
+  void _setCurrentPosition(int position){
+    if (position != _drawerCurrentPosition)
+      setState(() => _drawerCurrentPosition = position);
+
+    Navigator.of(context).pop();
+  }
+
+  Widget _getFragment(int position){
+    switch (position){
+      case 0:
+
+        return Center(
+          child: Text("Perfil Screen"),
+        );
+
+      case 1:
+        return Center(
+          child: ServicesFragment(),
+        );
+
+      case 2:
+        return Center(
+          child: Text("Histórico"),
+        );
+
+      case 3:
+        return Center(
+          child: Text("Visualizações"),
+        );
+
+      case 4:
+        return Center(
+          child: Text("Favoritos"),
+        );
+
+      default:
+        return Center(
+          child: Text("Outras Telas!"),
+        );
+    }
+  }
+}// end of class
+
+
+/*
+   ANTIGO DRAWER HEADER
+*  var drawerHeader = Container(
       height: 128.0,
       color: Colors.cyanAccent[400],
 
@@ -120,87 +232,5 @@ class _MainScreenState extends State<MainScreen> {
         ),
       ),
     );
-
-    return new Drawer(
-      child: ListView(
-        padding: EdgeInsets.all(.0),
-        children: <Widget>[
-
-          UserAccountsHackedDrawerHeader(
-            accountEmail: Text('${widget.user.email}'),
-            accountName: Text('${widget.user.name}'),
-            ratingBar: RatingBar(starCount: 5, rating: 4.3,),
-            currentAccountPicture: CircleAvatar(backgroundColor: Colors.red,),
-          ),
-          /*UserAccountsDrawerHeader(
-            accountEmail: Text('${widget.user.email}'),
-            accountName: Text('${widget.user.name}'),
-            currentAccountPicture: CircleAvatar(backgroundColor: Colors.red,),
-          ),*/
-          //drawerHeader,
-
-          ListTile(
-            //contentPadding: EdgeInsets.fromLTRB(16.0, 16.0, .0, .0),
-            leading: Icon(Icons.person),
-            title: Text('Perfil'),
-
-          ),
-
-          ListTile(
-            leading: Icon(Icons.work),
-            title: Text('Serviços'),
-          ),
-
-          ListTile(
-            leading: Icon(Icons.history),
-            title: Text('Histórico'),
-          ),
-
-          ListTile(
-            leading: Icon(Icons.remove_red_eye),
-            title: Text('Visualizações'),
-          ),
-
-          ListTile(
-            leading: Icon(Icons.favorite),
-            title: Text('Favoritos'),
-          ),
-
-          Divider(),
-
-          ListTile(
-            leading: Icon(Icons.navigate_before),
-            title: Text('Sair'),
-            onTap: () {
-//              AlertDialog(title: Text('Tem certeza que você quer sair?'),).build(context);
-                _logout();
-            },
-          ),
-
-        ],
-      ),
-    );
-  }
-
-  _logout(){
-    _auth.signOut().then((_){
-      //Navigator.pop(context);
-      Navigator.pushReplacementNamed(context, '/loginScreen');
-    }).catchError( (onError) {
-      //Navigator.pop(context);
-      Navigator.pushReplacementNamed(context, '/loginScreen');
-    });
-  }
-
-  _onDrawerItemSelected(int position){
-    setState(() {
-      _drawerCurrentPosition = position;
-      // atualiza a tela!
-    });
-
-    // fecha o drawer!
-  }
-  Widget _getDrawerItemScreen(int position){
-    return null;
-  }
-}// end of class
+*
+* */
