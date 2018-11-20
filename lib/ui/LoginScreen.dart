@@ -98,9 +98,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
   List<Widget> _buildForm() {
     final logo = Container(
-      height: 128.0,
-      child: Center(
-        child: Text(
+        height: 150.0,
+        child: DecoratedBox(
+            decoration: BoxDecoration(
+              image: DecorationImage(image: AssetImage("assets/autonomos.png"), ),
+              ),
+            ),
+        );
+        /*child: Text(
           "Autônomos",
           maxLines: 1,
           softWrap: false,
@@ -109,10 +114,7 @@ class _LoginScreenState extends State<LoginScreen> {
             fontSize: 50.0,
             fontFamily: "cursive",
           ),
-        ),
-      ),
-    );
-
+        ),*/
     final emailField = Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.0),
       child: Material(

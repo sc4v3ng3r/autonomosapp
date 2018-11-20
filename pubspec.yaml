@@ -59,6 +59,9 @@ flutter:
     - assets/usuario_drawer.png
     - assets/usuario_drawer_2.png
     - assets/face_icon.ttf
+    - assets/autonomos_logo.jpeg
+    - assets/autonomos.png
+    - assets/faceicon.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.
 
