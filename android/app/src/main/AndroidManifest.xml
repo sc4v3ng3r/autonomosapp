@@ -14,8 +14,8 @@
          FlutterApplication and put your custom class here. -->
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="autonomos_app"
-        android:icon="@drawable/app_icon">
+        android:label="Autônomos"
+        android:icon="@mipmap/launcher_ic">
 
         <activity
             android:name=".MainActivity"

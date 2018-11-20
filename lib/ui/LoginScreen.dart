@@ -31,6 +31,15 @@ class _LoginScreenState extends State<LoginScreen> {
   var _email, _password;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  static final logo = Container(
+    height: 140.0,
+    child: DecoratedBox(
+      decoration: BoxDecoration(
+        image: DecorationImage(image: AssetImage("assets/login_logo_name.png"), fit: BoxFit.scaleDown),
+      ),
+    ),
+  );
+
   @override
   void initState() {
     super.initState();
@@ -99,14 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   List<Widget> _buildForm() {
-    final logo = Container(
-        height: 150.0,
-        child: DecoratedBox(
-            decoration: BoxDecoration(
-              image: DecorationImage(image: AssetImage("assets/autonomos.png"), ),
-              ),
-            ),
-        );
+
         /*child: Text(
           "Autônomos",
           maxLines: 1,
