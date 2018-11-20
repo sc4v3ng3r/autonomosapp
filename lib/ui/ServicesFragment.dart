@@ -37,34 +37,34 @@ class _ServicesFragmentState extends State<ServicesFragment> {
           );
 
           case ConnectionState.active:
+
           case ConnectionState.done:
-            return ListView(
-                shrinkWrap: true,
-                children: _generateListItens( snapshot.data  ),
+            return ListView.builder(itemBuilder: (BuildContext context, int index) {
+              Text serviceText = Text('${snapshot.data[index]}', style: TextStyle(fontSize: 20.0));
+              ListTile tile = ListTile(
+                title: serviceText,
+                leading: Icon( Icons.room_service),
+                onTap: () {
+                    // TODO AQUI VAMOS ABRIR A TELA DE MAPA, ANTES REALIZANDO A BUSCA POR
+                    // PROFISSIONAIS NUMA DETERMINADA ÁREA QUE REALIZAM O SERVICO CLICADO!
+                    Scaffold.of(context).showSnackBar(
+                      SnackBar(content: Text("${serviceText.data} index: $index"),
+                        backgroundColor: Colors.redAccent,),
+                    );
+                  },
+              );
+
+              return Card(
+                child: tile,
+              );
+            },
+
+            itemCount: snapshot.data.length,
             );
             break;
         }
       },
     );
-  }
-
-  List<Card> _generateListItens(List<String> services){
-
-    List<Card> list = List();
-    for(int i=0; i < services.length; i++){
-      list.add(
-        Card(
-          child:
-          ListTile(
-            title: Text('${services[i]}', style: TextStyle(fontSize: 20.0), ),
-            leading: Icon( Icons.room_service),
-            onTap: () =>  print('clicked item') ,
-          ),
-        ),
-      );
-    }
-
-    return list;
   }
 
   @override
