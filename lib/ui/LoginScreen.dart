@@ -268,14 +268,30 @@ class _LoginScreenState extends State<LoginScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[registerButton, forgotPassword],
     );
-    final divisor = Container(
-      color: Colors.grey,
+    final divisor1 = Expanded(
+      child:Container(
+      color: Colors.grey[300],
+      height: 1.0,
+      padding: EdgeInsets.fromLTRB(16.0, .0, .0, .0),
+//      padding: EdgeInsets.symmetric(horizontal: 16.0),
+      margin: EdgeInsets.fromLTRB(16.0,.0, 8.0, .0),
+      )
+    );
+    final divisor2 = Expanded(
+      child: Container(
+      color: Colors.grey[300],
+      height: 1.0,
+      padding: EdgeInsets.fromLTRB(.0, .0, 16.0, .0),
+
+      margin: EdgeInsets.fromLTRB(8.0,.0, 16.0, .0),)
     );
     final divisiorOuGroup = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
 //        Divider(color: Colors.black,),
-        Text('OU'),
+        divisor1,
+        Text('OU',style: TextStyle(color: Colors.grey[400]),),
+        divisor2
       ],
     );
 //    const IconData(59393, fontFamily: 'Facebook');
