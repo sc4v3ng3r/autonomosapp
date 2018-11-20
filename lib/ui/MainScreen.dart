@@ -38,13 +38,7 @@ class _MainScreenState extends State<MainScreen> {
         ),
 
         drawer: _drawerMenu(context),
-
-        // aqui entram os "FRAGMENTS!"
-        body: _getFragment( _drawerCurrentPosition ),//new Container(
-          //padding: EdgeInsets.all(16.0),
-          //width: double.infinity,
-          //child: _getFragment( _drawerCurrentPosition ),
-          //),
+        body: _getFragment( _drawerCurrentPosition ),
     );
   }
 
