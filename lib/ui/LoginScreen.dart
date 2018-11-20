@@ -18,7 +18,9 @@ class _LoginScreenState extends State<LoginScreen> {
   final SizedBox _VERTICAL_SEPARATOR = SizedBox(
     height: 16.0,
   );
-
+  bool iconVisibility = false;
+  Icon icon = Icon(Icons.visibility_off);
+  bool _obscureText = true;
   FocusNode _emailFocus;
   FocusNode _passwordFocus;
   TextEditingController _emailController;
@@ -150,13 +152,25 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
 
+
+    void _toggle(){
+      setState(() {
+        _obscureText = !_obscureText;
+        iconVisibility = !iconVisibility;
+        if(iconVisibility == false)
+          icon = Icon(Icons.visibility_off);
+        else
+          icon = Icon(Icons.visibility);
+
+      });
+    }
     final passwordField = Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.0),
       child: Material(
         child: TextFormField(
           maxLines: 1,
           autofocus: false,
-          obscureText: true,
+          obscureText: _obscureText,
           keyboardType: TextInputType.text,
           textInputAction: TextInputAction.done,
           controller: _passwordController,
@@ -173,10 +187,9 @@ class _LoginScreenState extends State<LoginScreen> {
               suffixIcon: Padding(
                 padding: EdgeInsetsDirectional.only(end: 12.0),
                 child: IconButton(
-                    icon: Icon(Icons.visibility_off),
-                    onPressed: () {
-                      print("eye clicked!");
-                    }),
+                  onPressed: _toggle,
+                  icon: icon,
+                ),
               ),
               labelStyle: TextStyle(
                 fontSize: 18.0,
@@ -270,14 +283,41 @@ class _LoginScreenState extends State<LoginScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[registerButton, forgotPassword],
     );
-    final divisor = Container(
-      color: Colors.grey,
+    final divisor1 = Expanded(
+      child:Container(
+      color: Colors.grey[300],
+      height: 1.0,
+      padding: EdgeInsets.fromLTRB(16.0, .0, .0, .0),
+      margin: EdgeInsets.fromLTRB(16.0,.0, 8.0, .0),
+      )
+    );
+    final divisor2 = Expanded(
+      child: Container(
+      color: Colors.grey[300],
+      height: 1.0,
+      padding: EdgeInsets.fromLTRB(.0, .0, 16.0, .0),
+
+      margin: EdgeInsets.fromLTRB(8.0,.0, 16.0, .0),)
+    );
+    final divisor3 = Expanded(
+        child: Container(
+          color: Colors.grey[300],
+          height: 1.0,
+          padding: EdgeInsets.fromLTRB(16.0, .0, 16.0, .0),
+
+          margin: EdgeInsets.fromLTRB(16.0,.0, 16.0, .0),)
+    );
+    final divisor = Row(
+      children: <Widget>[
+        divisor3
+      ],
     );
     final divisiorOuGroup = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-//        Divider(color: Colors.black,),
-        Text('OU'),
+        divisor1,
+        Text('OU',style: TextStyle(color: Colors.grey[500]),),
+        divisor2
       ],
     );
 //    const IconData(59393, fontFamily: 'Facebook');
@@ -290,6 +330,7 @@ class _LoginScreenState extends State<LoginScreen> {
             style: TextStyle(
                 color: Colors.white,
                 fontSize: 16.0,
+              fontWeight: FontWeight.bold
                 ),
           ),
           color: Colors.blue[500],
@@ -315,7 +356,8 @@ class _LoginScreenState extends State<LoginScreen> {
           divisiorOuGroup,
           _VERTICAL_SEPARATOR,
           facebookLoginButton,
-          Divider(),
+          _VERTICAL_SEPARATOR,
+          divisor,
           registerTextGroup,
         ],
       ),
