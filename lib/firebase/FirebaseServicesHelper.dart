@@ -1,28 +1,19 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:autonos_app/firebase/FirebaseReferences.dart';
-import  'package:autonos_app/model/Service.dart';
 
 class FirebaseServicesHelper {
 
-  static Future<List<String>> getServicesByArea(String subarea) async {
+  static Future<List<String>> getServicesByArea(String subarea, void onData( List<String> data) ) async {
     DatabaseReference reference = FirebaseDatabase.instance.reference()
       .child(FirebaseReferences.REFERENCE_AREA)
         .child(subarea).child(FirebaseReferences.REFERENCE_SERVICOS);
-    List<String> services;
 
-    try {
-      //TODO SO ESTAR LENDO UMA UNICA VEZ!!
-      DataSnapshot snapshot = await reference.once();
-      if ( snapshot!=null ){
-        services = List.from( snapshot.value );
-        print("FirebaseServicesHelper:: TOTAL SERVICES LOADED: ${services.length}");
-      }
-    }
+    List<String> services = List();
+     reference.onValue.listen( (event) {
+      services = List.from( event.snapshot.value );
+      onData(services);
+    });
 
-    catch (ex){
-      print( "FirebaseServicesHelper::" + ex.toString());
-      throw ex;
-    }
     return services;
   }
 

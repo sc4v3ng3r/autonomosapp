@@ -63,6 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
         print("LoggedIn");
         firebaseAuthWithFacebook(
             facebookLoginResult.accessToken.token, context);
+        
         //onLoginStatusChanged(true);
         //print("login status changed!");
         break;
@@ -328,6 +329,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print("LoginScreen::BuildMethod");
     return new Scaffold(
       body: Center(
         child: Stack(
