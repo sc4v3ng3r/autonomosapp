@@ -31,7 +31,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
   static final RATING_INIT_VALUE = 5.0;
 
   static final SizedBox _verticalSeparator = new SizedBox(
-    height: 20.0,
+    height: 16.0,
   );
 
   var _email, _password, _name;
@@ -153,7 +153,11 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
         ),
       ),
     );
-
+    final userphoto = Container(
+      child: Image.asset(
+        "assets/usuario.png",
+        width: 168.0,height: 168.0,),
+    );
     final emailField = Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.0),
       child: Material(
@@ -230,6 +234,64 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
         ),
       ),
     );
+    final preTermosDeUso = Container(
+
+      child: Text("Ao se cadastrar você concorda com os" ,
+        style: TextStyle(
+            fontSize: 12.0,
+            fontStyle: FontStyle.italic,
+            color: Colors.grey[500]),),
+    );
+    final termosDeUso = Flexible(
+
+      child: FlatButton(
+          padding: EdgeInsets.fromLTRB(2.0, .0, 16.0, .0),
+          onPressed: (){
+            print("Termo de uso pressionado");
+          },
+          child: Text("Temos de uso",
+            style: TextStyle(
+                fontSize: 12.0,
+                fontStyle: FontStyle.italic),
+          )
+      )
+    );
+    final termosGroup = Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        preTermosDeUso,
+        termosDeUso
+      ],
+    );
+    final preTelaLogin = Container(
+
+      child: Text("Já possui uma conta?" ,
+        style: TextStyle(
+            fontSize: 12.0,
+            fontStyle: FontStyle.italic,
+            color: Colors.grey[500]),),
+    );
+    final telaLogin = Flexible(
+        child: FlatButton(
+            padding: EdgeInsets.fromLTRB(2.0, .0, 16.0, .0),
+            onPressed: (){
+              Navigator.pop(context);
+              print("voltar a tela de login pressionado");
+            },
+            child: Text("Faça login.",
+              style: TextStyle(
+                  fontSize: 12.0,
+                  fontStyle: FontStyle.italic),
+            )
+        )
+    );
+    final telaLoginGroup = Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        preTelaLogin,
+        telaLogin
+      ],
+    );
 
     final passwordConfirm = Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.0),
@@ -265,9 +327,11 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
     );
 
     final registerButton = Builder(builder: (BuildContext context) {
-      return Material(
-        borderRadius: BorderRadius.circular(30.0),
-        child: MaterialButton(
+      return Padding(
+//        borderRadius: BorderRadius.circular(30.0),
+        padding: EdgeInsets.fromLTRB(16.0, .0, 16.0, .0),
+        child: RaisedButton(
+          padding: EdgeInsets.fromLTRB(16.0, .0, 16.0, .0),
           splashColor: Colors.greenAccent,
           onPressed: () {
 
@@ -290,11 +354,11 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
                       });
             }
           },
-          minWidth: 130.0,
-          color: Colors.yellow,
+//          minWidth: 130.0,
+          color: Colors.red,
           child: Text(
             "Confirmar",
-            style: TextStyle(fontSize: 16.0),
+            style: TextStyle(fontSize: 16.0,color: Colors.white),
           ),
         ),
       );
@@ -321,26 +385,30 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
       ),
     );
 
-    final buttonsGroup = Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        registerButton,
-        SizedBox(
-          width: 5.0,
-        ),
-        cancelButton
-      ],
-    );
+//    final buttonsGroup = Row(
+//      mainAxisAlignment: MainAxisAlignment.center,
+//      children: <Widget>[
+//        registerButton,
+//        SizedBox(
+//          width: 5.0,
+//        ),
+//        cancelButton
+//      ],
+//    );
 
     final form = Form(
       autovalidate: _autoValidate,
       key: _formKey,
-      child: Center(
+      child: Container(
+        color: Colors.white,
         //mainAxisAlignment: MainAxisAlignment.center,
         //crossAxisAlignment: CrossAxisAlignment.center,
         child: ListView(
           shrinkWrap: true,
           children: <Widget>[
+
+            userphoto,
+            _verticalSeparator,
             nameField,
             _verticalSeparator,
             emailField,
@@ -349,7 +417,10 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
             _verticalSeparator,
             passwordConfirm,
             _verticalSeparator,
-            buttonsGroup
+//            buttonsGroup
+          registerButton,
+            termosGroup,
+            telaLoginGroup
           ],
         ),
       ),

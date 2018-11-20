@@ -7,6 +7,7 @@ import 'widget/ModalRoundedProgressBar.dart';
 import 'package:autonos_app/firebase/FirebaseUserHelper.dart';
 import 'MainScreen.dart';
 import 'package:autonos_app/model/User.dart';
+import 'package:flutter/services.dart';
 
 // TODO REALIZAR BUGFIX dos SNACKBARS
 class LoginScreen extends StatefulWidget {
@@ -18,6 +19,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final SizedBox _VERTICAL_SEPARATOR = SizedBox(
     height: 16.0,
   );
+
   bool iconVisibility = false;
   Icon icon = Icon(Icons.visibility_off);
   bool _obscureText = true;
@@ -225,10 +227,10 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Text(
         'Ainda não possui uma conta?',
         style: TextStyle(
-            fontSize: 12.0,
-            fontStyle: FontStyle.italic,
-            color: Colors.grey[500]),
-      ),
+        fontSize: 12.0,
+        fontStyle: FontStyle.italic,
+        color: Colors.grey[500]),
+    ),
     );
     final registerButton = Flexible(
       child: FlatButton(
@@ -374,7 +376,13 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     print("LoginScreen::BuildMethod");
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      systemNavigationBarColor: Colors.red,
+      statusBarColor: Colors.red[600],
+    ));
+//    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
     return new Scaffold(
+//      bottomNavigationBar: BottomNavigationBar(items: null,fixedColor: Colors.red,),
       body: Center(
         child: Stack(
           //overflow: Overflow.clip,
