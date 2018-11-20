@@ -33,7 +33,9 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
   static final SizedBox _verticalSeparator = new SizedBox(
     height: 16.0,
   );
-
+  bool iconVisibility = false;
+  Icon icon = Icon(Icons.visibility_off);
+  bool _obscureText = true;
   var _email, _password, _name;
   var _passwordConfirmation;
   var _showProgressBar = false;
@@ -154,6 +156,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
       ),
     );
     final userphoto = Container(
+      padding: EdgeInsets.fromLTRB(.0, 8.0, .0, .0),
       child: Image.asset(
         "assets/usuario.png",
         width: 168.0,height: 168.0,),
@@ -193,6 +196,17 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
       ),
     );
 
+    void _toggle(){
+      setState(() {
+        _obscureText = !_obscureText;
+        iconVisibility = !iconVisibility;
+        if(iconVisibility == false)
+          icon = Icon(Icons.visibility_off);
+        else
+          icon = Icon(Icons.visibility);
+
+      });
+    }
     final passwordField = Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.0),
       child: Material(
@@ -200,7 +214,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
           maxLines: 1,
           controller: _passwordController,
           autofocus: false,
-          obscureText: true,
+          obscureText: _obscureText,
           keyboardType: TextInputType.text,
           textInputAction: TextInputAction.next,
           focusNode: _passwordFocus,
@@ -220,10 +234,8 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
               suffixIcon: Padding(
                 padding: EdgeInsetsDirectional.only(end: 12.0),
                 child: IconButton(
-                    icon: Icon(Icons.remove_red_eye),
-                    onPressed: () {
-                      print("eye clicked!");
-                    }),
+                    icon: icon,
+                    onPressed: _toggle),
               ),
               labelStyle: TextStyle(
                 fontSize: 18.0,
