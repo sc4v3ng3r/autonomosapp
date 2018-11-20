@@ -76,22 +76,20 @@ class _LoginScreenState extends State<LoginScreen> {
         print("LIDO COM FACEBOOK ${user.email} ${user.name}");
 
         _goToLoggedScreen(context, user);
-      }).catchError( (dataBaseError) {
-
+      }).catchError((dataBaseError) {
         FirebaseUserHelper.writeUserAccountData(firebaseUser)
             .then((createdUser) {
           print("USUARIO CRIADO COM SUCESSO!");
           print("CREATED: ${createdUser.name}  ${createdUser.email}");
 
           _goToLoggedScreen(context, createdUser);
-
         }).catchError((error) {
           print("ERRO AO CRIAR USUARIO NO DB COM FACEBOOK!");
           print(error.toString());
           showProgressBar(false);
         });
       });
-    }).catchError( (facebookError) {
+    }).catchError((facebookError) {
       print(facebookError.toString());
       showProgressBar(false);
     });
@@ -99,14 +97,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
   List<Widget> _buildForm() {
     final logo = Container(
-      height: 150.0,
+      height: 128.0,
       child: Center(
         child: Text(
           "Autônomos",
           maxLines: 1,
           softWrap: false,
           style: TextStyle(
-            color: Colors.cyan,
+            color: Colors.red,
             fontSize: 50.0,
             fontFamily: "cursive",
           ),
@@ -129,18 +127,15 @@ class _LoginScreenState extends State<LoginScreen> {
             _emailFocus.unfocus();
             FocusScope.of(context).requestFocus(_passwordFocus);
           },
-
           style: TextStyle(
             fontSize: 20.0,
             color: Colors.black,
           ),
           decoration: InputDecoration(
               labelText: "E-mail",
-              suffixIcon:  Padding(
+              suffixIcon: Padding(
                 padding: EdgeInsetsDirectional.only(end: 12.0),
-                child: IconButton(
-                    icon: Icon(Icons.email),
-                    onPressed: () {}),
+                child: IconButton(icon: Icon(Icons.email), onPressed: () {}),
               ),
               labelStyle: TextStyle(
                 fontSize: 18.0,
@@ -178,7 +173,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     icon: Icon(Icons.visibility_off),
                     onPressed: () {
                       print("eye clicked!");
-
                     }),
               ),
               labelStyle: TextStyle(
@@ -186,74 +180,118 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
               border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(22.0))
-          ),
-
+                  borderRadius: BorderRadius.circular(22.0))),
         ),
       ),
     );
 
-    final loginButton = Material(
-      borderRadius: BorderRadius.circular(30.0),
+    final loginButton = Padding(
+//      borderRadius: BorderRadius.circular(200.0),
+      padding: EdgeInsets.symmetric(horizontal: 16.0),
       child: MaterialButton(
+        padding: EdgeInsets.fromLTRB(.0, 14.0, .0, 14.0),
+//        minWidth: MediaQuery.of(context).size.width,
         splashColor: Colors.yellowAccent,
         onPressed: () {
-          if (validate())
-            firebaseLogin(context);
+          if (validate()) firebaseLogin(context);
         },
-        minWidth: 130.0,
-        color: Colors.green,
+//        minWidth: 130.0,
+//      borderSide: BorderSide(style: BorderStyle.solid),
+        color: Colors.redAccent,
         child: Text(
           "Entrar",
-          style: TextStyle(fontSize: 16.0),
+          style: TextStyle(fontSize: 16.0, color: Colors.white),
         ),
       ),
     );
-
-    final registerButton = Material(
-      borderRadius: BorderRadius.circular(30.0),
-      child: MaterialButton(
-        splashColor: Colors.greenAccent,
+    final textPreRegisterButton = Container(
+      padding: EdgeInsets.fromLTRB(16.0, .0, 2.0, .0),
+      child: Text(
+        'Ainda não possui uma conta?',
+        style: TextStyle(
+            fontSize: 12.0,
+            fontStyle: FontStyle.italic,
+            color: Colors.grey[500]),
+      ),
+    );
+    final registerButton = Flexible(
+      child: FlatButton(
         onPressed: () {
-          print("realizar cadastro");
+          print("Realizar Cadastro");
           cadastrar(context);
         },
-        minWidth: 130.0,
-        color: Colors.yellow,
+        splashColor: Colors.red,
+        padding: EdgeInsets.fromLTRB(.0, .0, 16.0, .0),
         child: Text(
           "Cadastre-se",
-          style: TextStyle(fontSize: 16.0),
+          style: TextStyle(fontSize: 12.0, fontStyle: FontStyle.italic),
         ),
+        color: Colors.transparent,
       ),
     );
 
-    final buttonGroup = Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        loginButton,
-        SizedBox(width: 5.0),// buttons separator
-        registerButton,
-      ],
+    final preForgotPassword = Container(
+      padding: EdgeInsets.fromLTRB(16.0, .0, 5.0, .0),
+      child: Text(
+        "Não lembra do login/senha?",
+        style: TextStyle(
+            fontStyle: FontStyle.italic,
+            fontSize: 12.0,
+            color: Colors.grey[500]),
+        overflow: TextOverflow.clip,
+      ),
     );
-
-    final forgotPassword = Container(
-      width: 150.0,
+    final forgotPassword = Flexible(
       child: FlatButton(
+        padding: EdgeInsets.fromLTRB(.0, .0, 16.0, .0),
         onPressed: () {
           print("Esqueceu a senha...");
         },
         color: Colors.transparent,
         child: Text(
-          "Esqueceu a Senha?",
-          style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+          "Recupere seus dados.",
+          style: TextStyle(fontSize: 12.0, fontStyle: FontStyle.italic),
+//          overflow: TextOverflow.fade,
         ),
       ),
     );
-
-    final facebookLoginButton = RaisedButton(
-      child: Text("Entrar com o Facebook"),
-      onPressed: () => initiateFacebookLogin(context),
+    final forgotGroup = Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[preForgotPassword, forgotPassword],
     );
+    final registerTextGroup = Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[textPreRegisterButton, registerButton],
+    );
+    final buttonsGroupAux = Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[registerButton, forgotPassword],
+    );
+    final divisor = Container(
+      color: Colors.grey,
+    );
+    final divisiorOuGroup = Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+//        Divider(color: Colors.black,),
+        Text('OU'),
+      ],
+    );
+//    const IconData(59393, fontFamily: 'Facebook');
+    final facebookLoginButton = Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16.0),
+        child: RaisedButton(
+          padding: EdgeInsets.fromLTRB(.0, 14.0, .0, 14.0),
+          child: Text(
+            "Entrar com o Facebook",
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: 16.0,
+                ),
+          ),
+          color: Colors.blue[500],
+          onPressed: () => initiateFacebookLogin(context),
+        ));
 
     var form = Form(
       key: _globalKey,
@@ -267,10 +305,15 @@ class _LoginScreenState extends State<LoginScreen> {
           _VERTICAL_SEPARATOR,
           passwordField,
           _VERTICAL_SEPARATOR,
-          buttonGroup,
-          forgotPassword,
+          _VERTICAL_SEPARATOR,
+          loginButton,
+          _VERTICAL_SEPARATOR,
+          forgotGroup,
+          divisiorOuGroup,
           _VERTICAL_SEPARATOR,
           facebookLoginButton,
+          Divider(),
+          registerTextGroup,
         ],
       ),
     );
@@ -286,17 +329,17 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-        body:Center(
-          child: Stack(
-            //overflow: Overflow.clip,
-            children: _buildForm(),
-          ),
+      body: Center(
+        child: Stack(
+          //overflow: Overflow.clip,
+          children: _buildForm(),
         ),
+      ),
     );
   }
 
   bool validate() {
-    if ( _globalKey.currentState.validate() ) {
+    if (_globalKey.currentState.validate()) {
       setState(() {
         _email = _emailController.text;
         _password = _passwordController.text;
@@ -315,28 +358,30 @@ class _LoginScreenState extends State<LoginScreen> {
     showProgressBar(true);
     FirebaseAuth auth = FirebaseAuth.instance;
 
-    auth.signInWithEmailAndPassword(email: _email, password: _password)
+    auth
+        .signInWithEmailAndPassword(email: _email, password: _password)
         .then((firebaseUser) {
       FirebaseUserHelper.readUserAccountData(firebaseUser.uid).then((user) {
         print("LIDO ${user.name}  ${user.email}");
 
         _goToLoggedScreen(context, user);
-
-      }).catchError( (onError) {
+      }).catchError((onError) {
         print(onError.toString());
         showProgressBar(false);
       });
-
-    }).catchError( (firebaseError) {
+    }).catchError((firebaseError) {
       print(firebaseError.toString());
       showProgressBar(false);
     });
   }
 
-  void _goToLoggedScreen(BuildContext context, User user){
-    Navigator.pushReplacement(context, MaterialPageRoute
-      (builder: (BuildContext context) => MainScreen( user:user )));
+  void _goToLoggedScreen(BuildContext context, User user) {
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (BuildContext context) => MainScreen(user: user)));
   }
+
   void _showSnackBarInfo(BuildContext ctx, String msg) {
     Scaffold.of(ctx).showSnackBar(SnackBar(content: Text(msg)));
   }
@@ -345,9 +390,7 @@ class _LoginScreenState extends State<LoginScreen> {
     // POR ENQUANTO VOU DEIXAR ESSA NAVEGACAO MUITO LOUCA MESMO!
     if (Navigator.of(context).canPop()) {
       Navigator.of(context).pop();
-    }
-
-    else
+    } else
       Navigator.of(context)
           .push(MaterialPageRoute<Null>(builder: (BuildContext context) {
         return UserRegisterScreen();

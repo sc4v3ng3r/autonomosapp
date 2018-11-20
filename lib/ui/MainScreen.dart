@@ -34,7 +34,7 @@ class _MainScreenState extends State<MainScreen> {
           ),
           title: Text("Main Screen"),
           automaticallyImplyLeading: false,
-          backgroundColor: Colors.indigo[400],
+          backgroundColor: Colors.redAccent,
         ),
 
         drawer: _drawerMenu(context),
@@ -64,7 +64,7 @@ class _MainScreenState extends State<MainScreen> {
             accountEmail: Text('${widget.user.email}'),
             accountName: Text('${widget.user.name}'),
             ratingBar: RatingBar(starCount: 5, rating: 4.3,),
-            currentAccountPicture: CircleAvatar(backgroundColor: Colors.red,),
+            currentAccountPicture: CircleAvatar(backgroundColor: Colors.white,),
           ),
 
           ListTile(
