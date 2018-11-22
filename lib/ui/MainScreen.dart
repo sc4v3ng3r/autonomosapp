@@ -44,7 +44,14 @@ class _MainScreenState extends State<MainScreen> {
         body: _getFragment( _drawerCurrentPosition ),
     );
   }
+void _NavegaCadastroAutonomo(BuildContext context){
+  Navigator.pop(context);
 
+  Navigator.push(
+      context,
+      MaterialPageRoute(builder: (BuildContext context) => CadastroAutonomoPt1()));
+
+}
   @override
   void initState() {
     super.initState();
@@ -96,13 +103,14 @@ class _MainScreenState extends State<MainScreen> {
             onTap: () => _setCurrentPosition(4),
           ),
 //          Divider(),
-          ListTile(
 
+          ListTile(
             leading: Icon(Icons.directions_walk,color: Colors.red[500],),
             title: Text('Seja Um Autônomo!!!',style: TextStyle(color: Colors.red[500],fontWeight: FontWeight.bold)),
-            onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (BuildContext context) => CadastroAutonomoPt1())),
+            onTap: ()=>_NavegaCadastroAutonomo(context),
+//            onTap: () => Navigator.push(
+//                context,
+//                MaterialPageRoute(builder: (BuildContext context) => CadastroAutonomoPt1())),
           ),
           Divider(),
 
