@@ -6,6 +6,11 @@ class ServiceBlock {
 
   final _servicesFetcher = PublishSubject< List<String> >();
 
+
+
+
+
+  
   Observable<List<String>> get allServices => _servicesFetcher.stream;
 
   getServices() {
@@ -20,6 +25,7 @@ class ServiceBlock {
   _addDataToSink(List<String> data){
     _servicesFetcher.sink.add( data);
   }
+
 }
 
 //final bloc = ServiceBlock();

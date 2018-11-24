@@ -38,7 +38,7 @@ class ScreenSelector extends StatefulWidget {
 
 class _ScreenSelectorState extends State<ScreenSelector>{
 
-  static final _container = Container(color: Colors.transparent,);
+  static final _container = Container(color: Colors.red,);
   //Future<FirebaseUser> _future;
   @override
   void initState() {
