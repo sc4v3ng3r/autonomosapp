@@ -1,3 +1,4 @@
+import 'package:autonos_app/ui/ui_cadastro_autonomo/CadastroAutonomoPt1.dart';
 import 'package:autonos_app/ui/widget/RatingBar.dart';
 import 'package:autonos_app/model/User.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +24,9 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
+    print("LoginScreen::BuildMethod");
+
+    return Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
           leading: IconButton(
@@ -34,14 +37,21 @@ class _MainScreenState extends State<MainScreen> {
           ),
           title: Text("Main Screen"),
           automaticallyImplyLeading: false,
-          backgroundColor: Colors.redAccent,
+          backgroundColor: Colors.red[400],
         ),
 
         drawer: _drawerMenu(context),
         body: _getFragment( _drawerCurrentPosition ),
     );
   }
+void _NavegaCadastroAutonomo(BuildContext context){
+  Navigator.pop(context);
 
+  Navigator.push(
+      context,
+      MaterialPageRoute(builder: (BuildContext context) => CadastroAutonomoPt1()));
+
+}
   @override
   void initState() {
     super.initState();
@@ -67,7 +77,6 @@ class _MainScreenState extends State<MainScreen> {
             title: Text('Perfil'),
             onTap: () => _setCurrentPosition(0),
           ),
-
           ListTile(
             leading: Icon(Icons.work),
             title: Text('Serviços'),
@@ -93,7 +102,16 @@ class _MainScreenState extends State<MainScreen> {
             title: Text('Favoritos'),
             onTap: () => _setCurrentPosition(4),
           ),
+//          Divider(),
 
+          ListTile(
+            leading: Icon(Icons.directions_walk,color: Colors.red[500],),
+            title: Text('Seja Um Autônomo!!!',style: TextStyle(color: Colors.red[500],fontWeight: FontWeight.bold)),
+            onTap: ()=>_NavegaCadastroAutonomo(context),
+//            onTap: () => Navigator.push(
+//                context,
+//                MaterialPageRoute(builder: (BuildContext context) => CadastroAutonomoPt1())),
+          ),
           Divider(),
 
           ListTile(

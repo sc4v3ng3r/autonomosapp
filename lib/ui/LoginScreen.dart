@@ -378,10 +378,10 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     print("LoginScreen::BuildMethod");
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      systemNavigationBarColor: Colors.red,
-      statusBarColor: Colors.red[600],
-    ));
+//    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+//      systemNavigationBarColor: Colors.red,
+//      statusBarColor: Colors.red[600],
+//    ));
 //    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
     return new Scaffold(
 //      bottomNavigationBar: BottomNavigationBar(items: null,fixedColor: Colors.red,),

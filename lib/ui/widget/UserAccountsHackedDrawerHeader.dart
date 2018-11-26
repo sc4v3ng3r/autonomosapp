@@ -137,7 +137,7 @@ class _AccountDetails extends StatelessWidget {
             child: Center(
               child: Icon(
                 isOpen ? Icons.arrow_drop_up : Icons.arrow_drop_down,
-                color: Colors.white,
+                color: Colors.black87,
                 semanticLabel: isOpen
                     ? localizations.hideAccountsLabel
                     : localizations.showAccountsLabel,
@@ -340,10 +340,11 @@ class _UserAccountsHackedDrawerHeaderState extends State<UserAccountsHackedDrawe
     assert(debugCheckHasMaterialLocalizations(context));
     return Semantics(
       container: true,
+
       label: MaterialLocalizations.of(context).signedInLabel,
       child: DrawerHeader(
         decoration: widget.decoration ?? BoxDecoration(
-          color: Theme.of(context).primaryColor,
+          color: Colors.black87,
         ),
         margin: widget.margin,
         padding: const EdgeInsetsDirectional.only(top: 16.0, start: 16.0),

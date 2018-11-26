@@ -268,6 +268,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
           )
       )
     );
+
     final termosGroup = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -342,7 +343,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
       return Padding(
 //        borderRadius: BorderRadius.circular(30.0),
         padding: EdgeInsets.fromLTRB(16.0, .0, 16.0, .0),
-        child: RaisedButton(
+        child: MaterialButton(
           padding: EdgeInsets.fromLTRB(16.0, .0, 16.0, .0),
           splashColor: Colors.greenAccent,
           onPressed: () {
