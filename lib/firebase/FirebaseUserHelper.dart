@@ -1,7 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:autonos_app/model/User.dart';
-import 'FirebaseReferences.dart';
+import 'package:autonos_app/firebase/FirebaseReferences.dart';
 
 class FirebaseUserHelper {
   static final RATING_INIT_VALUE = 5.0;

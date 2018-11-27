@@ -1,39 +1,26 @@
-import 'package:meta/meta.dart';
 
 class Service {
-  int _id;
-  String _name;
+
+  String id;
+  String name;
 
   static final String ID = "id";
   static final String NAME = "name";
 
-  String get name => _name;
-  int get id => _id;
-
-  Service(this._id, this._name);
+  Service(this.id, this.name);
 
   Service.fromJson(Map<String, dynamic> json) :
-      _id = json[ID],
-      _name = json[NAME];
+      id = json[ID],
+      name = json[NAME];
 
-
-  Service.fromString(int index, String name) :
-      _id = index,
-      _name = name;
 
   Map<String, dynamic> toJson () => {
-    ID : _id,
-    NAME : _name,
+    ID : id,
+    NAME : name,
   };
 
-
+  @override
+  String toString() {
+    return "ID: $id\nNAME: $name";
+  }
 }
-
-/*
-* Map<String, dynamic> toJson() => {
-     NAME : name,
-    EMAIL : email,
-    RATING : rating,
-    UID : uid,
-    PICTURE_URL : picturePath,
-  };*/

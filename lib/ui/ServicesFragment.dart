@@ -1,3 +1,4 @@
+import 'package:autonos_app/model/Service.dart';
 import 'package:flutter/material.dart';
 import 'package:autonos_app/bloc/ServiceBloc.dart';
 
@@ -19,9 +20,9 @@ class _ServicesFragmentState extends State<ServicesFragment> {
   @override
   Widget build(BuildContext context) {
 
-    return StreamBuilder< List<String> > (
+    return StreamBuilder< List<Service> > (
       stream: bloc.allServices,
-      builder: ( BuildContext context, AsyncSnapshot< List< String> > snapshot ) {
+      builder: ( BuildContext context, AsyncSnapshot< List< Service> > snapshot ) {
         switch( snapshot.connectionState ) {
           case ConnectionState.none:
           case ConnectionState.waiting:
@@ -39,14 +40,17 @@ class _ServicesFragmentState extends State<ServicesFragment> {
           case ConnectionState.active:
 
           case ConnectionState.done:
+            List<Service> list = snapshot.data;
             return ListView.builder(itemBuilder: (BuildContext context, int index) {
-              Text serviceText = Text('${snapshot.data[index]}', style: TextStyle(fontSize: 20.0));
+              Text serviceText = Text('${list[index].name}', style: TextStyle(fontSize: 20.0));
               ListTile tile = ListTile(
                 title: serviceText,
                 leading: Icon( Icons.room_service),
                 onTap: () {
+
                     // TODO AQUI VAMOS ABRIR A TELA DE MAPA, ANTES REALIZANDO A BUSCA POR
                     // PROFISSIONAIS NUMA DETERMINADA ÁREA QUE REALIZAM O SERVICO CLICADO!
+
                     Scaffold.of(context).showSnackBar(
                       SnackBar(content: Text("${serviceText.data} index: $index"),
                         backgroundColor: Colors.redAccent,),

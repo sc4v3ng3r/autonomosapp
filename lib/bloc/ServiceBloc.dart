@@ -1,28 +1,23 @@
+import 'package:autonos_app/model/Service.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:autonos_app/firebase/FirebaseServicesHelper.dart';
-import 'package:autonos_app/firebase/FirebaseReferences.dart';
 
 class ServiceBlock {
 
-  final _servicesFetcher = PublishSubject< List<String> >();
-
-
-
-
-
+  final _servicesFetcher = PublishSubject< List<Service> > ();
   
-  Observable<List<String>> get allServices => _servicesFetcher.stream;
+  Observable<List<Service> > get allServices => _servicesFetcher.stream;
 
   getServices() {
-    FirebaseServicesHelper.getServicesByArea(
-        FirebaseReferences.REFERENCE_GERAL, _addDataToSink);
+    FirebaseServicesHelper.getAllServices(_addDataToSink);
   }
 
   dispose(){
     _servicesFetcher.close();
   }
 
-  _addDataToSink(List<String> data){
+  _addDataToSink(List<Service> data){
+    data.sort((a, b) =>  (a.name.compareTo( b.name))  );
     _servicesFetcher.sink.add( data);
   }
 

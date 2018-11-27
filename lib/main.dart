@@ -1,11 +1,14 @@
+import 'package:autonos_app/model/Service.dart';
 import 'package:autonos_app/ui/LoginScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:autonos_app/ui/UserRegisterScreen.dart';
 import 'package:autonos_app/firebase/FirebaseUserHelper.dart';
 import 'package:autonos_app/model/User.dart';
 import 'package:autonos_app/ui/MainScreen.dart';
+void main() {
+  runApp( new MyApp() );
+}
 
-void main() => runApp(new MyApp());
 
 class MyApp extends StatefulWidget{
   @override
@@ -29,16 +32,15 @@ class _MyAppState extends State<MyApp> {
 }
 
 class ScreenSelector extends StatefulWidget {
-
   @override
   State createState() => _ScreenSelectorState();
 
-}
-
+}// Marcelo
+/*(71)991259223*/
 
 class _ScreenSelectorState extends State<ScreenSelector>{
 
-  static final _container = Container(color: Colors.red,);
+  static final _container = Container(color: Colors.transparent,);
   //Future<FirebaseUser> _future;
   @override
   void initState() {
@@ -73,4 +75,5 @@ class _ScreenSelectorState extends State<ScreenSelector>{
       },
     );
   }
+
 }
