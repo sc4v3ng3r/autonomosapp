@@ -113,7 +113,8 @@ class CadastroAutonomoPt1State extends State<CadastroAutonomoPt1> {
                         new Text('Pessoa Jurídica')
                       ],
                     ),
-                    TextFormField(
+
+                   TextFormField(
                       focusNode: _tipoPessoaFocus,
                       autofocus: false,
                       controller: _typeCpfOrCnpj(),
@@ -137,6 +138,7 @@ class CadastroAutonomoPt1State extends State<CadastroAutonomoPt1> {
                   TextFormField(
                     focusNode: _telefoneFocus,
                     controller: typeTelefone,
+
                     autofocus: false,
                     keyboardType: TextInputType.number,
                     onFieldSubmitted: (dataType) {
@@ -157,7 +159,7 @@ class CadastroAutonomoPt1State extends State<CadastroAutonomoPt1> {
                       padding:
                           EdgeInsets.symmetric(horizontal: .0, vertical: 16.0),
                       child: RaisedButton(
-                        padding: EdgeInsets.fromLTRB(.0, 14.0, .0, 14.0),
+                        padding: EdgeInsets.fromLTRB(.0, 8.0, .0, 8.0),
                         onPressed: initState,
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
@@ -195,7 +197,7 @@ class CadastroAutonomoPt1State extends State<CadastroAutonomoPt1> {
                       padding:
                       EdgeInsets.symmetric(horizontal: .0, vertical: 16.0),
                       child: RaisedButton(
-                        padding: EdgeInsets.fromLTRB(.0, 14.0, .0, 14.0),
+                        padding: EdgeInsets.fromLTRB(.0, 8.0, .0, 8.0),
                         onPressed: (){
                           Navigator.of(context).push(
                             MaterialPageRoute(builder:
