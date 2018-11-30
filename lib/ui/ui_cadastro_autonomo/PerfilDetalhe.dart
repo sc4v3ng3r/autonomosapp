@@ -338,5 +338,3 @@ class PerfilDetalheState extends State<PerfilDetalhe> {
         ));
   }
 }
-
-class ChipCidade {}

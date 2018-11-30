@@ -1,3 +1,4 @@
+import 'package:autonos_app/ui/ui_cadastro_autonomo/Atuacao.dart';
 import 'package:autonos_app/ui/ui_cadastro_autonomo/PerfilDetalhe.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
@@ -138,9 +139,9 @@ class CadastroAutonomoPt1State extends State<CadastroAutonomoPt1> {
                   TextFormField(
                     focusNode: _telefoneFocus,
                     controller: typeTelefone,
-
                     autofocus: false,
                     keyboardType: TextInputType.number,
+
                     onFieldSubmitted: (dataType) {
                       setState(() {
                         _telefoneFocus.unfocus();
@@ -201,7 +202,7 @@ class CadastroAutonomoPt1State extends State<CadastroAutonomoPt1> {
                         onPressed: (){
                           Navigator.of(context).push(
                             MaterialPageRoute(builder:
-                                (BuildContext context) => PerfilDetalhe())
+                                (BuildContext context) => Atuacao())
                           );
                         },
                         child: Row(
