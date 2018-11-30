@@ -50,16 +50,6 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
   bool _autoValidate = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  // TEST button
-  final testButton = MaterialButton(
-    child: Text("Test Button"),
-    color: Colors.green,
-    onPressed: () {
-      FirebaseStateCityHelper.getCityListByState("DF");
-
-    },
-  );
-
   @override
   void initState() {
     _nameFocus = new FocusNode();
@@ -452,8 +442,6 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
           registerButton,
             termosGroup,
             telaLoginGroup,
-            testButton
-
           ],
         ),
       ),

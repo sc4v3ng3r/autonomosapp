@@ -38,13 +38,12 @@ class FirebaseStateCityHelper {
 
     cityRef.child(uf).once().then(
             (dataSnapshot) {
-              print( dataSnapshot.key);
               Map<String, dynamic> citiesMap = Map.from( dataSnapshot.value);
 
               citiesMap.forEach( (key, value) {
                   Cidade city = Cidade.fromJson(Map.from(value));
-                  city.id = key;
-                  city.uf = dataSnapshot.key.toString();
+                  city.id = key; // id da cidade eh o nó raiz da cidade
+                  city.uf = dataSnapshot.key.toString();// a sigla do estado eh  Nó raiz do snapshot
                   cityList.add(city);
               });
 
