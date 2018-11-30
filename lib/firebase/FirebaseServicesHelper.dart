@@ -26,8 +26,9 @@ class FirebaseServicesHelper {
     List<Service> services = List();
     servicesReference.orderByKey().onValue.listen( (event){
         Map<String, dynamic> mapOfMaps = Map.from( event.snapshot.value);
-
+        //print(event.snapshot.key);
         mapOfMaps.values.forEach( (value) {
+
           services.add( Service.fromJson(Map.from(value) ));
         });
 
