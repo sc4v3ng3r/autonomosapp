@@ -1,5 +1,6 @@
 import 'package:autonos_app/ui/ui_cadastro_autonomo/FormasDePagamento.dart';
 import 'package:autonos_app/ui/ui_cadastro_autonomo/ListagemCidades.dart';
+import 'package:autonos_app/ui/ui_cadastro_autonomo/ListagemServicos.dart';
 import 'package:flutter/material.dart';
 
 class Atuacao extends StatefulWidget {
@@ -41,30 +42,14 @@ class AtuacaoState extends State<Atuacao> {
     "Conceição do Jacuípe",
     "Conceição de Coité",
     "Feira de Santana",
-    "Amelia Rodrigues",
-    "Baixios",
-    "Conde",
-    "Conceição do Jacuípe",
-    "Conceição de Coité",
-    "Feira de Santana",
-    "Amelia Rodrigues",
-    "Baixios",
-    "Conde",
-    "Conceição do Jacuípe",
-    "Conceição de Coité",
-    "Feira de Santana",
-    "Amelia Rodrigues",
-    "Baixios",
-    "Conde",
-    "Conceição do Jacuípe",
-    "Conceição de Coité",
-    "Feira de Santana",
-    "Amelia Rodrigues",
-    "Baixios",
-    "Conde",
-    "Conceição do Jacuípe",
-    "Conceição de Coité",
-    "Feira de Santana",
+  ];
+  List<String> _servicos = [
+    "Alarmes",
+    "Aulas de violão",
+    "Aulas de matematica",
+    "Aulas de portugues",
+    "Diarista",
+    "Mecanico"
   ];
 
   List _cidadesSelcionadas = new List();
@@ -99,17 +84,83 @@ class AtuacaoState extends State<Atuacao> {
   void changeDropDownItens(String estadoSelecionado) {
     print("$estadoSelecionado selecionado");
     setState(() {
-//      if (estadoSelecionado == "Bahia") {
-//        _cidades = _cidadesBa;
-//        _cidadeAtual = _cidades[0];
-//      } else {
-//        _cidades = _cidadesAc;
-//        _cidadeAtual = _cidades[0];
-//      }
       _estadoAtual = estadoSelecionado;
+      _chipList.clear();
     });
   }
-  List<Widget> _buildForm() {
+  void removeChip(String nomeChip) {
+    _cidadesSelcionadas.remove(nomeChip);
+    _trasnformaListaSelecionadoEmChip();
+  }
+
+  void removeServicoChip(String nomeChip) {
+    _servicosSelecionados.remove(nomeChip);
+    _trasnformaListaServicosSelecionadoEmChip();
+  }
+  void _trasnformaListaSelecionadoEmChip() {
+    _chipList.clear();
+    if(_cidadesSelcionadas!=null)
+    for (String nomeCidade in _cidadesSelcionadas) {
+      Chip chip = Chip(
+        onDeleted: () {
+          setState(() {
+            removeChip(nomeCidade);
+          });
+        },
+        backgroundColor: Colors.red[300],
+        label: Text(
+          nomeCidade,
+          style: TextStyle(color: Colors.white),
+        ),
+      );
+      setState(() {
+        _chipList.add(chip);
+      });
+    }
+  }
+  void _trasnformaListaServicosSelecionadoEmChip() {
+    _chipListServicos.clear();
+    if(_servicosSelecionados!=null)
+    for (String nomeServico in _servicosSelecionados) {
+      Chip chip = Chip(
+        onDeleted: () {
+          setState(() {
+            removeServicoChip(nomeServico);
+          });
+        },
+        backgroundColor: Colors.black54,
+        label: Text(
+          nomeServico,
+          style: TextStyle(color: Colors.white),
+        ),
+      );
+      setState(() {
+        _chipListServicos.add(chip);
+      });
+    }
+  }
+
+  _navegarEEsperarLista(BuildContext context) async{
+    _cidadesSelcionadas = await Navigator.of(context).push(
+        MaterialPageRoute(builder:
+            (BuildContext context) => ListagemCidades(
+          cidades: _cidadesBa,
+          nome: _estadoAtual,)
+        )
+    );
+    await _trasnformaListaSelecionadoEmChip();
+  }
+
+
+  _navegaEEseraListaDeServicos(BuildContext context) async{
+    _servicosSelecionados = await Navigator.of(context).push(
+        MaterialPageRoute(builder: (BuildContext context) => ListagemServicos(
+          servicos: _servicos,
+        ))
+    );
+    _trasnformaListaServicosSelecionadoEmChip();
+  }
+  List<Widget> _buildForm(BuildContext context) {
     final estadoLabel = Padding(
       padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, .0),
       child: Text(
@@ -142,6 +193,7 @@ class AtuacaoState extends State<Atuacao> {
         style: TextStyle(color: Colors.grey),
       ),
     );
+
     final buttonListCidades = Padding(
       padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, .0),
       child: RaisedButton(
@@ -154,11 +206,7 @@ class AtuacaoState extends State<Atuacao> {
           ],
         ),
           onPressed: (){
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                  builder: (BuildContext context)
-                  => ListagemCidades(cidades: _cidadesBa,nome: _estadoAtual,))
-            );
+            _navegarEEsperarLista(context);
           })
     );
 
@@ -173,7 +221,24 @@ class AtuacaoState extends State<Atuacao> {
         style: TextStyle(color: Colors.grey),
       ),
     );
+    final buttonListServico = Padding(
+      padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, .0),
+      child:
+          RaisedButton(
+            child: Text('Serviços',style: TextStyle(color: Colors.white),),
+            color: Colors.black87,
+            onPressed: () {
+              _navegaEEseraListaDeServicos(context);
+//              Navigator.of(context).push(
+//               MaterialPageRoute(builder: (BuildContext context) =>ListagemServicos(
+//                 servicos: _servicos,
+//               ))
+//              );
+            },
 
+          )
+
+    );
     final listChipServico =Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.0),
         child: Wrap(children: _chipListServicos)
@@ -184,9 +249,10 @@ class AtuacaoState extends State<Atuacao> {
       child: RaisedButton(
         padding: EdgeInsets.fromLTRB(.0, 8.0, .0, 8.0),
         onPressed: (){
-          Navigator.of(context).push(
-              MaterialPageRoute(builder: (BuildContext context) => FormaDePagamento())
-          );
+
+//          Navigator.of(context).push(
+//              MaterialPageRoute(builder: (BuildContext context) => FormaDePagamento())
+//          );
         },
         color: Colors.red[400],
         child: Row(
@@ -207,6 +273,9 @@ class AtuacaoState extends State<Atuacao> {
         ),
       ),
     );
+//     test(){
+////      print('AQUIIII: ${_cidadesSelcionadas.length}');
+//    }
 //	final proximaTela
     final form = Form(
         child: ListView(
@@ -219,6 +288,7 @@ class AtuacaoState extends State<Atuacao> {
             listChip,
             Divider(),
             areasDeAtuacaoLabel,
+            buttonListServico,
             listChipServico,
             Divider(),
             buttonNext,
@@ -242,7 +312,7 @@ class AtuacaoState extends State<Atuacao> {
         ),
         body: new Stack(
 //          alignment: AlignmentDirectional(16.0, 16.0),
-          children: _buildForm(),
+          children: _buildForm(context),
         ));
   }
 }

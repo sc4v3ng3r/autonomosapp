@@ -40,18 +40,65 @@ class ListagemCidadesState extends State<ListagemCidades> {
     super.initState();
   }
 
+  Widget _confirmButton(BuildContext context){
+    return IconButton(
+      onPressed: (){
+        SnackBar(content: Text('abc'));
+//        print(_cidadesSelecionadas.length);
+        Navigator.of(context).pop(_cidadesSelecionadas);
+      },
+      icon: Icon(Icons.add,color: Colors.green[200],),
+    );
+  }
+
+Widget _iconButton(BuildContext context){
+    return IconButton(
+        icon: Icon(Icons.arrow_back,color: Colors.white,),
+        onPressed: (){
+          _voltarDialog(context);
+        });
+}
+
+  AlertDialog _voltarDialog(BuildContext context){
+    return AlertDialog(
+      title: Text('Alerta!'),
+      content: Text('Tem certeza que você deseja voltar?'),
+      actions: <Widget>[
+        new FlatButton(
+            onPressed: (){
+              Navigator.of(context).pop();
+            },
+            child: Text('Cancelar'))
+      ],
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+//        leading:_iconButton(context),
+        actions: <Widget>[
+          _confirmButton(context),
+//          Icon(Icons.done,color: Colors.green[200],),
+        ],
         elevation: 0.0,
         backgroundColor: Colors.red[400],
         title: Text(
           '$_nomeEstado',
           style: TextStyle(color: Colors.white),
         ),
+
       ),
-      body: Column(
+      floatingActionButton: FloatingActionButton(
+          onPressed: (){
+            Navigator.of(context).pop(_cidadesSelecionadas);
+          },
+          foregroundColor: Colors.red,
+          elevation: 8.0,
+          backgroundColor: Colors.teal,
+          child: Icon(Icons.add,color: Colors.white,),
+      ),
+      body:Column(
         children: <Widget>[
           new Container(
               child: Row(
@@ -70,6 +117,7 @@ class ListagemCidadesState extends State<ListagemCidades> {
                             color: Colors.red[400],
                           ),
                           title: TextField(
+                            onChanged: _onBuscaItem,
                             controller: controller,
                             decoration: new InputDecoration(
                                 border: InputBorder.none, hintText: 'Busca'),
@@ -78,6 +126,7 @@ class ListagemCidadesState extends State<ListagemCidades> {
                               icon: Icon(Icons.cancel, color: Colors.black87),
                               onPressed: () {
                                 controller.clear();
+                                _onBuscaItem('');
                               }),
                         ),
                       ),
@@ -85,38 +134,84 @@ class ListagemCidadesState extends State<ListagemCidades> {
               )
             ],
           )),
-          new Expanded(child: new ListView.builder(
-            itemBuilder: (context, index) {
-              return new Card(
-                color: _cidadeList[index].corItem,
-                child: new ListTile(
-                  onTap: (){
-                    setState(() {
-                      if(_cidadeList[index].corItem == Colors.white){
-                      _cidadeList[index].setCor(Colors.green[200]);
-                      _cidadesSelecionadas.add(_cidadeList[index].nomeCidade);
-                      }
-                      else{
-                        _cidadeList[index].setCor(Colors.white);
-                        _cidadesSelecionadas.remove(_cidadeList[index].nomeCidade);
-                      }
-                    });
+          new Expanded(
+              child: _searchItens.length!=0 || controller.text.isNotEmpty
+              ?ListView.builder(
+                padding: const EdgeInsets.all(16.0),
+                itemCount: _searchItens.length,
+                itemBuilder: (context, index) {
+                  return new Card(
+                    color: _searchItens[index].corItem,
+                    child: new ListTile(
+                      onTap: (){
+                        setState(() {
+                          if(_searchItens[index].corItem == Colors.white){
+                            _searchItens[index].setCor(Colors.green[200]);
+                            _cidadesSelecionadas.add(_searchItens[index].nomeCidade);
+                          }
+                          else{
+                            _searchItens[index].setCor(Colors.white);
+                            _cidadesSelecionadas.remove(_searchItens[index].nomeCidade);
+                          }
+                        });
 
-                  },
-                title: Text('${_cidadeList[index].nomeCidade}'),
-                ),
-              );
-//              return ListTile(
-//                title: Text('${_cidades[index]}'),
+                      },
+                      title: Text('${_searchItens[index].nomeCidade}'),
+                    ),
+                  );
 //              );
-            },
-            itemCount: _cidades.length,
-          )
-          )
+                },
+              ):ListView.builder(
+                padding: const EdgeInsets.all(16.0),
+                itemCount: _cidadeList.length,
+                itemBuilder: (context, index) {
+                  return new Card(
+                    color: _cidadeList[index].corItem,
+                    child: new ListTile(
+                      onTap: (){
+                        setState(() {
+                          if(_cidadeList[index].corItem == Colors.white){
+                            _cidadeList[index].setCor(Colors.green[200]);
+                            _cidadesSelecionadas.add(_cidadeList[index].nomeCidade);
+                          }
+                          else{
+                            _cidadeList[index].setCor(Colors.white);
+                            _cidadesSelecionadas.remove(_cidadeList[index].nomeCidade);
+                          }
+                        });
+
+                      },
+                      title: Text('${_cidadeList[index].nomeCidade}'),
+                    ),
+                  );
+//              );
+                },
+              )
+          ),
         ],
-//
       ),
     );
+  }
+  List<CidadeItem> _searchItens = [];
+
+  _onBuscaItem(String text) async{
+    print('DBG: '+ text);
+    _searchItens.clear();
+    if(text.isEmpty){
+      setState(() {
+      });
+      return;
+    }
+    _cidadeList.forEach((cidade){
+      if(cidade.nomeCidade.toLowerCase().contains(text)){
+        print('entrou: '+ text);
+        _searchItens.add(cidade);
+      }
+      setState(() {
+
+      });
+    });
+
   }
 }
 
