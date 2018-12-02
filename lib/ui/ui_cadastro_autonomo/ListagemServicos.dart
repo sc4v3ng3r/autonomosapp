@@ -1,21 +1,25 @@
 import 'package:flutter/material.dart';
 
 class ListagemServicos extends StatefulWidget {
+  final List<String> _servicosConfirmados;
   final List<String> _servicos;
 
-  ListagemServicos({ @required List servicos})
-      :this._servicos = servicos;
+  ListagemServicos({List servicosConfirmados ,@required List servicos})
+      :this._servicosConfirmados = servicosConfirmados,
+        this._servicos = servicos;
 
   @override
   ListagemServicosState createState() =>
-      ListagemServicosState( _servicos);
+      ListagemServicosState( _servicosConfirmados,_servicos);
 }
 
 class ListagemServicosState extends State<ListagemServicos> {
+  final List<String> _servicosConfirmados;
   final List<String> _servicos;
 
-  ListagemServicosState(@required List servicos)
-      : this._servicos = servicos;
+  ListagemServicosState(List servicosConfirmados ,@required List servicos)
+      : this._servicosConfirmados = servicosConfirmados,
+        this._servicos = servicos;
   TextEditingController controller = new TextEditingController();
 
   var colorCard;
@@ -24,8 +28,16 @@ class ListagemServicosState extends State<ListagemServicos> {
 //  CidadeItem cidadeItem;
 
   void _criaListaServicos(){
+    ServicoItem c;
     for(String nomeServico in _servicos){
-      ServicoItem c = new ServicoItem(nomeServico, Colors.white);
+      if (_servicosConfirmados != null) {
+        if (_servicosConfirmados.contains(nomeServico)) {
+          c = new ServicoItem(nomeServico, Colors.green[200]);
+          _servicosSelecionados.add(nomeServico);
+        } else
+          c = new ServicoItem(nomeServico, Colors.white);
+      } else
+        c = new ServicoItem(nomeServico, Colors.white);
       _servicoList.add(c);
     }
   }

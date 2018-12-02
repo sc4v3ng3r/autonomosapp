@@ -35,7 +35,7 @@ class AtuacaoState extends State<Atuacao> {
     "Sergipe",
   ];
 
-  List<String> _cidadesBa = [
+  var _cidadesBa = <String>[
     "Amelia Rodrigues",
     "Baixios",
     "Conde",
@@ -43,7 +43,7 @@ class AtuacaoState extends State<Atuacao> {
     "Conceição de Coité",
     "Feira de Santana",
   ];
-  List<String> _servicos = [
+  var _servicos = <String>[
     "Alarmes",
     "Aulas de violão",
     "Aulas de matematica",
@@ -52,8 +52,8 @@ class AtuacaoState extends State<Atuacao> {
     "Mecanico"
   ];
 
-  List _cidadesSelcionadas = new List();
-  List _servicosSelecionados = new List();
+  List<String> _cidadesSelcionadas = new List();
+  List<String> _servicosSelecionados = new List();
 
   List _cidades;
   List<Chip> _chipList = [];
@@ -84,8 +84,10 @@ class AtuacaoState extends State<Atuacao> {
   void changeDropDownItens(String estadoSelecionado) {
     print("$estadoSelecionado selecionado");
     setState(() {
+      if(_estadoAtual!=estadoSelecionado){
+        _chipList.clear();
+      }
       _estadoAtual = estadoSelecionado;
-      _chipList.clear();
     });
   }
   void removeChip(String nomeChip) {
@@ -141,23 +143,33 @@ class AtuacaoState extends State<Atuacao> {
   }
 
   _navegarEEsperarLista(BuildContext context) async{
+    List<String> cidadesSelecionadasAux = _cidadesSelcionadas;
     _cidadesSelcionadas = await Navigator.of(context).push(
         MaterialPageRoute(builder:
             (BuildContext context) => ListagemCidades(
+          cidadesConfirmadas: cidadesSelecionadasAux,
           cidades: _cidadesBa,
           nome: _estadoAtual,)
         )
     );
-    await _trasnformaListaSelecionadoEmChip();
+    if(_cidadesSelcionadas == null){
+      _cidadesSelcionadas = cidadesSelecionadasAux;
+    }
+    _trasnformaListaSelecionadoEmChip();
   }
 
 
   _navegaEEseraListaDeServicos(BuildContext context) async{
+    List<String> servicosSelecionadoAux = _servicosSelecionados;
     _servicosSelecionados = await Navigator.of(context).push(
         MaterialPageRoute(builder: (BuildContext context) => ListagemServicos(
+          servicosConfirmados: servicosSelecionadoAux,
           servicos: _servicos,
         ))
     );
+    if(_servicosSelecionados== null){
+      _servicosSelecionados = servicosSelecionadoAux;
+    }
     _trasnformaListaServicosSelecionadoEmChip();
   }
   List<Widget> _buildForm(BuildContext context) {
