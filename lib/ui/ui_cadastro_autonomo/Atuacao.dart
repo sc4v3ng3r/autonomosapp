@@ -36,12 +36,31 @@ class AtuacaoState extends State<Atuacao> {
   ];
 
   var _cidadesBa = <String>[
+    "Alagoinhas",
     "Amelia Rodrigues",
     "Baixios",
     "Conde",
+    "Camaçarí",
     "Conceição do Jacuípe",
     "Conceição de Coité",
+    "Cruz das Almas",
     "Feira de Santana",
+    "Jacobina",
+    "Jaguaquara"
+    "Juazeiro",
+    "Jequié",
+    "Nova Fatima",
+    "Mucuri",
+    "Itabuna",
+    "ictacaré",
+    "Irecê",
+    "Itaparica",
+    "Riachão",
+    "Santo Antônio de Jesus",
+    "Santa Barbara",
+    "Serrinha",
+    "Simões Filhos",
+    "Vitória da Conquista",
   ];
   var _servicos = <String>[
     "Alarmes",
@@ -85,6 +104,7 @@ class AtuacaoState extends State<Atuacao> {
     print("$estadoSelecionado selecionado");
     setState(() {
       if(_estadoAtual!=estadoSelecionado){
+        _cidadesSelcionadas.clear();
         _chipList.clear();
       }
       _estadoAtual = estadoSelecionado;
