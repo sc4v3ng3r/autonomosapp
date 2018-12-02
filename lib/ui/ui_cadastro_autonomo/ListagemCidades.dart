@@ -102,7 +102,7 @@ class ListagemCidadesState extends State<ListagemCidades> {
 //          Icon(Icons.done,color: Colors.green[200],),
         ],
         elevation: 0.0,
-        backgroundColor: Colors.red[400],
+        backgroundColor: Colors.red[300],
         title: Text(
           '$_nomeEstado',
           style: TextStyle(color: Colors.white),
@@ -127,7 +127,7 @@ class ListagemCidadesState extends State<ListagemCidades> {
             children: <Widget>[
               Flexible(
                 child: Container(
-                    color: Colors.red[400],
+                    color: Colors.red[300],
                     child: Padding(
                       padding: EdgeInsets.all(.0),
                       child: Card(

@@ -129,7 +129,7 @@ class AtuacaoState extends State<Atuacao> {
             removeChip(nomeCidade);
           });
         },
-        backgroundColor: Colors.red[300],
+        backgroundColor: Colors.red[200],
         label: Text(
           nomeCidade,
           style: TextStyle(color: Colors.white),
@@ -150,7 +150,7 @@ class AtuacaoState extends State<Atuacao> {
             removeServicoChip(nomeServico);
           });
         },
-        backgroundColor: Colors.black54,
+        backgroundColor: Colors.blueGrey[300],
         label: Text(
           nomeServico,
           style: TextStyle(color: Colors.white),
@@ -229,7 +229,7 @@ class AtuacaoState extends State<Atuacao> {
     final buttonListCidades = Padding(
       padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, .0),
       child: RaisedButton(
-        color: Colors.red[400],
+        color: Colors.red[300],
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -258,7 +258,7 @@ class AtuacaoState extends State<Atuacao> {
       child:
           RaisedButton(
             child: Text('Serviços',style: TextStyle(color: Colors.white),),
-            color: Colors.black87,
+            color: Colors.blueGrey,
             onPressed: () {
               _navegaEEseraListaDeServicos(context);
 //              Navigator.of(context).push(
@@ -286,7 +286,7 @@ class AtuacaoState extends State<Atuacao> {
 //              MaterialPageRoute(builder: (BuildContext context) => FormaDePagamento())
 //          );
         },
-        color: Colors.red[400],
+        color: Colors.red[300],
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -337,10 +337,10 @@ class AtuacaoState extends State<Atuacao> {
         appBar: AppBar(
           title: Text(
             'Atuação',
-            style: TextStyle(color: Colors.black87),
+            style: TextStyle(color: Colors.blueGrey),
           ),
           backgroundColor: Colors.white,
-          iconTheme: IconThemeData(color: Colors.red[400]),
+          iconTheme: IconThemeData(color: Colors.red[300]),
         ),
         body: new Stack(
 //          alignment: AlignmentDirectional(16.0, 16.0),

@@ -72,7 +72,7 @@ class CadastroAutonomoPt1State extends State<CadastroAutonomoPt1> {
         appBar: AppBar(
           title: Text(
             'Informações Básicas',
-            style: TextStyle(color: Colors.black87),
+            style: TextStyle(color: Colors.blueGrey),
           ),
           backgroundColor: Colors.white,
           iconTheme: IconThemeData(color: Colors.red[400]),
@@ -89,7 +89,7 @@ class CadastroAutonomoPt1State extends State<CadastroAutonomoPt1> {
                       CircleAvatar(
                         backgroundImage:
                             AssetImage("assets/usuario_drawer.png"),
-                        backgroundColor: Colors.black87,
+                        backgroundColor: Colors.blueGrey,
                         maxRadius: 48.0,
                       ),
                     ],
@@ -167,12 +167,12 @@ class CadastroAutonomoPt1State extends State<CadastroAutonomoPt1> {
                           children: <Widget>[
                             Padding(
                               padding: EdgeInsets.symmetric(horizontal: 8.0),
-                              child: Icon(Icons.fingerprint,color: Colors.red[400],),
+                              child: Icon(Icons.fingerprint,color: Colors.blueGrey,),
                             ),
                             Expanded(
                               child: Text(
                                 'Insira seus documentos',
-                                style: TextStyle(color: Colors.red[400]),),
+                                style: TextStyle(color: Colors.red[300]),),
                             ),
                           ],
                         ),
@@ -221,7 +221,7 @@ class CadastroAutonomoPt1State extends State<CadastroAutonomoPt1> {
                             ),
                           ],
                         ),
-                        color: Colors.red[400],
+                        color: Colors.red[300],
                       )),
                 ],
               ),

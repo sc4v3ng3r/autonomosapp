@@ -67,7 +67,7 @@ class ListagemServicosState extends State<ListagemServicos> {
 //          Icon(Icons.done,color: Colors.green[200],),
         ],
         elevation: 0.0,
-        backgroundColor: Colors.black87,
+        backgroundColor: Colors.blueGrey,
         title: Text(
           'Serviços',
           style: TextStyle(color: Colors.white),
@@ -89,7 +89,7 @@ class ListagemServicosState extends State<ListagemServicos> {
                 children: <Widget>[
                   Flexible(
                     child: Container(
-                        color: Colors.black87,
+                        color: Colors.blueGrey,
                         child: Padding(
                           padding: EdgeInsets.all(.0),
                           child: Card(
