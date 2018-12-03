@@ -58,7 +58,7 @@ class FormaDePagamentoState extends State<FormaDePagamento> {
   List<Widget> _buildForm() {
 
     final formasDePagamentoLabel = Padding(
-      padding: EdgeInsets.all(16.0),
+      padding: EdgeInsets.fromLTRB(16.0, 32.0, 16.0, 16.0),
       child: Text(
         'Formas de pagamento que você trabalha:',
         style: TextStyle(color: Colors.grey),
@@ -66,7 +66,7 @@ class FormaDePagamentoState extends State<FormaDePagamento> {
     );
 
     final chipList = Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.0),
+      padding: EdgeInsets.fromLTRB(16.0, .0, 16.0, 16.0),
       child: Wrap(
         children: _transformaFormasDePagamentoEmChip.toList(),
       ),
@@ -76,12 +76,13 @@ class FormaDePagamentoState extends State<FormaDePagamento> {
       padding: EdgeInsets.all(16.0),
       child: Row(
         children: <Widget>[
-          Text('Emite Nota fiscal:'),
+          Text('Emite ',style: TextStyle(color: Colors.grey),),
+          Text('Nota fiscal: ',style: TextStyle(color:Colors.grey,fontWeight: FontWeight.bold),),
           new Radio(
               value: 0,
               groupValue:_radioValue,
               onChanged: _emiteNotaChange,
-              activeColor: Colors.red,
+              activeColor: Colors.red[300],
 
           ),
           Text('Não'),
@@ -89,14 +90,14 @@ class FormaDePagamentoState extends State<FormaDePagamento> {
             value: 1,
             groupValue: _radioValue,
             onChanged: _emiteNotaChange,
-            activeColor: Colors.red,
+            activeColor: Colors.red[300],
           ),
           Text('Sim')
         ],
       ),
     );
     final botaoFinalizar = Padding(
-      padding: EdgeInsets.fromLTRB(16.0, 128.0, 16.0, .0),
+      padding: EdgeInsets.fromLTRB(16.0, 32.0, 16.0, .0),
       child: RaisedButton(
         padding: EdgeInsets.symmetric(horizontal: 8.0),
           color: Colors.green[300],
@@ -117,7 +118,9 @@ class FormaDePagamentoState extends State<FormaDePagamento> {
         children: <Widget>[
           formasDePagamentoLabel,
           chipList,
+          Divider(),
           notaFiscalLabel,
+          Divider(),
           botaoFinalizar
         ],
       ),

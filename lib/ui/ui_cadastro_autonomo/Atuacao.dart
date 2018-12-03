@@ -277,7 +277,7 @@ class AtuacaoState extends State<Atuacao> {
     );
 
     final buttonNext = Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 32.0),
       child: RaisedButton(
         padding: EdgeInsets.fromLTRB(.0, 8.0, .0, 8.0),
         onPressed: (){
