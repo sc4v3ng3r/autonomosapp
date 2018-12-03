@@ -14,8 +14,7 @@ import 'dart:convert';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:autonos_app/firebase/FirebaseStateCityHelper.dart';
 
-//TODO olhar navegacao e rotas
-// TODO ADICIONAR OS DEMAIS CAMPOS DE REGISTRO
+// TODO metodos do firebase devem sair daqui
 
 class UserRegisterScreen extends StatefulWidget {
   @override
@@ -384,46 +383,11 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
       );
     });
 
-    final cancelButton = Material(
-      borderRadius: BorderRadius.circular(30.0),
-      child: MaterialButton(
-        splashColor: Colors.red,
-        onPressed: () {
-          print("cancelar cadastro");
-          Navigator.pop(context);
-        },
-        minWidth: 130.0,
-        color: Colors.redAccent,
-        child: Text(
-          "Cancelar",
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 16.0,
-            color: Colors.white,
-          ),
-        ),
-      ),
-    );
-
-//    final buttonsGroup = Row(
-//      mainAxisAlignment: MainAxisAlignment.center,
-//      children: <Widget>[
-//        registerButton,
-//        SizedBox(
-//          width: 5.0,
-//        ),
-//        cancelButton
-//      ],
-//    );
-
-
     final form = Form(
       autovalidate: _autoValidate,
       key: _formKey,
       child: Container(
         color: Colors.white,
-        //mainAxisAlignment: MainAxisAlignment.center,
-        //crossAxisAlignment: CrossAxisAlignment.center,
         child: ListView(
           shrinkWrap: true,
           children: <Widget>[

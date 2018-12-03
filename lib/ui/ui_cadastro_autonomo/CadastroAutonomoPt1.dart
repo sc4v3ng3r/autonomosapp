@@ -1,5 +1,6 @@
 import 'package:autonos_app/ui/ui_cadastro_autonomo/Atuacao.dart';
 import 'package:autonos_app/ui/ui_cadastro_autonomo/PerfilDetalhe.dart';
+import 'package:autonos_app/utility/InputValidator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:autonos_app/ui/widget/GenericDataListScreen.dart';
@@ -13,43 +14,58 @@ class CadastroAutonomoPt1State extends State<CadastroAutonomoPt1> {
   int _radioValue = 0;
   String _tipoPessoa = '';
 
-  var typeCpf;
-  var typeCnpj;
-  var typeTelefone;
+  var typeCpfMask;
+  var typeCnpjMask;
+  var typeTelefoneMask;
 
   FocusNode _tipoPessoaFocus;
   FocusNode _descricaoFocus;
   FocusNode _telefoneFocus;
 
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  bool _autoValidade = false;
+  bool _contextChanged = false;
+
   static const SizedBox _VERTICAL_SEPARATOR = SizedBox(height: 16.0,);
   static const SizedBox _FIELD_SEPARATOR = SizedBox(height: 10.0);
+  static const String _CPF = 'CPF';
+  static const String _CNPJ = 'CNPJ';
 
   void _handleRadioValueChange(int i) {
     _radioValue = i;
+    print("handling radio value: $i");
+
+    _contextChanged = true;
     setState(() {
+
       switch (_radioValue) {
         case 0:
-          _tipoPessoa = 'CPF';
+          _tipoPessoa = _CPF;
           break;
         case 1:
-          _tipoPessoa = 'CNPJ';
+          _tipoPessoa = _CNPJ;
           break;
       }
-    });
+    }
+
+    );
   }
 
   @override
   void initState() {
-    super.initState();
-    _handleRadioValueChange(0);
 
-    typeCpf = new MaskedTextController(mask: '000.000.000-00', text: 'CPF');
-    typeCnpj = new MaskedTextController(mask: '00.000.000/0000-00');
-    typeTelefone = new MaskedTextController(mask: '(00) 00000-0000');
+    _radioValue = 0;
+    _tipoPessoa = _CPF;
+
+    typeCpfMask = new MaskedTextController(mask: '000.000.000-00', text: _CPF);
+    typeCnpjMask = new MaskedTextController(mask: '00.000.000/0000-00', text: _CNPJ);
+    typeTelefoneMask = new MaskedTextController(mask: '(00) 00000-0000');
 
     _tipoPessoaFocus = new FocusNode();
     _descricaoFocus = new FocusNode();
     _telefoneFocus = new FocusNode();
+    super.initState();
   }
 
   @override
@@ -57,13 +73,14 @@ class CadastroAutonomoPt1State extends State<CadastroAutonomoPt1> {
     _tipoPessoaFocus.dispose();
     _descricaoFocus.dispose();
     _telefoneFocus.dispose();
+    super.dispose();
   }
 
   MaskedTextController _typeCpfOrCnpj() {
-    if (_tipoPessoa == 'CPF')
-      return typeCpf;
+    if (_tipoPessoa == _CPF)
+      return typeCpfMask;
     else
-      return typeCnpj;
+      return typeCnpjMask;
   }
 
   @override
@@ -88,8 +105,7 @@ class CadastroAutonomoPt1State extends State<CadastroAutonomoPt1> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         CircleAvatar(
-          backgroundImage:
-          AssetImage("assets/usuario_drawer.png"),
+          backgroundImage: AssetImage("assets/usuario_drawer.png"),
           backgroundColor: Colors.blueGrey,
           maxRadius: 48.0,
         ),
@@ -116,65 +132,98 @@ class CadastroAutonomoPt1State extends State<CadastroAutonomoPt1> {
       ],
     );
 
-    var cpf_cnpjField = TextFormField(
-      focusNode: _tipoPessoaFocus,
-      autofocus: false,
-      controller: _typeCpfOrCnpj(),
-      keyboardType: TextInputType.number,
-      onFieldSubmitted: (dataType) {
-        setState(() {
-          _tipoPessoaFocus.unfocus();
-          FocusScope.of(context).requestFocus(_telefoneFocus);
-        });
-      },
-      decoration: InputDecoration(
-          labelText: _tipoPessoa,
-          border: OutlineInputBorder(
-              borderSide: BorderSide(
-                color: Colors.red[400],
+    var cpfAndCnpjField = TextFormField(
+          maxLines: 1,
+          autofocus: false,
+          controller: _typeCpfOrCnpj(),
+          validator: (String data) {
+            print("validator method");
+            if (_contextChanged){
+              _contextChanged = false;
+              return null;
+            }
+
+            if (_tipoPessoa ==_CPF)
+              return InputValidator.cpfValidation(data);
+            else
+              return InputValidator.cnpjValidation(data);
+          },
+
+          keyboardType: TextInputType.number,
+          textInputAction: TextInputAction.next,
+          focusNode: _tipoPessoaFocus,
+          onFieldSubmitted: (dataTyped) {
+            _tipoPessoaFocus.unfocus();
+            FocusScope.of(context).requestFocus(_telefoneFocus);
+          },
+          style: TextStyle(
+            fontSize: 20.0,
+            color: Colors.black,
+          ),
+          decoration: InputDecoration(
+              labelText: _tipoPessoa,
+              labelStyle: TextStyle(
+                fontSize: 18.0,
               ),
-              borderRadius: BorderRadius.circular(22.0))),
+              contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(22.0)
+              )
+          ),
     );
 
-    var telefoneField = TextFormField(
-      focusNode: _telefoneFocus,
-      controller: typeTelefone,
-      autofocus: false,
-      keyboardType: TextInputType.number,
-
-      onFieldSubmitted: (dataType) {
-        setState(() {
+    //cpfAndCnpjField.
+    var phoneField = Material(
+      child: TextFormField(
+        focusNode: _telefoneFocus,
+        controller: typeTelefoneMask,
+        autofocus: false,
+        keyboardType: TextInputType.number,
+        maxLines: 1,
+        validator: InputValidator.phoneValidation,
+        textInputAction: TextInputAction.next,
+        onFieldSubmitted: (dataTyped) {
           _telefoneFocus.unfocus();
           FocusScope.of(context).requestFocus(_descricaoFocus);
-        });
-      },
-      decoration: InputDecoration(
-          labelText: 'Telefone',
-          border: OutlineInputBorder(
-              borderSide: BorderSide(
-                color: Colors.red[400],
-              ),
-              borderRadius: BorderRadius.circular(22.0))),
+        },
+        style: TextStyle(
+          fontSize: 20.0,
+          color: Colors.black,
+        ),
+        decoration: InputDecoration(
+            labelText: "Telefone",
+            labelStyle: TextStyle(
+              fontSize: 18.0,
+            ),
+            contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(22.0)
+            )
+        ),
+      ),
     );
 
     var personalForm = Form(
+      key: _formKey,
+      autovalidate: _autoValidade,
       child: Column(
         children: <Widget>[
           userPicture,
           radioGroup,
-          _VERTICAL_SEPARATOR,
-          cpf_cnpjField,
           _FIELD_SEPARATOR,
-          telefoneField,
+           cpfAndCnpjField,
+          _FIELD_SEPARATOR,
+          phoneField,
         ],
       ),
     );
 
 
-    var documentsButton = Padding(
-        padding:
-        EdgeInsets.symmetric(horizontal: .0, vertical: 16.0),
-        child: RaisedButton(
+    var documentsButton = /*Padding(
+        padding: EdgeInsets.symmetric(horizontal: .0, vertical: 16.0),
+        child: */RaisedButton(
+
+          color: Colors.white,
           padding: EdgeInsets.fromLTRB(.0, 8.0, .0, 8.0),
           onPressed: initState,
           child: Row(
@@ -191,14 +240,15 @@ class CadastroAutonomoPt1State extends State<CadastroAutonomoPt1> {
               ),
             ],
           ),
-          color: Colors.white,
-        )
+        //)
     );
 
     var tellMeAboutYouField = TextFormField(
+      autofocus: false,
       focusNode: _descricaoFocus,
       maxLength: 48,
       maxLines: 4,
+      textInputAction: TextInputAction.done,
       onFieldSubmitted: (dataTyped) {
         setState(() {
           _descricaoFocus.unfocus();
@@ -208,21 +258,22 @@ class CadastroAutonomoPt1State extends State<CadastroAutonomoPt1> {
           labelText: 'Fale um pouco de você',
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.0),
-          )),
+          )
+      ),
     );
 
-    
-    var nextStepButton = Padding(
-        padding:
-        EdgeInsets.symmetric(horizontal: .0, vertical: 16.0),
-        child: RaisedButton(
+
+    var nextStepButton = RaisedButton(
           padding: EdgeInsets.fromLTRB(.0, 8.0, .0, 8.0),
           onPressed: (){
-            Navigator.of(context).push(
-                MaterialPageRoute(builder:
-                    (BuildContext context) => Atuacao() )
-            );
+            if (_inputValidation()){
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder:
+                      (BuildContext context) => Atuacao() )
+              );
+            }
           },
+
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.max,
@@ -240,7 +291,6 @@ class CadastroAutonomoPt1State extends State<CadastroAutonomoPt1> {
             ],
           ),
           color: Colors.red[300],
-        )
     );
 
     return ListView(
@@ -248,13 +298,34 @@ class CadastroAutonomoPt1State extends State<CadastroAutonomoPt1> {
       children: <Widget>[
         _VERTICAL_SEPARATOR,
         personalForm,
+        _VERTICAL_SEPARATOR,
         documentsButton,
-        _FIELD_SEPARATOR,
+        _VERTICAL_SEPARATOR,
         tellMeAboutYouField,
-        nextStepButton
+        _FIELD_SEPARATOR,
+        nextStepButton,
       ],
       shrinkWrap: true,
-
     );
   }
+
+  bool _inputValidation(){
+
+    if (_formKey.currentState.validate() ){
+      // se o formulario foi validado!!
+      //obtem os dados inseridos em objeto conjunto!!
+      return true;
+    }
+
+    _turnOnAutoValidate(true);
+    return false;
+  }
+
+  void _turnOnAutoValidate(bool on){
+    setState( () {
+      _autoValidade = on;
+
+    });
+  }
+
 }

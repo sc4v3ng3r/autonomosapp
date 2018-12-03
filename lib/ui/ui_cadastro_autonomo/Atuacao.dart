@@ -192,6 +192,7 @@ class AtuacaoState extends State<Atuacao> {
     }
     _trasnformaListaServicosSelecionadoEmChip();
   }
+
   List<Widget> _buildForm(BuildContext context) {
     final estadoLabel = Padding(
       padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, .0),
