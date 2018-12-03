@@ -1,4 +1,5 @@
 import 'package:autonos_app/ui/ui_cadastro_autonomo/Atuacao.dart';
+import 'package:autonos_app/ui/ui_cadastro_autonomo/FormasDePagamento.dart';
 import 'package:autonos_app/ui/ui_cadastro_autonomo/PerfilDetalhe.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
