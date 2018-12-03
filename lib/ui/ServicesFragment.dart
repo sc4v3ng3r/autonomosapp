@@ -41,7 +41,7 @@ class _ServicesFragmentState extends State<ServicesFragment> {
 
           case ConnectionState.done:
             List<Service> list = snapshot.data;
-            return ListView.builder(itemBuilder: (BuildContext context, int index) {
+            return ListView.builder( itemBuilder: (BuildContext context, int index) {
               Text serviceText = Text('${list[index].name}', style: TextStyle(fontSize: 20.0));
               ListTile tile = ListTile(
                 title: serviceText,

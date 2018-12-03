@@ -2,6 +2,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:autonos_app/model/Estado.dart';
 import 'package:autonos_app/model/Cidade.dart';
 import 'package:autonos_app/firebase/FirebaseReferences.dart';
+import 'package:flutter/foundation.dart';
 
 class FirebaseStateCityHelper {
 
@@ -38,7 +39,8 @@ class FirebaseStateCityHelper {
 
     cityRef.child(uf).once().then(
             (dataSnapshot) {
-              Map<String, dynamic> citiesMap = Map.from( dataSnapshot.value);
+
+              /*Map<String, dynamic> citiesMap = Map.from( dataSnapshot.value);
 
               citiesMap.forEach( (key, value) {
                   Cidade city = Cidade.fromJson(Map.from(value));
@@ -47,13 +49,28 @@ class FirebaseStateCityHelper {
                   cityList.add(city);
               });
 
-              return cityList;
+              return cityList;*/
+              return compute(_parseData, dataSnapshot);
             } ).catchError(
 
             (onError) {
               print(onError);
               throw onError;
             });
+
+    return cityList;
+  }
+
+  static List<Cidade> _parseData (DataSnapshot dataSnapshot) {
+    Map<String, dynamic> citiesMap = Map.from( dataSnapshot.value);
+    List<Cidade> cityList = new List();
+
+    citiesMap.forEach( (key, value) {
+      Cidade city = Cidade.fromJson(Map.from(value));
+      city.id = key; // id da cidade eh o nó raiz da cidade
+      city.uf = dataSnapshot.key.toString();// a sigla do estado eh  Nó raiz do snapshot
+      cityList.add(city);
+    } );
 
     return cityList;
   }

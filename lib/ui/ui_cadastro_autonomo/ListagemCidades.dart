@@ -108,6 +108,7 @@ class ListagemCidadesState extends State<ListagemCidades> {
           style: TextStyle(color: Colors.white),
         ),
       ),
+
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context).pop(_cidadesSelecionadas);
@@ -120,6 +121,7 @@ class ListagemCidadesState extends State<ListagemCidades> {
           color: Colors.white,
         ),
       ),
+
       body: Column(
         children: <Widget>[
           new Container(
@@ -152,10 +154,12 @@ class ListagemCidadesState extends State<ListagemCidades> {
                               }),
                         ),
                       ),
-                    )),
-              )
+                    ),
+                ),
+              ),
             ],
-          )),
+          )
+          ),
           new Expanded(
               child: _searchItens.length != 0 || controller.text.isNotEmpty
                   ? ListView.builder(

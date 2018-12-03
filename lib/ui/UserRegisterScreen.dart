@@ -427,7 +427,6 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
         child: ListView(
           shrinkWrap: true,
           children: <Widget>[
-
             userphoto,
             _verticalSeparator,
             nameField,
