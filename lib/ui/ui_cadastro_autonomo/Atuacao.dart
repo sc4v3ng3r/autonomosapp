@@ -278,16 +278,16 @@ class AtuacaoState extends State<Atuacao> {
     );
 
     final buttonNext = Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 32.0),
       child: RaisedButton(
         padding: EdgeInsets.fromLTRB(.0, 8.0, .0, 8.0),
         onPressed: (){
 
-//          Navigator.of(context).push(
-//              MaterialPageRoute(builder: (BuildContext context) => FormaDePagamento())
-//          );
+          Navigator.of(context).push(
+              MaterialPageRoute(builder: (BuildContext context) => FormaDePagamento())
+          );
         },
-        color: Colors.red[300],
+        color: Colors.green[300],
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -306,10 +306,9 @@ class AtuacaoState extends State<Atuacao> {
         ),
       ),
     );
-//     test(){
-////      print('AQUIIII: ${_cidadesSelcionadas.length}');
-//    }
-//	final proximaTela
+
+
+
     final form = Form(
         child: ListView(
           children: <Widget>[
