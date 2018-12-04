@@ -124,8 +124,7 @@ class ListagemCidadesState extends State<ListagemCidades> {
 
       body: Column(
         children: <Widget>[
-          new Container(
-              child: Row(
+          new Row(
             children: <Widget>[
               Flexible(
                 child: Container(
@@ -158,7 +157,6 @@ class ListagemCidadesState extends State<ListagemCidades> {
                 ),
               ),
             ],
-          )
           ),
           new Expanded(
               child: _searchItens.length != 0 || controller.text.isNotEmpty

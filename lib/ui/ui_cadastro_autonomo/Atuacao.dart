@@ -73,8 +73,7 @@ class AtuacaoState extends State<Atuacao> {
 
   List<String> _cidadesSelcionadas = new List();
   List<String> _servicosSelecionados = new List();
-
-  List _cidades;
+  
   List<Chip> _chipList = [];
   List<Chip> _chipListServicos = [];
 

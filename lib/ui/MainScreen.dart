@@ -38,6 +38,7 @@ class _MainScreenState extends State<MainScreen> {
           title: Text("Main Screen"),
           automaticallyImplyLeading: false,
           backgroundColor: Colors.red[300],
+          elevation: .0,
         ),
 
         drawer: _drawerMenu(context),
