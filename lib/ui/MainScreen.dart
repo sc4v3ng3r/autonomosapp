@@ -1,6 +1,7 @@
 import 'package:autonos_app/ui/ui_cadastro_autonomo/CadastroAutonomoPt1.dart';
 import 'package:autonos_app/ui/widget/RatingBar.dart';
 import 'package:autonos_app/model/User.dart';
+import 'package:autonos_app/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'widget/UserAccountsHackedDrawerHeader.dart';
@@ -130,6 +131,11 @@ void _NavegaCadastroAutonomo(BuildContext context){
     _auth.signOut().then((_){
       //Navigator.pop(context);
       Navigator.pushReplacementNamed(context, '/loginScreen');
+
+      //TODO WORK AROUND USER REPOSITORY
+      UserRepository r = new UserRepository();
+      r.currentUser = null;
+
     }).catchError( (onError) {
       //Navigator.pop(context);
       Navigator.pushReplacementNamed(context, '/loginScreen');

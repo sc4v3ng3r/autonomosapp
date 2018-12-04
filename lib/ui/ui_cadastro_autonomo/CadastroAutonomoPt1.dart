@@ -1,10 +1,14 @@
 import 'package:autonos_app/ui/ui_cadastro_autonomo/Atuacao.dart';
 import 'package:autonos_app/ui/ui_cadastro_autonomo/FormasDePagamento.dart';
 import 'package:autonos_app/ui/ui_cadastro_autonomo/PerfilDetalhe.dart';
+import 'package:autonos_app/ui/widget/NextButton.dart';
 import 'package:autonos_app/utility/InputValidator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:autonos_app/ui/widget/GenericDataListScreen.dart';
+import 'package:autonos_app/utility/UserRepository.dart';
+import 'package:autonos_app/model/User.dart';
+import 'package:autonos_app/model/ProfissionalData.dart';
 
 class CadastroAutonomoPt1 extends StatefulWidget {
   @override
@@ -49,7 +53,6 @@ class CadastroAutonomoPt1State extends State<CadastroAutonomoPt1> {
           break;
       }
     }
-
     );
   }
 
@@ -173,7 +176,6 @@ class CadastroAutonomoPt1State extends State<CadastroAutonomoPt1> {
           ),
     );
 
-    //cpfAndCnpjField.
     var phoneField = Material(
       child: TextFormField(
         focusNode: _telefoneFocus,
@@ -220,10 +222,7 @@ class CadastroAutonomoPt1State extends State<CadastroAutonomoPt1> {
     );
 
 
-    var documentsButton = /*Padding(
-        padding: EdgeInsets.symmetric(horizontal: .0, vertical: 16.0),
-        child: */RaisedButton(
-
+    var documentsButton = RaisedButton(
           color: Colors.white,
           padding: EdgeInsets.fromLTRB(.0, 8.0, .0, 8.0),
           onPressed: initState,
@@ -264,34 +263,18 @@ class CadastroAutonomoPt1State extends State<CadastroAutonomoPt1> {
     );
 
 
-    var nextStepButton = RaisedButton(
-          padding: EdgeInsets.fromLTRB(.0, 8.0, .0, 8.0),
-          onPressed: (){
-            if (_inputValidation()){
-              Navigator.of(context).push(
-                  MaterialPageRoute(builder:
-                      (BuildContext context) => Atuacao() )
-              );
-            }
-          },
-
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.max,
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8.0),
-                child: Text(
-                  '[1/3]   Próximo Passo',
-                  style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8.0),
-                child: Icon(Icons.directions_run,color: Colors.white,),
-              ),
-            ],
-          ),
-          color: Colors.red[300],
+    var nextButton = NextButton(
+      buttonColor: Colors.green[300],
+      text: '[1/3]   Próximo Passo',
+      textColor: Colors.white,
+      callback: (){
+        if(_inputValidation()){
+          Navigator.of(context).push(
+              MaterialPageRoute(builder:
+                  (BuildContext context) => Atuacao() )
+          );
+        }
+      },
     );
 
     return ListView(
@@ -304,7 +287,7 @@ class CadastroAutonomoPt1State extends State<CadastroAutonomoPt1> {
         _VERTICAL_SEPARATOR,
         tellMeAboutYouField,
         _FIELD_SEPARATOR,
-        nextStepButton,
+        nextButton,
       ],
       shrinkWrap: true,
     );

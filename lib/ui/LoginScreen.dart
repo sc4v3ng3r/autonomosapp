@@ -1,3 +1,4 @@
+import 'package:autonos_app/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
 import 'UserRegisterScreen.dart';
 import 'package:autonos_app/utility/InputValidator.dart';
@@ -419,6 +420,9 @@ class _LoginScreenState extends State<LoginScreen> {
         .then((firebaseUser) {
       FirebaseUserHelper.readUserAccountData(firebaseUser.uid).then((user) {
         print("LIDO ${user.name}  ${user.email}");
+        // TODO REPO INIT WORKAROUND
+        UserRepository rep = new UserRepository();
+        rep.currentUser = user;
 
         _goToLoggedScreen(context, user);
       }).catchError((onError) {
@@ -443,7 +447,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void cadastrar(BuildContext context) {
-    // POR ENQUANTO VOU DEIXAR ESSA NAVEGACAO MUITO LOUCA MESMO!
+
     if (Navigator.of(context).canPop()) {
       Navigator.of(context).pop();
     } else

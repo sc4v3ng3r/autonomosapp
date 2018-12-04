@@ -1,3 +1,4 @@
+import 'package:autonos_app/ui/widget/NextButton.dart';
 import 'package:flutter/material.dart';
 
 class FormaDePagamento extends StatefulWidget {
@@ -6,6 +7,7 @@ class FormaDePagamento extends StatefulWidget {
 }
 
 class FormaDePagamentoState extends State<FormaDePagamento> {
+
   List<String> _formasDePagamento = <String>[
     "Cartão de Crédito",
     "Cartão de Débito",
@@ -20,6 +22,7 @@ class FormaDePagamentoState extends State<FormaDePagamento> {
   Color _colorChip = Colors.blueGrey[200];
   List<String> _formasDePagamentoChipSelecionado = <String>[];
 
+  //TODO WHAAATTTTTT ?????????????????????
   Iterable<Widget> get _transformaFormasDePagamentoEmChip sync* {
     for (String nomePagamento in _formasDePagamento) {
       yield Padding(
@@ -47,12 +50,12 @@ class FormaDePagamentoState extends State<FormaDePagamento> {
 
   void _emiteNotaChange(int i){
     _radioValue = i;
-    setState(() {
-      if(i == 0){
+    //setState(() {
+      if(i == 0)
         _emiteNota = false;
-      }else
+      else
         _emiteNota = true;
-    });
+    //});
   }
 
   List<Widget> _buildForm() {
@@ -96,23 +99,16 @@ class FormaDePagamentoState extends State<FormaDePagamento> {
         ],
       ),
     );
-    final botaoFinalizar = Padding(
-      padding: EdgeInsets.fromLTRB(16.0, 32.0, 16.0, .0),
-      child: RaisedButton(
-        padding: EdgeInsets.symmetric(horizontal: 8.0),
-          color: Colors.green[300],
-          child: Row(
-            mainAxisAlignment:  MainAxisAlignment.center,
-            children: <Widget>[
-              Text('[3/3] Finalizar Cadastro ',style: TextStyle(color: Colors.white),),
-              Icon(Icons.directions_run,color: Colors.white,),
-            ],
-          ),
-          onPressed: (){
 
-          }
-      ),
+    final nextButton = NextButton(
+      text: '[3/3] Finalizar Cadastro',
+      textColor: Colors.white,
+      buttonColor: Colors.green[300],
+      callback: () {
+        print("Finalizar cadastro!");
+      },
     );
+
     final form = Form(
       child: ListView(
         children: <Widget>[
@@ -121,7 +117,7 @@ class FormaDePagamentoState extends State<FormaDePagamento> {
           Divider(),
           notaFiscalLabel,
           Divider(),
-          botaoFinalizar
+          nextButton
         ],
       ),
     );

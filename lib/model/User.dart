@@ -1,13 +1,15 @@
 //import 'package:meta/meta.dart';
 
 import 'package:firebase_database/firebase_database.dart';
-
+import 'package:autonos_app/model/ProfissionalData.dart';
 class User {
+
   String name;
   String email;
   String picturePath;
   String uid;
   double rating;
+  ProfissionalData professionalData;
 
   static final String EMAIL = "email";
   static final String NAME = "name";
@@ -21,6 +23,7 @@ class User {
     email = email,
     rating = rating;
 
+  //TODO aqui tera leitura dos dados profissionais
   User.fromJson(Map<String, dynamic> json) :
       name = json[NAME],
       email = json[EMAIL],
@@ -28,6 +31,7 @@ class User {
       rating = json[RATING],
       picturePath = json[PICTURE_URL];
 
+  // aqui nao tera serializacao de ProfissionalData
   Map<String, dynamic> toJson() => {
      NAME : name,
     EMAIL : email,
@@ -36,6 +40,7 @@ class User {
     PICTURE_URL : picturePath,
   };
 
+  //TODO aqui tera leitura dos dados profissionais
   User.fromDataSnapshot(DataSnapshot snapshot ) :
     name = snapshot.value[NAME],
     email = snapshot.value[EMAIL],

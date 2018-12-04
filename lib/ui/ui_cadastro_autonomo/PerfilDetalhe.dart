@@ -12,7 +12,6 @@ class PerfilDetalheState extends State<PerfilDetalhe> {
   );
 
   List _estados = [
-    "Acre",
     "Amapá",
     "Amazonas",
     "Bahia",
@@ -35,6 +34,7 @@ class PerfilDetalheState extends State<PerfilDetalhe> {
     "Santa Catarina",
     "Sergipe",
   ];
+
   List _cidadesBa = [
     "Amelia Rodrigues",
     "Baixios",
@@ -95,10 +95,13 @@ class PerfilDetalheState extends State<PerfilDetalhe> {
   }
   
   List<DropdownMenuItem<String>> getDropDownMenuItem() {
-    List<DropdownMenuItem<String>> itens = new List();
+    List<DropdownMenuItem<String>> itens =  new List();
 
     for (String estado in _estados) {
-      itens.add(new DropdownMenuItem(value: estado, child: new Text(estado)));
+      itens.add(new DropdownMenuItem(
+          value: estado,
+          child: new Text(estado))
+      );
     }
 
     return itens;
@@ -115,6 +118,7 @@ class PerfilDetalheState extends State<PerfilDetalhe> {
   }
 
   void changeDropDownItens(String estadoSelecionado) {
+
     print("$estadoSelecionado selecionado");
     setState(() {
       if (estadoSelecionado == "Bahia") {
@@ -219,6 +223,7 @@ class PerfilDetalheState extends State<PerfilDetalhe> {
               value: _estadoAtual,
               items: getDropDownMenuItem(),
               onChanged: changeDropDownItens),
+
         ],
       ),
 //    ,new DropdownButton(

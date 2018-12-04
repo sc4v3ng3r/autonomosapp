@@ -10,7 +10,7 @@ class Estado {
 
   Estado(this.nome);
 
-  Estado.fromJson(Map<String, dynamic> json) :
+  Estado.fromJson( Map<String, dynamic> json ) :
     //id = json[ID],
     //sigla = json[SIGLA],
     nome = json[NOME];
