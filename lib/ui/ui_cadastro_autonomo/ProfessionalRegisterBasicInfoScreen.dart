@@ -5,7 +5,6 @@ import 'package:autonos_app/ui/widget/NextButton.dart';
 import 'package:autonos_app/utility/InputValidator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
-import 'package:autonos_app/ui/widget/GenericDataListScreen.dart';
 import 'package:autonos_app/utility/UserRepository.dart';
 import 'package:autonos_app/model/User.dart';
 import 'package:autonos_app/model/ProfessionalData.dart';

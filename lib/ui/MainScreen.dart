@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'widget/UserAccountsHackedDrawerHeader.dart';
 import 'widget/RatingBar.dart';
-import 'package:autonos_app/ui/ServicesFragment.dart';
+import 'package:autonos_app/ui/ClientChooseServicesFragment.dart';
 
 class MainScreen extends StatefulWidget {
   final User user;
@@ -160,7 +160,7 @@ void _NavegaCadastroAutonomo(BuildContext context){
 
       case 1:
         return Center(
-          child: ServicesFragment(),
+          child: ClientChooseServicesFragment(),
         );
 
       case 2:
