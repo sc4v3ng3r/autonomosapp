@@ -1,5 +1,5 @@
 
-class ProfissionalData {
+class ProfessionalData {
 
   String documento;
   String tipoPessoa;
@@ -25,6 +25,8 @@ class ProfissionalData {
   static final String _LATITUDE = "latitude";
   static final String _LONGITUDE = "longitude";
 
+  ProfessionalData();
+
   Map<String, dynamic> toJson() => {
     UID: uid, // tavez nao fique aqui
     _DOCUMENTO : documento,
@@ -39,7 +41,7 @@ class ProfissionalData {
     _LONGITUDE : longitude,
   };
 
-  ProfissionalData.fromJson(Map<String, dynamic> json) :
+  ProfessionalData.fromJson(Map<String, dynamic> json) :
       uid = json[UID],
       documento = json[_DOCUMENTO],
       tipoPessoa = json[_TIPO_PESSOA],
@@ -50,4 +52,11 @@ class ProfissionalData {
       emissorNotaFiscal = json[_NOTA_FISCAL],
       servicosAtuantes = List.from( json[_SERVICOS] ),
       cidadesAtuantes = List.from( json[_CIDADES] );
+
+
+  @override
+  String toString() {
+    // TODO: implement toString
+    return "$UID: $uid\n$_TIPO_PESSOA: $tipoPessoa\n$_DOCUMENTO $documento\n$_TELEFONE: $telefone";
+  }
 }

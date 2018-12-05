@@ -1,17 +1,28 @@
-import 'package:autonos_app/ui/ui_cadastro_autonomo/FormasDePagamento.dart';
+import 'package:autonos_app/model/Estado.dart';
+import 'package:autonos_app/ui/ui_cadastro_autonomo/ProfesionalRegisterPaymentScreen.dart';
 import 'package:autonos_app/ui/ui_cadastro_autonomo/ListagemCidades.dart';
 import 'package:autonos_app/ui/ui_cadastro_autonomo/ListagemServicos.dart';
 import 'package:flutter/material.dart';
 import 'package:autonos_app/ui/widget/NextButton.dart';
+import 'package:autonos_app/model/ProfessionalData.dart';
+import 'package:autonos_app/firebase/FirebaseStateCityHelper.dart';
 
-class Atuacao extends StatefulWidget {
+class ProfessionalRegisterLocationAndServiceScreen extends StatefulWidget {
+  ProfessionalData _profissionalData;
+
+  ProfessionalRegisterLocationAndServiceScreen({@required ProfessionalData data})
+      : _profissionalData = data;
+
   @override
-  AtuacaoState createState() => AtuacaoState();
+  ProfessionalRegisterLocationAndServiceScreenState createState() =>
+      ProfessionalRegisterLocationAndServiceScreenState();
 }
 
-class AtuacaoState extends State<Atuacao> {
+class ProfessionalRegisterLocationAndServiceScreenState extends
+  State<ProfessionalRegisterLocationAndServiceScreen> {
+
   static const String KEY_NONE = "NONE";
-  static const Map<String, String> STATES = const {
+  static const Map<String, String> DROPDOWN_MENU_OPTIONS = const {
     KEY_NONE: "Selecione seu Estado",
     "AC": "Acre",
     "AL": "Alagoas",
@@ -42,33 +53,6 @@ class AtuacaoState extends State<Atuacao> {
     "TO": "Tocantins"
   };
 
-  var _cidadesBa = <String>[
-    "Alagoinhas",
-    "Amelia Rodrigues",
-    "Baixios",
-    "Conde",
-    "Camaçarí",
-    "Conceição do Jacuípe",
-    "Conceição de Coité",
-    "Cruz das Almas",
-    "Feira de Santana",
-    "Jacobina",
-    "Jaguaquara"
-        "Juazeiro",
-    "Jequié",
-    "Nova Fatima",
-    "Mucuri",
-    "Itabuna",
-    "ictacaré",
-    "Irecê",
-    "Itaparica",
-    "Riachão",
-    "Santo Antônio de Jesus",
-    "Santa Barbara",
-    "Serrinha",
-    "Simões Filhos",
-    "Vitória da Conquista",
-  ];
   var _servicos = <String>[
     "Alarmes",
     "Aulas de violão",
@@ -80,48 +64,46 @@ class AtuacaoState extends State<Atuacao> {
 
   List<String> _cidadesSelcionadas = new List();
   List<String> _servicosSelecionados = new List();
-  
   List<Chip> _chipList = [];
   List<Chip> _chipListServicos = [];
 
-  List<DropdownMenuItem<String>> _dropDownMenuItem;
 
-  String _estadoAtual;
+  RaisedButton _buttonListCidades;
+  List<DropdownMenuItem<String>> _dropDownMenuItems;
+  String _dropdownCurrentOption;
   final _VERTICAL_SEPARATOR = SizedBox(height: 8.0,);
 
   @override
   void initState() {
-    _dropDownMenuItem = getDropDownMenuItem();
-    _estadoAtual = _dropDownMenuItem[0].value;
-
+    _initDropdownMenu();
+    print( widget._profissionalData );
     super.initState();
   }
 
-  List<DropdownMenuItem<String>> getDropDownMenuItem() {
+  void _initDropdownMenu() {
+    _dropDownMenuItems = getDropDownMenuItems();
+    _dropdownCurrentOption = _dropDownMenuItems[0].value;
+    print("dropdown current option $_dropdownCurrentOption");
+  }
+
+  List<DropdownMenuItem<String>> getDropDownMenuItems() {
     List<DropdownMenuItem<String>> itens = new List();
 
-    for (String estado in STATES.values) {
+    for (String estado in DROPDOWN_MENU_OPTIONS.values) {
       itens.add(new DropdownMenuItem(value: estado, child: new Text(estado)));
     }
-
     return itens;
   }
 
-  void changeDropDownItens(String estadoSelecionado) {
-    if (_estadoAtual != estadoSelecionado) {
-      var key = STATES.keys.firstWhere((k) => STATES[k] == estadoSelecionado,
-          orElse: () => null);
-      print("$key $estadoSelecionado selecionado");
-      if (key != KEY_NONE) {
-        // TODO CARREGAR  lista de cidades do DB
-        setState(() {
-          _cidadesSelcionadas.clear();
-          _chipList.clear();
-          _estadoAtual = estadoSelecionado;
-        });
-      } else {
-        //desabilita o botão de cidades
-      }
+  void onDropdownItemSelected(String dataSelected) {
+    if (_dropdownCurrentOption != dataSelected) {
+      setState(() {
+        _cidadesSelcionadas.clear();
+        _chipList.clear();
+        _dropdownCurrentOption = dataSelected;
+      });
+      // TODO DEVEMOS HABILITAR E/OU DESABILITAR O BOTÃO DE SELECIONAR CIDADE DE ACORDO
+      // COM A OPÇÃO SELECIONADA
     }
   }
 
@@ -179,26 +161,37 @@ class AtuacaoState extends State<Atuacao> {
       }
   }
 
-  // TODO O que eh isso aqui!?????!!!!!
-  _navegarEEsperarLista(BuildContext context) async {
+  _gotoCityListScreen(BuildContext context) async {
+
+    var key = DROPDOWN_MENU_OPTIONS.keys.firstWhere((k) => DROPDOWN_MENU_OPTIONS[k] ==
+        _dropdownCurrentOption, orElse: () => null);
+    print("$key $_dropdownCurrentOption selecionado");
+
+    Estado estadoSelecionado = Estado(_dropdownCurrentOption);
+    estadoSelecionado.sigla = key;
+
     List<String> cidadesSelecionadasAux = _cidadesSelcionadas;
-    _cidadesSelcionadas = await Navigator.of(context).push(MaterialPageRoute(
-        builder: (BuildContext context) => ListagemCidades(
-              cidadesConfirmadas: cidadesSelecionadasAux,
-              cidades: _cidadesBa,
-              nome: _estadoAtual,
-            )));
+    _cidadesSelcionadas = await Navigator.of(context).push(
+        MaterialPageRoute( builder: (BuildContext context) =>
+            ListagemCidades( cidadesConfirmadas: cidadesSelecionadasAux,
+              estado: estadoSelecionado,
+            )
+        )
+    );
+
     if (_cidadesSelcionadas == null) {
       _cidadesSelcionadas = cidadesSelecionadasAux;
     }
+
     _trasnformaListaSelecionadoEmChip();
   }
 
   // TODO WHAAATTT?????!!!
   _navegaEEseraListaDeServicos(BuildContext context) async {
     List<String> servicosSelecionadoAux = _servicosSelecionados;
-    _servicosSelecionados = await Navigator.of(context).push(MaterialPageRoute(
-        builder: (BuildContext context) => ListagemServicos(
+
+    _servicosSelecionados = await Navigator.of(context).push(
+        MaterialPageRoute(builder: (BuildContext context) => ListagemServicos(
               servicosConfirmados: servicosSelecionadoAux,
               servicos: _servicos,
             )));
@@ -213,10 +206,12 @@ class AtuacaoState extends State<Atuacao> {
     final estadoLabel =Text('Selecione seu estado:', style: TextStyle(color: Colors.grey),);
 
     final estados = Row( children: <Widget>[
+
       new DropdownButton(
-          value: _estadoAtual,
-          items: getDropDownMenuItem(),
-          onChanged: changeDropDownItens),
+          hint: Text("Selecione um estado"),
+          value: _dropdownCurrentOption,
+          items:  getDropDownMenuItems(),
+          onChanged: onDropdownItemSelected),
         ],
       );
 
@@ -225,25 +220,24 @@ class AtuacaoState extends State<Atuacao> {
       maxLines: 1,
       textAlign: TextAlign.center,);
 
-    final buttonListCidades = RaisedButton(
-            color: Colors.red[300],
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  'Cidades ',
-                  style: TextStyle(color: Colors.white),
-                ),
-                Text(
-                  '($_estadoAtual)',
-                  style: TextStyle(color: Colors.black54),
-                ),
-              ],
+    _buttonListCidades = RaisedButton(
+        color: Colors.red[300],
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              'Cidades ',
+              style: TextStyle(color: Colors.white),
             ),
-            onPressed: () {
-              _navegarEEsperarLista(context);
-            }
-            );
+            Text(
+              '($_dropdownCurrentOption)',
+              style: TextStyle(color: Colors.black54),
+            ),
+          ],
+        ),
+        onPressed: () { _gotoCityListScreen(context); }
+    );
+
 
     final listChip = Padding(
         padding: EdgeInsets.symmetric(horizontal: 8.0),
@@ -270,13 +264,13 @@ class AtuacaoState extends State<Atuacao> {
       padding: EdgeInsets.symmetric(horizontal: 8.0),
       child:  Wrap( children: _chipListServicos,));
 
-    final nxButton = NextButton(
+    final nextButton = NextButton(
       buttonColor: Colors.green[300],
       text: '[2/3] Próximo Passo',
       textColor: Colors.white,
       callback: () {
         Navigator.of(context).push(MaterialPageRoute(
-            builder: (BuildContext context) => FormaDePagamento()));
+            builder: (BuildContext context) => ProfesionalRegisterPaymentScreen()));
       },
     );
 
@@ -288,7 +282,7 @@ class AtuacaoState extends State<Atuacao> {
         Divider(),
         _VERTICAL_SEPARATOR,
         cidadeLabel,
-        buttonListCidades,
+        _buttonListCidades,
         listChip,
         Divider(),
         _VERTICAL_SEPARATOR,
@@ -297,7 +291,7 @@ class AtuacaoState extends State<Atuacao> {
         listChipServico,
         Divider(),
         _VERTICAL_SEPARATOR,
-        nxButton,
+        nextButton,
       ],
     );
   }
@@ -319,5 +313,9 @@ class AtuacaoState extends State<Atuacao> {
     );
   }
 
+  void _changeDropdownCurrentOption(String option){
+    setState(() {
+      _dropdownCurrentOption = option;
+    });
+  }
 }
-// ,

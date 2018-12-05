@@ -1,11 +1,11 @@
-class Cidade {
+class Cidade implements Comparable<Cidade> {
 
   static final String ID = "id";
   static final String NOME = "nome";
   static final String UF = "uf";
 
   var id;
-  var nome;
+  String nome;
   var uf;
 
   Cidade(this.id, this.nome, this.uf);
@@ -26,4 +26,12 @@ class Cidade {
     // TODO: implement toString
     return "$NOME: $nome $UF: $uf $ID: $id";
   }
+
+
+  @override
+  int compareTo(Cidade other) {
+    return this.nome.compareTo( other.nome);
+  }
+
+
 }

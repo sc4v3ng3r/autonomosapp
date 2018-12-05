@@ -1,4 +1,4 @@
-import 'package:autonos_app/ui/ui_cadastro_autonomo/CadastroAutonomoPt1.dart';
+import 'package:autonos_app/ui/ui_cadastro_autonomo/ProfessionalRegisterBasicInfoScreen.dart';
 import 'package:autonos_app/ui/widget/RatingBar.dart';
 import 'package:autonos_app/model/User.dart';
 import 'package:autonos_app/utility/UserRepository.dart';
@@ -51,7 +51,7 @@ void _NavegaCadastroAutonomo(BuildContext context){
 
   Navigator.push(
       context,
-      MaterialPageRoute(builder: (BuildContext context) => CadastroAutonomoPt1()));
+      MaterialPageRoute(builder: (BuildContext context) => ProfessionalRegisterBasicInfoScreen()));
 
 }
   @override

@@ -1,37 +1,39 @@
+import 'package:autonos_app/model/Estado.dart';
 import 'package:flutter/material.dart';
+import 'package:autonos_app/bloc/CitiesBloc.dart';
 
 class ListagemCidades extends StatefulWidget {
   final List<String> _cidadesConfirmadas;
-  final String _nomeEstado;
-  final List<String> _cidades;
+  final Estado _estado;
 
   ListagemCidades(
-      {List cidadesConfirmadas, String nome, @required List cidades})
+      {List cidadesConfirmadas, @required Estado estado} )
       : this._cidadesConfirmadas = cidadesConfirmadas,
-        this._nomeEstado = nome,
-        this._cidades = cidades;
+        this._estado = estado;
 
   @override
   ListagemCidadesState createState() =>
-      ListagemCidadesState(_cidadesConfirmadas, _nomeEstado, _cidades);
+      ListagemCidadesState();
 }
 
 class ListagemCidadesState extends State<ListagemCidades> {
-  final List<String> _cidadesConfirmadas;
-  final String _nomeEstado;
-  final List<String> _cidades;
 
-  ListagemCidadesState(
-      List cidadesConfirmadas, String nomeEstado, @required List cidades)
-      : this._cidadesConfirmadas = cidadesConfirmadas,
-        this._nomeEstado = nomeEstado,
-        this._cidades = cidades;
+  ListagemCidadesState();
+
   TextEditingController controller = new TextEditingController();
 
   var colorCard;
   List<CidadeItem> _cidadeList = new List();
   List<String> _cidadesSelecionadas = new List();
+  final CitiesBloc _bloc = CitiesBloc();
 
+  @override
+  void dispose() {
+    _bloc.dispose();
+    // TODO: implement dispose
+    super.dispose();
+  }
+  /*
   void _criaListaCidade() {
     for (String nomeCidade in _cidades) {
       CidadeItem c;
@@ -45,11 +47,11 @@ class ListagemCidadesState extends State<ListagemCidades> {
         c = new CidadeItem(nomeCidade, Colors.white);
       _cidadeList.add(c);
     }
-  }
+  }*/
 
   @override
   void initState() {
-    _criaListaCidade();
+    _bloc.getCity( widget._estado.sigla);
     super.initState();
   }
 
@@ -57,7 +59,6 @@ class ListagemCidadesState extends State<ListagemCidades> {
     return IconButton(
       onPressed: () {
         SnackBar(content: Text('abc'));
-//        print(_cidadesSelecionadas.length);
         Navigator.of(context).pop(_cidadesSelecionadas);
       },
       icon: Icon(
@@ -94,33 +95,35 @@ class ListagemCidadesState extends State<ListagemCidades> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-//        leading:_iconButton(context),
-        actions: <Widget>[
-          _confirmButton(context),
-//          Icon(Icons.done,color: Colors.green[200],),
-        ],
-        elevation: 0.0,
-        backgroundColor: Colors.red[300],
-        title: Text(
-          '$_nomeEstado',
-          style: TextStyle(color: Colors.white),
-        ),
+    var floatActionButton = FloatingActionButton(
+      onPressed: () {
+        Navigator.of(context).pop( _cidadesSelecionadas );
+      },
+      foregroundColor: Colors.red,
+      elevation: 8.0,
+      backgroundColor: Colors.teal,
+      child: Icon(
+        Icons.add,
+        color: Colors.white,
       ),
+    );
 
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context).pop(_cidadesSelecionadas);
-        },
-        foregroundColor: Colors.red,
-        elevation: 8.0,
-        backgroundColor: Colors.teal,
-        child: Icon(
-          Icons.add,
-          color: Colors.white,
-        ),
+    var appBar = AppBar(
+      actions: <Widget>[
+        _confirmButton(context),
+//          Icon(Icons.done,color: Colors.green[200],),
+      ],
+      elevation: 0.0,
+      backgroundColor: Colors.red[300],
+      title: Text(
+        '${this.widget._estado.nome}',
+        style: TextStyle(color: Colors.white),
       ),
+    );
+
+     var scaffold = Scaffold(
+      appBar: appBar,
+      floatingActionButton: floatActionButton,
 
       body: Column(
         children: <Widget>[
@@ -158,6 +161,7 @@ class ListagemCidadesState extends State<ListagemCidades> {
               ),
             ],
           ),
+
           new Expanded(
               child: _searchItens.length != 0 || controller.text.isNotEmpty
                   ? ListView.builder(
@@ -217,6 +221,10 @@ class ListagemCidadesState extends State<ListagemCidades> {
         ],
       ),
     );
+
+
+
+     return scaffold;
   }
 
   List<CidadeItem> _searchItens = [];

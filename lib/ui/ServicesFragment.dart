@@ -1,6 +1,7 @@
 import 'package:autonos_app/model/Service.dart';
 import 'package:flutter/material.dart';
 import 'package:autonos_app/bloc/ServiceBloc.dart';
+import 'package:autonos_app/ui/widget/SearchBarWidget.dart';
 
 class ServicesFragment extends StatefulWidget {
   @override
@@ -10,6 +11,7 @@ class ServicesFragment extends StatefulWidget {
 class _ServicesFragmentState extends State<ServicesFragment> {
   ServiceBlock bloc = new ServiceBlock();
   List<Service> _servicos;
+
   @override
   void initState() {
     super.initState();
@@ -34,6 +36,7 @@ class _ServicesFragmentState extends State<ServicesFragment> {
     });
   }
 
+  /*
   Row _buscaFieldBar() {
     return Row(
       children: <Widget>[
@@ -59,7 +62,10 @@ class _ServicesFragmentState extends State<ServicesFragment> {
                     ),
                   ),
                   trailing: new IconButton(
-                      icon: Icon(Icons.cancel,color: Colors.blueGrey,),
+                      icon: Icon(
+                        Icons.cancel,
+                        color: Colors.blueGrey,
+                      ),
                       onPressed: () {
                         controller.clear();
                         _onBuscaItem('');
@@ -71,14 +77,16 @@ class _ServicesFragmentState extends State<ServicesFragment> {
         )
       ],
     );
-  }
-  Expanded _listaServicos(AsyncSnapshot<List<Service>> snapshot){
+  }*/
+
+  Expanded _listaServicos(AsyncSnapshot<List<Service>> snapshot) {
     _servicos = snapshot.data;
     return Expanded(
       child: ListView.builder(
         itemBuilder: (BuildContext context, int index) {
           Text serviceText = Text('${_servicos[index].name}',
-              style: TextStyle(fontSize: 20.0));
+              style: TextStyle(fontSize: 20.0)
+          );
           ListTile tile = ListTile(
             title: serviceText,
             leading: Icon(Icons.room_service),
@@ -88,8 +96,7 @@ class _ServicesFragmentState extends State<ServicesFragment> {
 
               Scaffold.of(context).showSnackBar(
                 SnackBar(
-                  content:
-                  Text("${serviceText.data} index: $index"),
+                  content: Text("${serviceText.data} index: $index"),
                   backgroundColor: Colors.redAccent,
                 ),
               );
@@ -101,12 +108,12 @@ class _ServicesFragmentState extends State<ServicesFragment> {
           );
         },
         itemCount: snapshot.data.length,
-        padding: EdgeInsets.all(16.0),
       ),
     );
   }
-  Expanded _listaServicosProcurados(AsyncSnapshot<List<Service>> snapshot){
-      _servicos = snapshot.data;
+
+  Expanded _listaServicosProcurados(AsyncSnapshot<List<Service>> snapshot) {
+    _servicos = snapshot.data;
 
     return Expanded(
       child: ListView.builder(
@@ -122,8 +129,7 @@ class _ServicesFragmentState extends State<ServicesFragment> {
 
               Scaffold.of(context).showSnackBar(
                 SnackBar(
-                  content:
-                  Text("${serviceText.data} index: $index"),
+                  content: Text("${serviceText.data} index: $index"),
                   backgroundColor: Colors.redAccent,
                 ),
               );
@@ -140,7 +146,7 @@ class _ServicesFragmentState extends State<ServicesFragment> {
     );
   }
 
-  Column _carregando(){
+  Column _carregando() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -152,10 +158,10 @@ class _ServicesFragmentState extends State<ServicesFragment> {
     );
   }
 
-  Expanded _servicosAtuais(AsyncSnapshot<List<Service>> snapshot){
-    if(_searchItens.length !=0 || controller.text.isNotEmpty){
+  Expanded _servicosAtuais(AsyncSnapshot<List<Service>> snapshot) {
+    if (_searchItens.length != 0 || controller.text.isNotEmpty) {
       return _listaServicosProcurados(snapshot);
-    }else
+    } else
       return _listaServicos(snapshot);
   }
 
@@ -164,9 +170,6 @@ class _ServicesFragmentState extends State<ServicesFragment> {
     return StreamBuilder<List<Service>>(
       stream: bloc.allServices,
       builder: (BuildContext context, AsyncSnapshot<List<Service>> snapshot) {
-//        setState(() {
-//          _servicos = snapshot.data;
-//        });
         switch (snapshot.connectionState) {
           case ConnectionState.none:
           case ConnectionState.waiting:
@@ -178,7 +181,12 @@ class _ServicesFragmentState extends State<ServicesFragment> {
           case ConnectionState.done:
             return Column(
               children: <Widget>[
-                _buscaFieldBar(),
+                SearchBarWidget(
+                  onTyped: (String data) {
+                    _onBuscaItem(data);
+                  },
+                  color: Colors.red[300],
+                ),
                 _servicosAtuais(snapshot),
               ],
             );
@@ -187,6 +195,7 @@ class _ServicesFragmentState extends State<ServicesFragment> {
       },
     );
   }
+
 
   @override
   void dispose() {

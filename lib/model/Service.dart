@@ -1,5 +1,5 @@
 
-class Service {
+class Service implements Comparable<Service> {
 
   String id;
   String name;
@@ -23,4 +23,11 @@ class Service {
   String toString() {
     return "ID: $id\nNAME: $name";
   }
+  
+  @override
+  int compareTo(Service other) {
+    return this.name.compareTo( other.name);
+  }
+
+
 }

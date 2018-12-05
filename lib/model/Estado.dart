@@ -1,12 +1,12 @@
 
-class Estado {
+class Estado implements Comparable<Estado>{
 
   static final String NOME = "nome";
   static final String SIGLA = "sigla";
 
   //var id;
-  var sigla;
-  var nome;
+  String sigla;
+  String nome;
 
   Estado(this.nome);
 
@@ -14,7 +14,6 @@ class Estado {
     //id = json[ID],
     //sigla = json[SIGLA],
     nome = json[NOME];
-
 
   Map<String, dynamic> toJson () => {
     NOME: nome,
@@ -26,4 +25,11 @@ class Estado {
     // TODO: implement toString
     return "$NOME:$nome $SIGLA: $sigla";
   }
+
+  @override
+  int compareTo(Estado other) {
+    return this.nome.compareTo( other.nome );
+  }
+
+
 }

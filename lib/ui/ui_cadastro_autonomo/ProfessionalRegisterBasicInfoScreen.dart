@@ -1,5 +1,5 @@
-import 'package:autonos_app/ui/ui_cadastro_autonomo/Atuacao.dart';
-import 'package:autonos_app/ui/ui_cadastro_autonomo/FormasDePagamento.dart';
+import 'package:autonos_app/ui/ui_cadastro_autonomo/ProfessionalRegisterLocationAndServiceScreen.dart';
+import 'package:autonos_app/ui/ui_cadastro_autonomo/ProfesionalRegisterPaymentScreen.dart';
 import 'package:autonos_app/ui/ui_cadastro_autonomo/PerfilDetalhe.dart';
 import 'package:autonos_app/ui/widget/NextButton.dart';
 import 'package:autonos_app/utility/InputValidator.dart';
@@ -8,20 +8,23 @@ import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:autonos_app/ui/widget/GenericDataListScreen.dart';
 import 'package:autonos_app/utility/UserRepository.dart';
 import 'package:autonos_app/model/User.dart';
-import 'package:autonos_app/model/ProfissionalData.dart';
+import 'package:autonos_app/model/ProfessionalData.dart';
 
-class CadastroAutonomoPt1 extends StatefulWidget {
+class ProfessionalRegisterBasicInfoScreen extends StatefulWidget {
   @override
-  CadastroAutonomoPt1State createState() => CadastroAutonomoPt1State();
+  ProfessionalRegisterBasicInfoScreenState createState() => ProfessionalRegisterBasicInfoScreenState();
 }
 
-class CadastroAutonomoPt1State extends State<CadastroAutonomoPt1> {
+class ProfessionalRegisterBasicInfoScreenState extends State<ProfessionalRegisterBasicInfoScreen> {
   int _radioValue = 0;
   String _tipoPessoa = '';
-
+  //TODO SOMENTE ENQUANTO NÃO TEMOS BLOC
+  ProfessionalData _profissionalData;
   var typeCpfMask;
   var typeCnpjMask;
-  var typeTelefoneMask;
+
+  MaskedTextController _typeTelefoneMask;
+  TextEditingController _tellMeAboutYouController;
 
   FocusNode _tipoPessoaFocus;
   FocusNode _descricaoFocus;
@@ -43,7 +46,6 @@ class CadastroAutonomoPt1State extends State<CadastroAutonomoPt1> {
 
     _contextChanged = true;
     setState(() {
-
       switch (_radioValue) {
         case 0:
           _tipoPessoa = _CPF;
@@ -58,13 +60,13 @@ class CadastroAutonomoPt1State extends State<CadastroAutonomoPt1> {
 
   @override
   void initState() {
-
     _radioValue = 0;
     _tipoPessoa = _CPF;
 
     typeCpfMask = new MaskedTextController(mask: '000.000.000-00', text: _CPF);
     typeCnpjMask = new MaskedTextController(mask: '00.000.000/0000-00', text: _CNPJ);
-    typeTelefoneMask = new MaskedTextController(mask: '(00) 00000-0000');
+    _typeTelefoneMask = new MaskedTextController(mask: '(00) 00000-0000');
+    _tellMeAboutYouController = TextEditingController();
 
     _tipoPessoaFocus = new FocusNode();
     _descricaoFocus = new FocusNode();
@@ -77,6 +79,7 @@ class CadastroAutonomoPt1State extends State<CadastroAutonomoPt1> {
     _tipoPessoaFocus.dispose();
     _descricaoFocus.dispose();
     _telefoneFocus.dispose();
+    _tellMeAboutYouController.dispose();
     super.dispose();
   }
 
@@ -179,7 +182,7 @@ class CadastroAutonomoPt1State extends State<CadastroAutonomoPt1> {
     var phoneField = Material(
       child: TextFormField(
         focusNode: _telefoneFocus,
-        controller: typeTelefoneMask,
+        controller: _typeTelefoneMask,
         autofocus: false,
         keyboardType: TextInputType.number,
         maxLines: 1,
@@ -246,6 +249,7 @@ class CadastroAutonomoPt1State extends State<CadastroAutonomoPt1> {
     var tellMeAboutYouField = TextFormField(
       autofocus: false,
       focusNode: _descricaoFocus,
+      controller: _tellMeAboutYouController,
       maxLength: 48,
       maxLines: 4,
       textInputAction: TextInputAction.done,
@@ -262,16 +266,26 @@ class CadastroAutonomoPt1State extends State<CadastroAutonomoPt1> {
       ),
     );
 
-
     var nextButton = NextButton(
       buttonColor: Colors.green[300],
       text: '[1/3]   Próximo Passo',
       textColor: Colors.white,
       callback: (){
+
         if(_inputValidation()){
+          _profissionalData = ProfessionalData();
+          _profissionalData.tipoPessoa = _tipoPessoa;
+          _profissionalData.documento = _typeCpfOrCnpj().text;
+          _profissionalData.telefone = _typeTelefoneMask.text;
+          _profissionalData.descricao = _tellMeAboutYouController.text;
+
+          //TODO falta as referencias aos documentos "fotos"
+
+
           Navigator.of(context).push(
               MaterialPageRoute(builder:
-                  (BuildContext context) => Atuacao() )
+                  (BuildContext context) =>
+                      ProfessionalRegisterLocationAndServiceScreen( data: _profissionalData,) )
           );
         }
       },
@@ -308,7 +322,6 @@ class CadastroAutonomoPt1State extends State<CadastroAutonomoPt1> {
   void _turnOnAutoValidate(bool on){
     setState( () {
       _autoValidade = on;
-
     });
   }
 

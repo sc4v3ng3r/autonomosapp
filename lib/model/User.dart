@@ -1,7 +1,7 @@
 //import 'package:meta/meta.dart';
 
 import 'package:firebase_database/firebase_database.dart';
-import 'package:autonos_app/model/ProfissionalData.dart';
+import 'package:autonos_app/model/ProfessionalData.dart';
 class User {
 
   String name;
@@ -9,7 +9,7 @@ class User {
   String picturePath;
   String uid;
   double rating;
-  ProfissionalData professionalData;
+  ProfessionalData professionalData;
 
   static final String EMAIL = "email";
   static final String NAME = "name";

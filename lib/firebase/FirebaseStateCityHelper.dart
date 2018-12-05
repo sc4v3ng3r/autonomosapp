@@ -32,11 +32,10 @@ class FirebaseStateCityHelper {
     return stateList;
   }
 
-  static Future< List<Cidade> > getCityListByState(String uf) async{
+  static Future< List<Cidade> > getCityListByState(String uf) async {
     List<Cidade> cityList = new List();
     DatabaseReference cityRef = FirebaseDatabase.instance
         .reference().child( FirebaseReferences.REFERENCE_ESTADOS_CIDADES );
-
     cityRef.child(uf).once().then(
             (dataSnapshot) {
 
@@ -73,5 +72,19 @@ class FirebaseStateCityHelper {
     } );
 
     return cityList;
+  }
+
+  static List<Cidade> getCitiesFrom(String state, Function onData(List<Cidade> list)){
+    List<Cidade> list = new List();
+
+    DatabaseReference cityRef = FirebaseDatabase.instance
+        .reference().child( FirebaseReferences.REFERENCE_ESTADOS_CIDADES );
+
+    cityRef.child(state).onValue.listen( (event) {
+      print(event.snapshot.value);
+
+    });
+
+    return list;
   }
 }

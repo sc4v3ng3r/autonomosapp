@@ -1,12 +1,12 @@
 import 'package:autonos_app/ui/widget/NextButton.dart';
 import 'package:flutter/material.dart';
 
-class FormaDePagamento extends StatefulWidget {
+class ProfesionalRegisterPaymentScreen extends StatefulWidget {
   @override
-  FormaDePagamentoState createState() => FormaDePagamentoState();
+  ProfesionalRegisterPaymentScreenState createState() => ProfesionalRegisterPaymentScreenState();
 }
 
-class FormaDePagamentoState extends State<FormaDePagamento> {
+class ProfesionalRegisterPaymentScreenState extends State<ProfesionalRegisterPaymentScreen> {
 
   List<String> _formasDePagamento = <String>[
     "Cartão de Crédito",
