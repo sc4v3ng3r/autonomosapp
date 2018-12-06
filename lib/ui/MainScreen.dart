@@ -1,4 +1,5 @@
 import 'package:autonos_app/ui/ui_cadastro_autonomo/ProfessionalRegisterBasicInfoScreen.dart';
+import 'package:autonos_app/ui/widget/CityListWidget.dart';
 import 'package:autonos_app/ui/widget/RatingBar.dart';
 import 'package:autonos_app/model/User.dart';
 import 'package:autonos_app/utility/UserRepository.dart';
@@ -153,11 +154,11 @@ void _NavegaCadastroAutonomo(BuildContext context){
   Widget _getFragment(int position){
     switch (position){
       case 0:
-
-        return Center(
+        return CityListWidget();
+        /*return Center(
           child: Text("Perfil Screen"),
         );
-
+      */
       case 1:
         return Center(
           child: ClientChooseServicesFragment(),

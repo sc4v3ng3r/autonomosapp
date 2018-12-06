@@ -13,7 +13,6 @@ class ServiceBlock {
 
   dispose(){
     _servicesFetcher.close();
-
   }
 
   _addDataToSink(List<Service> data){

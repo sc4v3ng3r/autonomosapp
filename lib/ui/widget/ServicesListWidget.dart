@@ -5,7 +5,9 @@ import 'package:autonos_app/model/Service.dart';
 
 class ServicesListWidget extends AbstractListFragmentWidget<Service>{
 
-  ServicesListWidget( List<Service> list) : super(list);
+  ServicesListWidget( List<Service> list) :
+        super(
+          itemList: list,);
 
   @override
   Widget onCreateWidget(data, int index) {

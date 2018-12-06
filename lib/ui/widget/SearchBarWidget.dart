@@ -19,7 +19,7 @@ class SearchBarWidget extends StatefulWidget {
 
 }
 
-class SearchBarWidgetState extends State<SearchBarWidget>{
+class SearchBarWidgetState extends State<SearchBarWidget> {
 
   TextEditingController _textFieldController;
   FocusNode _textFieldFocusNode;

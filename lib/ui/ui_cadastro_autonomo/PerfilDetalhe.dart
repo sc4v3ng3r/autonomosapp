@@ -1,4 +1,4 @@
-import 'package:autonos_app/ui/ui_cadastro_autonomo/ProfesionalRegisterPaymentScreen.dart';
+import 'package:autonos_app/ui/ui_cadastro_autonomo/ProfessionalRegisterPaymentScreen.dart';
 import 'package:flutter/material.dart';
 
 class PerfilDetalhe extends StatefulWidget {
@@ -280,7 +280,7 @@ class PerfilDetalheState extends State<PerfilDetalhe> {
         padding: EdgeInsets.fromLTRB(.0, 8.0, .0, 8.0),
         onPressed: (){
           Navigator.of(context).push(
-           MaterialPageRoute(builder: (BuildContext context) => ProfesionalRegisterPaymentScreen())
+           MaterialPageRoute(builder: (BuildContext context) => ProfessionalRegisterPaymentScreen())
           );
         },
       color: Colors.red[400],

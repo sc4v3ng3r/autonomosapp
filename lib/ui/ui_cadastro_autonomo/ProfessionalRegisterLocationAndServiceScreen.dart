@@ -1,5 +1,5 @@
 import 'package:autonos_app/model/Estado.dart';
-import 'package:autonos_app/ui/ui_cadastro_autonomo/ProfesionalRegisterPaymentScreen.dart';
+import 'package:autonos_app/ui/ui_cadastro_autonomo/ProfessionalRegisterPaymentScreen.dart';
 import 'package:autonos_app/ui/ui_cadastro_autonomo/ListagemCidades.dart';
 import 'package:autonos_app/ui/ui_cadastro_autonomo/ListagemServicos.dart';
 import 'package:flutter/material.dart';
@@ -270,7 +270,7 @@ class ProfessionalRegisterLocationAndServiceScreenState extends
       textColor: Colors.white,
       callback: () {
         Navigator.of(context).push(MaterialPageRoute(
-            builder: (BuildContext context) => ProfesionalRegisterPaymentScreen()));
+            builder: (BuildContext context) => ProfessionalRegisterPaymentScreen()));
       },
     );
 

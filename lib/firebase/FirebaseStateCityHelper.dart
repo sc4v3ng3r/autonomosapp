@@ -74,14 +74,17 @@ class FirebaseStateCityHelper {
     return cityList;
   }
 
-  static List<Cidade> getCitiesFrom(String state, Function onData(List<Cidade> list)){
+  static List<Cidade> getCitiesFrom(String state, void _onData(List<Cidade> list)){
     List<Cidade> list = new List();
 
     DatabaseReference cityRef = FirebaseDatabase.instance
         .reference().child( FirebaseReferences.REFERENCE_ESTADOS_CIDADES );
 
     cityRef.child(state).onValue.listen( (event) {
-      print(event.snapshot.value);
+      //print(event.snapshot.value);
+      print("Calling onDAta");
+      _onData( _parseData( event.snapshot ) );
+
 
     });
 

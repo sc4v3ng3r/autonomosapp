@@ -1,13 +1,13 @@
 import 'package:autonos_app/model/Estado.dart';
 import 'package:flutter/material.dart';
-import 'package:autonos_app/bloc/CitiesBloc.dart';
+import 'package:autonos_app/bloc/CityListWidgetBloc.dart';
 
 class ListagemCidades extends StatefulWidget {
   final List<String> _cidadesConfirmadas;
   final Estado _estado;
 
   ListagemCidades(
-      {List cidadesConfirmadas, @required Estado estado} )
+      { List cidadesConfirmadas, @required Estado estado } )
       : this._cidadesConfirmadas = cidadesConfirmadas,
         this._estado = estado;
 
@@ -25,7 +25,7 @@ class ListagemCidadesState extends State<ListagemCidades> {
   var colorCard;
   List<CidadeItem> _cidadeList = new List();
   List<String> _cidadesSelecionadas = new List();
-  final CitiesBloc _bloc = CitiesBloc();
+  final CityListWidgetBloc _bloc = CityListWidgetBloc();
 
   @override
   void dispose() {
@@ -161,6 +161,7 @@ class ListagemCidadesState extends State<ListagemCidades> {
               ),
             ],
           ),
+          // toda essa linha eh subistituida pela SearchBarWidget
 
           new Expanded(
               child: _searchItens.length != 0 || controller.text.isNotEmpty

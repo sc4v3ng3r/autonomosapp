@@ -2,7 +2,7 @@ import 'package:autonos_app/model/Service.dart';
 import 'package:flutter/material.dart';
 import 'package:autonos_app/bloc/ServiceBloc.dart';
 import 'package:autonos_app/ui/widget/SearchBarWidget.dart';
-import 'package:autonos_app/ui/widget/ServicesListFragment.dart';
+import 'package:autonos_app/ui/widget/ServicesListWidget.dart';
 
 
 //TODO tratar os toques de seleção no serviço
