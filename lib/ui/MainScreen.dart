@@ -1,3 +1,4 @@
+import 'package:autonos_app/bloc/CityListWidgetBloc.dart';
 import 'package:autonos_app/ui/ui_cadastro_autonomo/ProfessionalRegisterBasicInfoScreen.dart';
 import 'package:autonos_app/ui/widget/CityListWidget.dart';
 import 'package:autonos_app/ui/widget/RatingBar.dart';
@@ -22,12 +23,23 @@ class _MainScreenState extends State<MainScreen> {
   GlobalKey<ScaffoldState> _scaffoldKey;
   final bool sair = false;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  //var _perfilFragment;
   int _drawerCurrentPosition = 1;
+
+
+  @override
+  void initState() {
+    print("Main initState");
+    super.initState();
+    _scaffoldKey = new GlobalKey<ScaffoldState>();
+    //_perfilFragment =  CityListWidgetBlocProvider(
+    //    child: CityListWidget() );
+  }
 
   @override
   Widget build(BuildContext context) {
-    print("LoginScreen::BuildMethod");
-
+    print("MainScreen build()");
     return Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
@@ -47,6 +59,7 @@ class _MainScreenState extends State<MainScreen> {
         body: _getFragment( _drawerCurrentPosition ),
     );
   }
+
 void _NavegaCadastroAutonomo(BuildContext context){
   Navigator.pop(context);
 
@@ -55,11 +68,6 @@ void _NavegaCadastroAutonomo(BuildContext context){
       MaterialPageRoute(builder: (BuildContext context) => ProfessionalRegisterBasicInfoScreen()));
 
 }
-  @override
-  void initState() {
-    super.initState();
-    _scaffoldKey = new GlobalKey<ScaffoldState>();
-  }
 
   Drawer _drawerMenu(BuildContext context) {
     return new Drawer(
@@ -131,8 +139,9 @@ void _NavegaCadastroAutonomo(BuildContext context){
 
   _logout(){
     _auth.signOut().then((_){
-      //Navigator.pop(context);
-      Navigator.pushReplacementNamed(context, '/loginScreen');
+      Navigator.pop(context);
+
+      Navigator.pushNamed(context, '/loginScreen');
 
       //TODO WORK AROUND USER REPOSITORY
       UserRepository r = new UserRepository();
@@ -148,17 +157,17 @@ void _NavegaCadastroAutonomo(BuildContext context){
     if (position != _drawerCurrentPosition)
       setState(() => _drawerCurrentPosition = position);
 
+    // coloca o drawer p/ traz??
     Navigator.of(context).pop();
   }
 
   Widget _getFragment(int position){
     switch (position){
       case 0:
-        return CityListWidget();
-        /*return Center(
-          child: Text("Perfil Screen"),
+        return Center(
+            child: Text("Perfil")
         );
-      */
+
       case 1:
         return Center(
           child: ClientChooseServicesFragment(),
@@ -185,72 +194,5 @@ void _NavegaCadastroAutonomo(BuildContext context){
         );
     }
   }
+
 }// end of class
-
-
-/*
-   ANTIGO DRAWER HEADER
-*  var drawerHeader = Container(
-      height: 128.0,
-      color: Colors.cyanAccent[400],
-
-      child: DrawerHeader(
-        decoration: BoxDecoration(
-          color: Colors.cyanAccent[400],
-        ),
-
-        margin: EdgeInsets.all(.0),
-        padding: EdgeInsets.all(.0),
-
-        child: Row(
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.fromLTRB(2.0, .0, 12.0, .0),
-              child: CircleAvatar(
-                backgroundColor: Colors.indigo[400],
-                backgroundImage: AssetImage('assets/usuario_drawer.png'),
-                maxRadius: 48.0,
-              ),
-            ),
-
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(.0, 8.0, 0.0, 0.0),
-                    child: Text( widget.user.name,
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(.0, 8.0, 0.0, 0.0),
-                    child: Text( widget.user.email,
-                        style: TextStyle(color: Colors.white)),
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(.0, 8.0, .0, .0),
-                        child: RatingBar(
-                          rating: widget.user.rating,
-//                          onRatingChanged: (rating) => setState(() => this.rating = rating),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(4.0, 8.0, .0, .0),
-                        child: Text( "${widget.user.rating}",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-*
-* */

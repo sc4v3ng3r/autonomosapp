@@ -5,10 +5,10 @@ import 'package:autonos_app/ui/UserRegisterScreen.dart';
 import 'package:autonos_app/firebase/FirebaseUserHelper.dart';
 import 'package:autonos_app/model/User.dart';
 import 'package:autonos_app/ui/MainScreen.dart';
+
 void main() {
   runApp( new MyApp() );
 }
-
 
 class MyApp extends StatefulWidget{
   @override
@@ -40,10 +40,11 @@ class ScreenSelector extends StatefulWidget {
 
 class _ScreenSelectorState extends State<ScreenSelector>{
 
-  static final _container = Container(color: Colors.transparent,);
+  var _container;
   //Future<FirebaseUser> _future;
   @override
   void initState() {
+    _container = Container(color: Colors.transparent,);
     super.initState();
     //_future = ;
   }
@@ -65,13 +66,17 @@ class _ScreenSelectorState extends State<ScreenSelector>{
           case ConnectionState.done:
             print("STATE ${snapshot.connectionState.toString()}");
             print("Snapshot:  ${snapshot.data} ");
+
             if (snapshot.data != null){
               return MainScreen(user: snapshot.data);
             }
 
+            else {
+              print("Main class NO USER DATA!");
+              return LoginScreen();
+            }
+
         }
-        //TODO fazer uma tela especial, pois provavelmente nao ha conexao!!
-        return LoginScreen();
       },
     );
   }

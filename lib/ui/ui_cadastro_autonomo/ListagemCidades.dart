@@ -1,4 +1,6 @@
+import 'package:autonos_app/model/Cidade.dart';
 import 'package:autonos_app/model/Estado.dart';
+import 'package:autonos_app/ui/widget/CityListWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:autonos_app/bloc/CityListWidgetBloc.dart';
 
@@ -18,42 +20,29 @@ class ListagemCidades extends StatefulWidget {
 
 class ListagemCidadesState extends State<ListagemCidades> {
 
-  ListagemCidadesState();
-
-  TextEditingController controller = new TextEditingController();
-
-  var colorCard;
-  List<CidadeItem> _cidadeList = new List();
-  List<String> _cidadesSelecionadas = new List();
-  final CityListWidgetBloc _bloc = CityListWidgetBloc();
-
-  @override
-  void dispose() {
-    _bloc.dispose();
-    // TODO: implement dispose
-    super.dispose();
-  }
-  /*
-  void _criaListaCidade() {
-    for (String nomeCidade in _cidades) {
-      CidadeItem c;
-      if (_cidadesConfirmadas != null) {
-        if (_cidadesConfirmadas.contains(nomeCidade)) {
-          c = new CidadeItem(nomeCidade, Colors.green[200]);
-          _cidadesSelecionadas.add(nomeCidade);
-        } else
-          c = new CidadeItem(nomeCidade, Colors.white);
-      } else
-        c = new CidadeItem(nomeCidade, Colors.white);
-      _cidadeList.add(c);
-    }
-  }*/
+  List<String> _cidadesSelecionadas;
+  var _body;
+  // vou precisar para escutar a streaming de Cidades selecinados
+  //final CityListWidgetBloc _bloc = CityListWidgetBloc();
 
   @override
   void initState() {
-    _bloc.getCity( widget._estado.sigla);
+    _cidadesSelecionadas = new List();
+    _body = CityListWidgetBlocProvider(
+        child: CityListWidget(
+          sigla: widget._estado.sigla,
+          itemsSelected: (List<Cidade> items) {
+            _cidadesSelecionadas.clear();
+
+            items.forEach( (cidade) {
+              _cidadesSelecionadas.add( cidade.nome );
+            });
+          },
+        )
+    );
     super.initState();
   }
+
 
   Widget _confirmButton(BuildContext context) {
     return IconButton(
@@ -63,7 +52,7 @@ class ListagemCidadesState extends State<ListagemCidades> {
       },
       icon: Icon(
         Icons.add,
-        color: Colors.green[200],
+        color: Colors.white,
       ),
     );
   }
@@ -79,6 +68,37 @@ class ListagemCidadesState extends State<ListagemCidades> {
         });
   }
 
+  @override
+  Widget build(BuildContext context) {
+
+    return Scaffold(
+      appBar: AppBar(
+        actions: <Widget>[ _confirmButton(context), ],
+        elevation: 0.0,
+        backgroundColor: Colors.red[300],
+        title: Text( '${this.widget._estado.nome}',  style: TextStyle(color: Colors.white),
+        ),
+      ),
+
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).pop( _cidadesSelecionadas );
+        },
+
+        foregroundColor: Colors.red,
+        elevation: 8.0,
+        backgroundColor: Colors.red[300],
+        child: Icon(
+          Icons.check,
+          color: Colors.white,
+        ),
+      ),
+
+      body: _body,
+    );
+  }
+
+  // está funcionando???
   AlertDialog _voltarDialog(BuildContext context) {
     return AlertDialog(
       title: Text('Alerta!'),
@@ -92,182 +112,5 @@ class ListagemCidadesState extends State<ListagemCidades> {
       ],
     );
   }
-
-  @override
-  Widget build(BuildContext context) {
-    var floatActionButton = FloatingActionButton(
-      onPressed: () {
-        Navigator.of(context).pop( _cidadesSelecionadas );
-      },
-      foregroundColor: Colors.red,
-      elevation: 8.0,
-      backgroundColor: Colors.teal,
-      child: Icon(
-        Icons.add,
-        color: Colors.white,
-      ),
-    );
-
-    var appBar = AppBar(
-      actions: <Widget>[
-        _confirmButton(context),
-//          Icon(Icons.done,color: Colors.green[200],),
-      ],
-      elevation: 0.0,
-      backgroundColor: Colors.red[300],
-      title: Text(
-        '${this.widget._estado.nome}',
-        style: TextStyle(color: Colors.white),
-      ),
-    );
-
-     var scaffold = Scaffold(
-      appBar: appBar,
-      floatingActionButton: floatActionButton,
-
-      body: Column(
-        children: <Widget>[
-          new Row(
-            children: <Widget>[
-              Flexible(
-                child: Container(
-                    color: Colors.red[300],
-                    child: Padding(
-                      padding: EdgeInsets.all(.0),
-                      child: Card(
-                        elevation: 8.0,
-                        color: Colors.white,
-                        child: ListTile(
-                          leading: Icon(
-                            Icons.search,
-                            color: Colors.red[400],
-                          ),
-                          title: TextField(
-                            onChanged: _onBuscaItem,
-                            controller: controller,
-                            decoration: new InputDecoration(
-                                border: InputBorder.none, hintText: 'Busca'),
-                          ),
-                          trailing: new IconButton(
-                              icon: Icon(Icons.cancel, color: Colors.black87),
-                              onPressed: () {
-                                controller.clear();
-                                _onBuscaItem('');
-                              }),
-                        ),
-                      ),
-                    ),
-                ),
-              ),
-            ],
-          ),
-          // toda essa linha eh subistituida pela SearchBarWidget
-
-          new Expanded(
-              child: _searchItens.length != 0 || controller.text.isNotEmpty
-                  ? ListView.builder(
-                      padding: const EdgeInsets.all(16.0),
-                      itemCount: _searchItens.length,
-                      itemBuilder: (context, index) {
-                        return new Card(
-                          color: _searchItens[index].corItem,
-                          child: new ListTile(
-                            onTap: () {
-                              setState(() {
-                                if (_searchItens[index].corItem ==
-                                    Colors.white) {
-                                  _searchItens[index].setCor(Colors.green[200]);
-                                  _cidadesSelecionadas
-                                      .add(_searchItens[index].nomeCidade);
-                                } else {
-                                  _searchItens[index].setCor(Colors.white);
-                                  _cidadesSelecionadas
-                                      .remove(_searchItens[index].nomeCidade);
-                                }
-                              });
-                            },
-                            title: Text('${_searchItens[index].nomeCidade}'),
-                          ),
-                        );
-//              );
-                      },
-                    )
-                  : ListView.builder(
-                      padding: const EdgeInsets.all(16.0),
-                      itemCount: _cidadeList.length,
-                      itemBuilder: (context, index) {
-                        return new Card(
-                          color: _cidadeList[index].corItem,
-                          child: new ListTile(
-                            onTap: () {
-                              setState(() {
-                                if (_cidadeList[index].corItem ==
-                                    Colors.white) {
-                                  _cidadeList[index].setCor(Colors.green[200]);
-                                  _cidadesSelecionadas
-                                      .add(_cidadeList[index].nomeCidade);
-                                } else {
-                                  _cidadeList[index].setCor(Colors.white);
-                                  _cidadesSelecionadas
-                                      .remove(_cidadeList[index].nomeCidade);
-                                }
-                              });
-                            },
-                            title: Text('${_cidadeList[index].nomeCidade}'),
-                          ),
-                        );
-//              );
-                      },
-                    )),
-        ],
-      ),
-    );
-
-
-
-     return scaffold;
-  }
-
-  List<CidadeItem> _searchItens = [];
-
-  _onBuscaItem(String text) async {
-    print('DBG: ' + text);
-    _searchItens.clear();
-    if (text.isEmpty) {
-      setState(() {});
-      return;
-    }
-    _cidadeList.forEach((cidade) {
-      if (cidade.nomeCidade.toLowerCase().contains(text)) {
-        print('entrou: ' + text);
-        _searchItens.add(cidade);
-      }
-      setState(() {});
-    });
-  }
 }
 
-class CidadeItem {
-  String nomeCidade;
-  var corItem;
-
-  CidadeItem(String nome, var corItem)
-      : this.nomeCidade = nome,
-        this.corItem = corItem;
-
-  void setCor(var c) {
-    corItem = c;
-  }
-
-  void changeTextColor() {
-//    if(corItem ==  )
-  }
-
-  Text getText() {
-    return Text(nomeCidade);
-  }
-
-  Color getColor() {
-    return corItem;
-  }
-}

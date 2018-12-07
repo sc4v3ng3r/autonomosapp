@@ -59,6 +59,7 @@ class ListagemServicosState extends State<ListagemServicos> {
   }
   @override
   Widget build(BuildContext context) {
+    print("Listagem Servicos build()");
     return Scaffold(
       appBar: AppBar(
 //        leading:_iconButton(context),
@@ -119,11 +120,13 @@ class ListagemServicosState extends State<ListagemServicos> {
                   )
                 ],
               )),
+
           new Expanded(child: _searchItens.length !=0 || controller.text.isNotEmpty
           ? new ListView.builder(
             itemCount: _searchItens.length,
             padding: EdgeInsets.all(16.0),
             itemBuilder: (context, index) {
+              print("Listagem Servicos ListView search build()");
               return new Card(
                 color: _searchItens[index].corItem,
                 child: new ListTile(
@@ -145,9 +148,11 @@ class ListagemServicosState extends State<ListagemServicos> {
               );
             },
           ):new ListView.builder(
+
             itemCount: _servicoList.length,
             padding: EdgeInsets.all(16.0),
             itemBuilder: (context, index) {
+              print("Listagem Servicos List View build 2()");
               return new Card(
                 color: _servicoList[index].corItem,
                 child: new ListTile(

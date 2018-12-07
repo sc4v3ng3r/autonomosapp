@@ -112,16 +112,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   List<Widget> _buildForm() {
 
-        /*child: Text(
-          "Autônomos",
-          maxLines: 1,
-          softWrap: false,
-          style: TextStyle(
-            color: Colors.red,
-            fontSize: 50.0,
-            fontFamily: "cursive",
-          ),
-        ),*/
     final emailField = Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.0),
       child: Material(
@@ -169,6 +159,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       });
     }
+
     final passwordField = Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.0),
       child: Material(
@@ -379,16 +370,9 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     print("LoginScreen::BuildMethod");
-//    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-//      systemNavigationBarColor: Colors.red,
-//      statusBarColor: Colors.red[600],
-//    ));
-//    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
-    return new Scaffold(
-//      bottomNavigationBar: BottomNavigationBar(items: null,fixedColor: Colors.red,),
+    return Scaffold(
       body: Center(
-        child: Stack(
-          //overflow: Overflow.clip,
+        child: Stack (
           children: _buildForm(),
         ),
       ),
@@ -436,9 +420,11 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _goToLoggedScreen(BuildContext context, User user) {
+
     Navigator.pushReplacement(
         context,
         MaterialPageRoute(
+          maintainState: true,
             builder: (BuildContext context) => MainScreen(user: user)));
   }
 

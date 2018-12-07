@@ -1,9 +1,9 @@
 
-import 'package:autonos_app/ui/widget/AbstractListFragmentWidget.dart';
+import 'package:autonos_app/ui/widget/AbstractDataListWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:autonos_app/model/Service.dart';
 
-class ServicesListWidget extends AbstractListFragmentWidget<Service>{
+class ServicesListWidget extends AbstractDataListWidget<Service>{
 
   ServicesListWidget( List<Service> list) :
         super(

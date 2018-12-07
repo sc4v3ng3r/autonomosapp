@@ -13,7 +13,6 @@ class Service implements Comparable<Service> {
       id = json[ID],
       name = json[NAME];
 
-
   Map<String, dynamic> toJson () => {
     ID : id,
     NAME : name,
@@ -23,7 +22,12 @@ class Service implements Comparable<Service> {
   String toString() {
     return "ID: $id\nNAME: $name";
   }
-  
+  @override
+  // ignore: hash_and_equals
+  bool operator ==(other) {
+    return ( (other is Service) && (( this.id.compareTo(other.id)) == 0) );
+  }
+
   @override
   int compareTo(Service other) {
     return this.name.compareTo( other.name);

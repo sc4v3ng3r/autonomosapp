@@ -161,29 +161,38 @@ class ProfessionalRegisterLocationAndServiceScreenState extends
       }
   }
 
+  // TODO isso aqui ainda vai mudar!
   _gotoCityListScreen(BuildContext context) async {
 
     var key = DROPDOWN_MENU_OPTIONS.keys.firstWhere((k) => DROPDOWN_MENU_OPTIONS[k] ==
         _dropdownCurrentOption, orElse: () => null);
     print("$key $_dropdownCurrentOption selecionado");
 
-    Estado estadoSelecionado = Estado(_dropdownCurrentOption);
-    estadoSelecionado.sigla = key;
+    // SE o cara selecionou 1 estado!
+    if (key.compareTo( KEY_NONE) != 0) {
+      Estado estadoSelecionado = Estado(_dropdownCurrentOption);
+      estadoSelecionado.sigla = key;
 
-    List<String> cidadesSelecionadasAux = _cidadesSelcionadas;
-    _cidadesSelcionadas = await Navigator.of(context).push(
-        MaterialPageRoute( builder: (BuildContext context) =>
-            ListagemCidades( cidadesConfirmadas: cidadesSelecionadasAux,
-              estado: estadoSelecionado,
-            )
-        )
-    );
+      List<String> cidadesSelecionadasAux = _cidadesSelcionadas;
+      _cidadesSelcionadas = await Navigator.of(context).push(
+          MaterialPageRoute( builder: (BuildContext context) =>
+              ListagemCidades( cidadesConfirmadas: cidadesSelecionadasAux,
+                estado: estadoSelecionado,
+              )
+          )
+      );
 
-    if (_cidadesSelcionadas == null) {
-      _cidadesSelcionadas = cidadesSelecionadasAux;
+      if (_cidadesSelcionadas == null) {
+        _cidadesSelcionadas = cidadesSelecionadasAux;
+      }
+
+      _trasnformaListaSelecionadoEmChip();
     }
 
-    _trasnformaListaSelecionadoEmChip();
+    else {
+
+    }
+
   }
 
   // TODO WHAAATTT?????!!!
@@ -298,6 +307,7 @@ class ProfessionalRegisterLocationAndServiceScreenState extends
 
   @override
   Widget build(BuildContext context) {
+    print("ProfessionalRegisterLocationAndServicesScren build()");
     return Scaffold(
       appBar: AppBar(
         title: Text(

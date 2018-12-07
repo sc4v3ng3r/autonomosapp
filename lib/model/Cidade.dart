@@ -27,6 +27,10 @@ class Cidade implements Comparable<Cidade> {
     return "$NOME: $nome $UF: $uf $ID: $id";
   }
 
+  @override
+  bool operator ==(other) {
+    return other is Cidade && ( (id.toString().compareTo(other.id.toString() )) == 0);
+  }
 
   @override
   int compareTo(Cidade other) {
