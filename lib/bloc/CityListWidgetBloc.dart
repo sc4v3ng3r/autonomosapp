@@ -32,7 +32,7 @@ class CityListWidgetBloc {
     });
   }
 
-  getCity(String key) {
+  getCity( {@required String key}) {
     FirebaseStateCityHelper.getCitiesFrom(key, _onData);
     //_lastKey = key;
   }
@@ -56,6 +56,11 @@ class CityListWidgetBloc {
     _selectedItems.add(item);
     //print("SELECTED ITEMS TOTAL: ${_selectedItems.length}");
     _selectedItemsInput.sink.add(_selectedItems);
+  }
+
+  void selectItems(List<Cidade> items){
+    _selectedItems.addAll( items);
+    _selectedItemsInput.sink.add( _selectedItems );
   }
 
   void removeItem(Cidade item) {

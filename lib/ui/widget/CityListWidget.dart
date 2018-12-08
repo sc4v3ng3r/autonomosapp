@@ -7,10 +7,12 @@ import 'package:autonos_app/ui/widget/SearchBarWidget.dart';
 class CityListWidget extends StatefulWidget {
   final String _queryKey;
   final _itemSelectedCallback;
+  final List<Cidade>_initialSelectedItems;
 
   CityListWidget( {String sigla = "BA",
-    @required void itemsSelected(List<Cidade> selectedItems) } ) :
-        _itemSelectedCallback = itemsSelected,
+    @required void itemsSelectedCallback(List<Cidade> selectedItems), List<Cidade> initialSelectedItems  } ) :
+        _itemSelectedCallback = itemsSelectedCallback,
+        _initialSelectedItems = initialSelectedItems,
         _queryKey = sigla;
 
   @override
@@ -38,11 +40,16 @@ class _CityListWidgetState extends State<CityListWidget> {
   Widget build(BuildContext context) {
     print("_CityListWidgetState build()");
     _bloc = CityListWidgetBlocProvider.of(context);
-    _bloc.getCity(widget._queryKey);
+    _bloc.getCity(key: widget._queryKey);
 
     _bloc.selectedItems.listen( (itemList) {
       widget._itemSelectedCallback(itemList);
     });
+
+    if( (widget._initialSelectedItems != null) && (widget._initialSelectedItems.isNotEmpty)){
+      _bloc.selectItems(widget._initialSelectedItems);
+      widget._initialSelectedItems.clear();
+    }
 
     var searchBar = SearchBarWidget(
       hint: "Pesquisar...",
@@ -73,7 +80,10 @@ class _CityListWidgetState extends State<CityListWidget> {
             return Column(
               children: <Widget>[
                 searchBar,
-                ListWidget( snapshot.data),
+                ListWidget(
+                    snapshot.data
+
+                ),
               ],
             );
           case ConnectionState.none:
@@ -95,7 +105,7 @@ class ListWidget extends AbstractDataListWidget< Cidade > {
     );
   }
 }
-
+//
 // essa a classe que deve ser generica
 class CityItemView extends StatefulWidget implements Comparable<CityItemView> {
   final Cidade item;
@@ -109,7 +119,7 @@ class CityItemView extends StatefulWidget implements Comparable<CityItemView> {
 
   @override
   int compareTo(CityItemView other) {
-    return this.item.id.toString().compareTo( other.item.id.toString());
+    return this.item.id.toString().compareTo( other.item.id.toString() );
   }
 }
 
@@ -127,19 +137,22 @@ class _CityItemViewState extends State<CityItemView> {
     print("_CityItemViewState build()");
     _bloc = CityListWidgetBlocProvider.of(context);
 
-    return Card(
-      color: (_bloc.isSelected( widget.item)) ? Colors.green : Colors.white,
-      elevation: 5.0,
-      child: ListTile(
-        title: Text( "${widget.item.nome}", style: TextStyle(fontSize: 20.0)),
-        leading: Icon(Icons.location_city),
-        onTap: (){
-          if (_bloc.isSelected( widget.item ) )
-            _bloc.removeItem( widget.item );
-          else _bloc.selectItem( widget.item );
-          setState(() {});
-        },
-      ),
-    );
+    return
+      Padding(
+        padding: EdgeInsets.only(left: 8.0, right: 8.0),
+        child: Card(
+          color: (_bloc.isSelected( widget.item)) ? Colors.green[300] : Colors.white,
+          child: ListTile(
+            title: Text( "${widget.item.nome}", style: TextStyle(fontSize: 20.0)),
+            leading: Icon(Icons.location_city),
+            onTap: (){
+              if (_bloc.isSelected( widget.item ) )
+                _bloc.removeItem( widget.item );
+              else _bloc.selectItem( widget.item );
+              setState(() {});
+            },
+          ),
+        ),
+      );
   }
 }

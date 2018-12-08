@@ -1,0 +1,209 @@
+{
+	servicos: {
+		"id_servico": {
+			"nome": "...",
+			"id": "..... ... ",
+		},
+		...
+	} // fim de servicos
+
+	usuarios: {
+		"uid1": {
+			...  
+		},
+
+		"uid2": {
+			...  
+		},
+		...
+	} // fim de usuarios
+
+	Usuarios_Certificacoes: {
+		"usuario_id_1": {
+			"certId1":{
+				"nome": " nome do curso",
+				"dataCurso": "... ... ... ",
+				...
+			},
+
+			"certId2": {
+				...
+				...
+			}
+		},
+			
+		"usuario_id_2": {
+			"certId3": {
+				nome: " nome do curso",
+				data: ".. .. .....",			
+			},
+			...
+		},
+		...
+	}// fim de certficacoes
+
+	profissionais : {
+		
+		"uid1": {
+			cpf_cnpj: "...",
+			tipo_pessoa: "...",
+			telefone: "...",
+			decricao:"...",
+			latitude: "",
+			longitude: "",
+			emite_nota_fisca: " ... ",
+			
+			cidades_atuante: [
+				"...",
+				"...",
+				"...",
+			],
+					
+			},
+		},
+
+		"uid2": { ... },
+		...
+	} // fim profissionais
+
+//==========================================================================================
+	/*RELACIONAMENTO ENTRE SERVICOS, PROFISSIONAL, CIDADE E ESTADO*/
+//=========================================================================================
+		
+				/*	SOLUÇÃO 01 */ 
+		Mais simples, porém, mais aninhada com poucas opções de consulta!
+
+	Cidades_Servicos_Profissionais: {
+		"cidade_nome": {
+			"id_do_serviço_1": {
+				"uid1": {
+					"nome": "profissionalNome",
+					"uid": "profissional uid",				
+				},
+
+				"uid2": {
+					"nome": "profissionalNome",
+					"uid": "profissional uid2",				
+				},
+			}, // fim do servico Id1
+
+			"id_do_Servico_2": {
+				"uid3": {
+					"nome": "profissionalNome",
+					"uid": "profissional uid 3",				
+				},
+				... outros profissionais
+			},
+			... outros servicos
+		},
+		
+		"cidade_nome_2": {
+			...
+		},
+		... outras cidades
+	} // fim Cidades_Servicos_Profissionais
+
+=============================================================================
+
+		SOLUÇÃO 2, É A SOLUÇÃO 1 COM OS ESTADOS
+
+	UF_Cidades_Servicos_Profissionais: {
+
+		"BA": {
+			"cidade_nome": {
+				"id_do_serviço_1": {
+					"uid1": {
+						"nome": "profissionalNome",
+						"uid": "profissional uid",				
+					},
+
+					"uid2": {
+						"nome": "profissionalNome",
+						"uid": "profissional uid2",				
+					},
+				}, // fim do servico Id1
+
+				"id_do_Servico_2": {
+					"uid3": {
+						"nome": "profissionalNome",
+						"uid": "profissional uid3",				
+					},
+					... outros profissionais
+				},
+				... outros servicos
+			},
+			
+			"cidade_nome_2:"{
+				......			
+			}
+		},
+
+		"PE": {
+			...
+		},
+	}
+================================================================================================================
+	SOLUÇÃO 3, FRAGMENTAR OS NÓS E REALIZAR MAIS CONSULTAS. 
+        
+	// arrays dentro de cidades? pode ser, e as deleções???
+	
+	ESTADO_CIDADE_PROFISSIONAL: {
+		"BA": {
+			"cidade_01": {
+				"uid": {
+					nome: " nome profissional",
+					uid: "id profissional",
+				},
+
+				"uid2": {
+					nome: " nome profissional2",
+					uid: "id profissional2",
+				},
+			},
+
+			"cidade_02": {
+				"uid2": {
+					nome: " nome profissional2",
+					uid: "id profissional2",
+				},
+
+				"uid_3": {
+					...
+				},
+				.. outros profissionais
+			},
+			... outras cidades da BA
+		},
+
+		"PE": { 
+			... ... ...
+		},
+	}// fim de ESTADO_CIDADE_PROFISSIONAL
+
+	SERVIÇO_PROFISSIONAL: {
+		"servico_id": {
+			"uid": {
+				nome: "",
+				uid: "",
+			},
+			"uid2": {
+				nome: "",
+				uid: "",
+			},
+
+			...
+		},
+		
+		"servico2": {
+			...
+		},
+
+	} // fim de SERVCO PROFISSIONAL
+}// fim doc JSON
+
+/*
+	ordenar por chave
+	ordenar por filho
+	ordenar por valor							{equalsTo(), startAt(), endAt()}
+	ordenar por prioridade 
+*/

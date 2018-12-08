@@ -5,25 +5,22 @@ import 'package:flutter/material.dart';
 import 'package:autonos_app/bloc/CityListWidgetBloc.dart';
 
 class ListagemCidades extends StatefulWidget {
-  final List<String> _cidadesConfirmadas;
   final Estado _estado;
+  final List<Cidade> _alreadySelectedCities; // cidades já selecionadas anteriormente...
 
   ListagemCidades(
-      { List cidadesConfirmadas, @required Estado estado } )
-      : this._cidadesConfirmadas = cidadesConfirmadas,
-        this._estado = estado;
+      {@required Estado estado, List<Cidade> alreadySelectedCities } ) :
+        this._estado = estado,
+        this._alreadySelectedCities = alreadySelectedCities;
 
   @override
-  ListagemCidadesState createState() =>
-      ListagemCidadesState();
+  ListagemCidadesState createState() => ListagemCidadesState();
 }
 
 class ListagemCidadesState extends State<ListagemCidades> {
 
-  List<String> _cidadesSelecionadas;
+  List<Cidade> _cidadesSelecionadas;
   var _body;
-  // vou precisar para escutar a streaming de Cidades selecinados
-  //final CityListWidgetBloc _bloc = CityListWidgetBloc();
 
   @override
   void initState() {
@@ -31,12 +28,10 @@ class ListagemCidadesState extends State<ListagemCidades> {
     _body = CityListWidgetBlocProvider(
         child: CityListWidget(
           sigla: widget._estado.sigla,
-          itemsSelected: (List<Cidade> items) {
+          initialSelectedItems: widget._alreadySelectedCities,
+          itemsSelectedCallback: (List<Cidade> items) {
             _cidadesSelecionadas.clear();
-
-            items.forEach( (cidade) {
-              _cidadesSelecionadas.add( cidade.nome );
-            });
+            _cidadesSelecionadas.addAll( items );
           },
         )
     );
@@ -56,7 +51,7 @@ class ListagemCidadesState extends State<ListagemCidades> {
       ),
     );
   }
-
+//
   Widget _iconButton(BuildContext context) {
     return IconButton(
         icon: Icon(

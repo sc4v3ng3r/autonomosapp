@@ -33,6 +33,7 @@ class _AbstractDataListWidgetState<T extends Comparable<T>>
     print("_AbstractDataListWidgetState build()");
     return Expanded(
       child: ListView.builder(
+        padding: EdgeInsets.only(top: 10.0),
         shrinkWrap: true,
         scrollDirection: Axis.vertical,
         itemCount: widget._itemList.length,

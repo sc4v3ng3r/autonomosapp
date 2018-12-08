@@ -1,3 +1,4 @@
+import 'package:autonos_app/model/Cidade.dart';
 import 'package:autonos_app/model/Estado.dart';
 import 'package:autonos_app/ui/ui_cadastro_autonomo/ProfessionalRegisterPaymentScreen.dart';
 import 'package:autonos_app/ui/ui_cadastro_autonomo/ListagemCidades.dart';
@@ -5,12 +6,12 @@ import 'package:autonos_app/ui/ui_cadastro_autonomo/ListagemServicos.dart';
 import 'package:flutter/material.dart';
 import 'package:autonos_app/ui/widget/NextButton.dart';
 import 'package:autonos_app/model/ProfessionalData.dart';
-import 'package:autonos_app/firebase/FirebaseStateCityHelper.dart';
 
 class ProfessionalRegisterLocationAndServiceScreen extends StatefulWidget {
   ProfessionalData _profissionalData;
 
-  ProfessionalRegisterLocationAndServiceScreen({@required ProfessionalData data})
+  ProfessionalRegisterLocationAndServiceScreen(
+      {@required ProfessionalData data})
       : _profissionalData = data;
 
   @override
@@ -18,9 +19,8 @@ class ProfessionalRegisterLocationAndServiceScreen extends StatefulWidget {
       ProfessionalRegisterLocationAndServiceScreenState();
 }
 
-class ProfessionalRegisterLocationAndServiceScreenState extends
-  State<ProfessionalRegisterLocationAndServiceScreen> {
-
+class ProfessionalRegisterLocationAndServiceScreenState
+    extends State<ProfessionalRegisterLocationAndServiceScreen> {
   static const String KEY_NONE = "NONE";
   static const Map<String, String> DROPDOWN_MENU_OPTIONS = const {
     KEY_NONE: "Selecione seu Estado",
@@ -62,21 +62,22 @@ class ProfessionalRegisterLocationAndServiceScreenState extends
     "Mecanico"
   ];
 
-  List<String> _cidadesSelcionadas = new List();
+  List<Cidade> _cidadesSelcionadas = new List();
   List<String> _servicosSelecionados = new List();
   List<Chip> _chipList = [];
   List<Chip> _chipListServicos = [];
 
-
   RaisedButton _buttonListCidades;
   List<DropdownMenuItem<String>> _dropDownMenuItems;
   String _dropdownCurrentOption;
-  final _VERTICAL_SEPARATOR = SizedBox(height: 8.0,);
+  final _VERTICAL_SEPARATOR = SizedBox(
+    height: 8.0,
+  );
 
   @override
   void initState() {
     _initDropdownMenu();
-    print( widget._profissionalData );
+    print(widget._profissionalData);
     super.initState();
   }
 
@@ -107,8 +108,8 @@ class ProfessionalRegisterLocationAndServiceScreenState extends
     }
   }
 
-  void removeChip(String nomeChip) {
-    _cidadesSelcionadas.remove(nomeChip);
+  void removeChip(Cidade cidade) {
+    _cidadesSelcionadas.remove(cidade);
     _trasnformaListaSelecionadoEmChip();
   }
 
@@ -117,19 +118,20 @@ class ProfessionalRegisterLocationAndServiceScreenState extends
     _trasnformaListaServicosSelecionadoEmChip();
   }
 
+// deve ir para um outro Bloc
   void _trasnformaListaSelecionadoEmChip() {
     _chipList.clear();
     if (_cidadesSelcionadas != null)
-      for (String nomeCidade in _cidadesSelcionadas) {
+      for (Cidade cidade in _cidadesSelcionadas) {
         Chip chip = Chip(
           onDeleted: () {
             setState(() {
-              removeChip(nomeCidade);
+              removeChip(cidade);
             });
           },
           backgroundColor: Colors.red[200],
           label: Text(
-            nomeCidade,
+            cidade.nome,
             style: TextStyle(color: Colors.white),
           ),
         );
@@ -161,46 +163,44 @@ class ProfessionalRegisterLocationAndServiceScreenState extends
       }
   }
 
-  // TODO isso aqui ainda vai mudar!
+// TODO isso aqui ainda vai mudar!
   _gotoCityListScreen(BuildContext context) async {
 
-    var key = DROPDOWN_MENU_OPTIONS.keys.firstWhere((k) => DROPDOWN_MENU_OPTIONS[k] ==
-        _dropdownCurrentOption, orElse: () => null);
+    var key = DROPDOWN_MENU_OPTIONS.keys.firstWhere(
+        (k) => DROPDOWN_MENU_OPTIONS[k] == _dropdownCurrentOption,
+        orElse: () => null);
     print("$key $_dropdownCurrentOption selecionado");
 
     // SE o cara selecionou 1 estado!
-    if (key.compareTo( KEY_NONE) != 0) {
+    if (key.compareTo(KEY_NONE) != 0) {
       Estado estadoSelecionado = Estado(_dropdownCurrentOption);
       estadoSelecionado.sigla = key;
 
-      List<String> cidadesSelecionadasAux = _cidadesSelcionadas;
+      List<Cidade> cidadesSelecionadasAux = _cidadesSelcionadas;
       _cidadesSelcionadas = await Navigator.of(context).push(
-          MaterialPageRoute( builder: (BuildContext context) =>
-              ListagemCidades( cidadesConfirmadas: cidadesSelecionadasAux,
+          MaterialPageRoute( builder: (BuildContext context) => ListagemCidades(
                 estado: estadoSelecionado,
-              )
-          )
-      );
+                alreadySelectedCities: cidadesSelecionadasAux,
+              )));
 
+      /*Se ele já havia ido à cityListwidget selecionou algumas cidades,
+      * retornou para a atual tela, mas resolveu ir novamente na CityListWidget,
+      * e não selecionou nada, mantemos o registro das cidades que já foram selecionadas
+      * na primeira ida da CityListWidget.*/
       if (_cidadesSelcionadas == null) {
         _cidadesSelcionadas = cidadesSelecionadasAux;
       }
 
       _trasnformaListaSelecionadoEmChip();
-    }
-
-    else {
-
-    }
-
+    } else {}
   }
 
-  // TODO WHAAATTT?????!!!
+// TODO WHAAATTT?????!!!
   _navegaEEseraListaDeServicos(BuildContext context) async {
     List<String> servicosSelecionadoAux = _servicosSelecionados;
 
-    _servicosSelecionados = await Navigator.of(context).push(
-        MaterialPageRoute(builder: (BuildContext context) => ListagemServicos(
+    _servicosSelecionados = await Navigator.of(context).push(MaterialPageRoute(
+        builder: (BuildContext context) => ListagemServicos(
               servicosConfirmados: servicosSelecionadoAux,
               servicos: _servicos,
             )));
@@ -211,23 +211,27 @@ class ProfessionalRegisterLocationAndServiceScreenState extends
   }
 
   Widget _buildForm(BuildContext context) {
+    final estadoLabel = Text(
+      'Selecione seu estado:',
+      style: TextStyle(color: Colors.grey),
+    );
 
-    final estadoLabel =Text('Selecione seu estado:', style: TextStyle(color: Colors.grey),);
+    final estados = Row(
+      children: <Widget>[
+        new DropdownButton(
+            hint: Text("Selecione um estado"),
+            value: _dropdownCurrentOption,
+            items: getDropDownMenuItems(),
+            onChanged: onDropdownItemSelected),
+      ],
+    );
 
-    final estados = Row( children: <Widget>[
-
-      new DropdownButton(
-          hint: Text("Selecione um estado"),
-          value: _dropdownCurrentOption,
-          items:  getDropDownMenuItems(),
-          onChanged: onDropdownItemSelected),
-        ],
-      );
-
-    final cidadeLabel = Text('Cidades que você atua:',
+    final cidadeLabel = Text(
+      'Cidades que você atua:',
       style: TextStyle(color: Colors.grey),
       maxLines: 1,
-      textAlign: TextAlign.center,);
+      textAlign: TextAlign.center,
+    );
 
     _buttonListCidades = RaisedButton(
         color: Colors.red[300],
@@ -244,9 +248,9 @@ class ProfessionalRegisterLocationAndServiceScreenState extends
             ),
           ],
         ),
-        onPressed: () { _gotoCityListScreen(context); }
-    );
-
+        onPressed: () {
+          _gotoCityListScreen(context);
+        });
 
     final listChip = Padding(
         padding: EdgeInsets.symmetric(horizontal: 8.0),
@@ -254,24 +258,29 @@ class ProfessionalRegisterLocationAndServiceScreenState extends
 
     final areasDeAtuacaoLabel = Text(
       'Areas de atuação:',
-      style: TextStyle(color: Colors.grey,),
+      style: TextStyle(
+        color: Colors.grey,
+      ),
       maxLines: 1,
-      textAlign: TextAlign.center,);
+      textAlign: TextAlign.center,
+    );
 
     final buttonListServico = RaisedButton(
-          child: Text(
-            'Serviços',
-            style: TextStyle(color: Colors.white),
-          ),
-          color: Colors.blueGrey,
-          onPressed: () {
-            _navegaEEseraListaDeServicos(context);
-          },
-        );
+      child: Text(
+        'Serviços',
+        style: TextStyle(color: Colors.white),
+      ),
+      color: Colors.blueGrey,
+      onPressed: () {
+        _navegaEEseraListaDeServicos(context);
+      },
+    );
 
     final listChipServico = Padding(
-      padding: EdgeInsets.symmetric(horizontal: 8.0),
-      child:  Wrap( children: _chipListServicos,));
+        padding: EdgeInsets.symmetric(horizontal: 8.0),
+        child: Wrap(
+          children: _chipListServicos,
+        ));
 
     final nextButton = NextButton(
       buttonColor: Colors.green[300],
@@ -279,7 +288,8 @@ class ProfessionalRegisterLocationAndServiceScreenState extends
       textColor: Colors.white,
       callback: () {
         Navigator.of(context).push(MaterialPageRoute(
-            builder: (BuildContext context) => ProfessionalRegisterPaymentScreen()));
+            builder: (BuildContext context) =>
+                ProfessionalRegisterPaymentScreen()));
       },
     );
 
@@ -319,7 +329,8 @@ class ProfessionalRegisterLocationAndServiceScreenState extends
       ),
       body: Padding(
         padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, .0),
-        child: _buildForm(context),),
+        child: _buildForm(context),
+      ),
     );
   }
 
@@ -328,4 +339,5 @@ class ProfessionalRegisterLocationAndServiceScreenState extends
       _dropdownCurrentOption = option;
     });
   }
+
 }
