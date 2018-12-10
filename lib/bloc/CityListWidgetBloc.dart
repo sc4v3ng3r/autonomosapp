@@ -70,7 +70,7 @@ class CityListWidgetBloc {
   }
 
   dispose() {
-    print("CityListWidget dispose()");
+    print("CityListWidgetBloc dispose()");
     _cityInput.close();
     _searchInput.close();
     _selectedItemsInput.close();

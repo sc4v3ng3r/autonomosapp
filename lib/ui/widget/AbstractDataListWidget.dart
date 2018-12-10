@@ -6,11 +6,9 @@ abstract class AbstractDataListWidget<T extends Comparable<T>>
     extends StatefulWidget {
 
   final List<T> _itemList;
-  //final _disposeCallback;
 
   AbstractDataListWidget({List<T> itemList /*, void dispose() */})
       : _itemList = itemList;
-       /* _disposeCallback = dispose;*/
 
   @override
   State createState() {
@@ -30,7 +28,6 @@ class _AbstractDataListWidgetState<T extends Comparable<T>>
 
   @override
   Widget build(BuildContext context) {
-    print("_AbstractDataListWidgetState build()");
     return Expanded(
       child: ListView.builder(
         padding: EdgeInsets.only(top: 10.0),
@@ -46,7 +43,6 @@ class _AbstractDataListWidgetState<T extends Comparable<T>>
 
   @override
   void dispose() {
-    print("_AbstractDataListWidgetState dispose()");
     super.dispose();
   }
 } //end of class

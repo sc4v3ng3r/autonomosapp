@@ -9,7 +9,7 @@ class CityListWidget extends StatefulWidget {
   final _itemSelectedCallback;
   final List<Cidade>_initialSelectedItems;
 
-  CityListWidget( {String sigla = "BA",
+  CityListWidget( {@required String sigla,
     @required void itemsSelectedCallback(List<Cidade> selectedItems), List<Cidade> initialSelectedItems  } ) :
         _itemSelectedCallback = itemsSelectedCallback,
         _initialSelectedItems = initialSelectedItems,
@@ -38,7 +38,7 @@ class _CityListWidgetState extends State<CityListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    print("_CityListWidgetState build()");
+    //print("_CityListWidgetState build()");
     _bloc = CityListWidgetBlocProvider.of(context);
     _bloc.getCity(key: widget._queryKey);
 
@@ -76,7 +76,7 @@ class _CityListWidgetState extends State<CityListWidget> {
 
           case ConnectionState.active:
           case ConnectionState.done:
-            print("stream builder");
+            //print("stream builder");
             return Column(
               children: <Widget>[
                 searchBar,
@@ -134,7 +134,7 @@ class _CityItemViewState extends State<CityItemView> {
 
   @override
   Widget build(BuildContext context) {
-    print("_CityItemViewState build()");
+    //print("_CityItemViewState build()");
     _bloc = CityListWidgetBlocProvider.of(context);
 
     return

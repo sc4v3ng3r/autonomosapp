@@ -1,14 +1,13 @@
-import 'package:autonos_app/bloc/CityListWidgetBloc.dart';
+import 'package:autonos_app/bloc/ServiceListWidgetBloc.dart';
 import 'package:autonos_app/ui/ui_cadastro_autonomo/ProfessionalRegisterBasicInfoScreen.dart';
-import 'package:autonos_app/ui/widget/CityListWidget.dart';
 import 'package:autonos_app/ui/widget/RatingBar.dart';
 import 'package:autonos_app/model/User.dart';
+import 'package:autonos_app/ui/widget/ServiceListWidget.dart';
 import 'package:autonos_app/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'widget/UserAccountsHackedDrawerHeader.dart';
 import 'widget/RatingBar.dart';
-import 'package:autonos_app/ui/ClientChooseServicesFragment.dart';
 
 class MainScreen extends StatefulWidget {
   final User user;
@@ -170,7 +169,15 @@ void _NavegaCadastroAutonomo(BuildContext context){
 
       case 1:
         return Center(
-          child: ClientChooseServicesFragment(),
+          child: ServiceListWidgetBlocProvider(
+              child: ServiceListWidget(
+                itemsSelectedCallback: null,
+                clickMode: ClickMode.TAP,
+                singleClickCallback: (item) {
+                  print("MainScreen clicou em $item");
+                },
+              ),//ClientChooseServicesFragment(),
+          ),
         );
 
       case 2:

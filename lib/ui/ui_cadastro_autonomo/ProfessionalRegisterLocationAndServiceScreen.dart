@@ -1,13 +1,15 @@
 import 'package:autonos_app/model/Cidade.dart';
-import 'package:autonos_app/model/Estado.dart';
+import 'package:autonos_app/ui/ui_cadastro_autonomo/ListagemCidadesScreen.dart';
 import 'package:autonos_app/ui/ui_cadastro_autonomo/ProfessionalRegisterPaymentScreen.dart';
-import 'package:autonos_app/ui/ui_cadastro_autonomo/ListagemCidades.dart';
-import 'package:autonos_app/ui/ui_cadastro_autonomo/ListagemServicos.dart';
+import 'package:autonos_app/model/Service.dart';
+import 'package:autonos_app/model/Estado.dart';
+import 'package:autonos_app/ui/ui_cadastro_autonomo/ListagemServicosScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:autonos_app/ui/widget/NextButton.dart';
 import 'package:autonos_app/model/ProfessionalData.dart';
 
 class ProfessionalRegisterLocationAndServiceScreen extends StatefulWidget {
+  //TODO usar o bloc de registro... GLOBAL!!
   ProfessionalData _profissionalData;
 
   ProfessionalRegisterLocationAndServiceScreen(
@@ -53,17 +55,9 @@ class ProfessionalRegisterLocationAndServiceScreenState
     "TO": "Tocantins"
   };
 
-  var _servicos = <String>[
-    "Alarmes",
-    "Aulas de violão",
-    "Aulas de matematica",
-    "Aulas de portugues",
-    "Diarista",
-    "Mecanico"
-  ];
 
   List<Cidade> _cidadesSelcionadas = new List();
-  List<String> _servicosSelecionados = new List();
+  List<Service> _servicosSelecionados = new List();
   List<Chip> _chipList = [];
   List<Chip> _chipListServicos = [];
 
@@ -108,30 +102,30 @@ class ProfessionalRegisterLocationAndServiceScreenState
     }
   }
 
-  void removeChip(Cidade cidade) {
+  void removeCidadeChip(Cidade cidade) {
     _cidadesSelcionadas.remove(cidade);
-    _trasnformaListaSelecionadoEmChip();
+    _trasnformaListaCidadeSelecionadoEmChip();
   }
 
-  void removeServicoChip(String nomeChip) {
-    _servicosSelecionados.remove(nomeChip);
+  void removeServicoChip(Service service) {
+    _servicosSelecionados.remove(service);
     _trasnformaListaServicosSelecionadoEmChip();
   }
 
 // deve ir para um outro Bloc
-  void _trasnformaListaSelecionadoEmChip() {
+  void _trasnformaListaCidadeSelecionadoEmChip() {
     _chipList.clear();
     if (_cidadesSelcionadas != null)
-      for (Cidade cidade in _cidadesSelcionadas) {
+      for (Cidade city in _cidadesSelcionadas) {
         Chip chip = Chip(
           onDeleted: () {
             setState(() {
-              removeChip(cidade);
+              removeCidadeChip(city);
             });
           },
           backgroundColor: Colors.red[200],
           label: Text(
-            cidade.nome,
+            city.nome,
             style: TextStyle(color: Colors.white),
           ),
         );
@@ -144,16 +138,16 @@ class ProfessionalRegisterLocationAndServiceScreenState
   void _trasnformaListaServicosSelecionadoEmChip() {
     _chipListServicos.clear();
     if (_servicosSelecionados != null)
-      for (String nomeServico in _servicosSelecionados) {
+      for (Service service in _servicosSelecionados) {
         Chip chip = Chip(
           onDeleted: () {
             setState(() {
-              removeServicoChip(nomeServico);
+              removeServicoChip(service);
             });
           },
           backgroundColor: Colors.blueGrey[300],
           label: Text(
-            nomeServico,
+            service.name,
             style: TextStyle(color: Colors.white),
           ),
         );
@@ -191,18 +185,17 @@ class ProfessionalRegisterLocationAndServiceScreenState
         _cidadesSelcionadas = cidadesSelecionadasAux;
       }
 
-      _trasnformaListaSelecionadoEmChip();
+      _trasnformaListaCidadeSelecionadoEmChip();
     } else {}
   }
 
 // TODO WHAAATTT?????!!!
   _navegaEEseraListaDeServicos(BuildContext context) async {
-    List<String> servicosSelecionadoAux = _servicosSelecionados;
+    List<Service> servicosSelecionadoAux = _servicosSelecionados;
 
     _servicosSelecionados = await Navigator.of(context).push(MaterialPageRoute(
         builder: (BuildContext context) => ListagemServicos(
-              servicosConfirmados: servicosSelecionadoAux,
-              servicos: _servicos,
+              alreadySelectedServices: _servicosSelecionados,
             )));
     if (_servicosSelecionados == null) {
       _servicosSelecionados = servicosSelecionadoAux;
@@ -318,6 +311,7 @@ class ProfessionalRegisterLocationAndServiceScreenState
   @override
   Widget build(BuildContext context) {
     print("ProfessionalRegisterLocationAndServicesScren build()");
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
