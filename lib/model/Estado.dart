@@ -22,7 +22,6 @@ class Estado implements Comparable<Estado>{
 
   @override
   String toString() {
-    // TODO: implement toString
     return "$NOME:$nome $SIGLA: $sigla";
   }
 

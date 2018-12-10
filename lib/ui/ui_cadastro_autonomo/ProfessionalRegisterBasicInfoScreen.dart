@@ -1,6 +1,6 @@
 import 'package:autonos_app/ui/ui_cadastro_autonomo/ProfessionalRegisterLocationAndServiceScreen.dart';
 import 'package:autonos_app/ui/ui_cadastro_autonomo/ProfessionalRegisterPaymentScreen.dart';
-import 'package:autonos_app/ui/ui_cadastro_autonomo/PerfilDetalhe.dart';
+import 'package:autonos_app/ui/ui_cadastro_autonomo/PerfilDetalheScreen.dart';
 import 'package:autonos_app/ui/widget/NextButton.dart';
 import 'package:autonos_app/utility/InputValidator.dart';
 import 'package:flutter/material.dart';

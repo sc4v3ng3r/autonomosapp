@@ -1,12 +1,12 @@
 import 'package:autonos_app/ui/ui_cadastro_autonomo/ProfessionalRegisterPaymentScreen.dart';
 import 'package:flutter/material.dart';
 
-class PerfilDetalhe extends StatefulWidget {
+class PerfilDetalheScreen extends StatefulWidget {
   @override
-  PerfilDetalheState createState() => PerfilDetalheState();
+  PerfilDetalheScreenState createState() => PerfilDetalheScreenState();
 }
 
-class PerfilDetalheState extends State<PerfilDetalhe> {
+class PerfilDetalheScreenState extends State<PerfilDetalheScreen> {
   static final SizedBox _verticalSeparator = new SizedBox(
     height: 16.0,
   );

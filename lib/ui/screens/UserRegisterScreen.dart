@@ -3,16 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:autonos_app/utility/InputValidator.dart';
 import 'package:autonos_app/model/User.dart';
-import 'package:autonos_app/ui/MainScreen.dart';
-import 'widget/ModalRoundedProgressBar.dart';
-
-
-import 'package:autonos_app/model/Cidade.dart';
-import 'package:autonos_app/model/Estado.dart';
-import 'dart:io';
-import 'dart:convert';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:autonos_app/firebase/FirebaseStateCityHelper.dart';
+import 'package:autonos_app/ui/screens/MainScreen.dart';
+import 'package:autonos_app/ui/widget/ModalRoundedProgressBar.dart';
 
 // TODO metodos do firebase devem sair daqui
 

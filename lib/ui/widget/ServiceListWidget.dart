@@ -170,7 +170,6 @@ class _ServiceItemViewState extends State<ServiceItemView> {
   @override
   Widget build(BuildContext context) {
     //print("_CityItemViewState build()");
-    // TODO SERVICE BLOC
     _bloc = ServiceListWidgetBlocProvider.of(context);
 
     return

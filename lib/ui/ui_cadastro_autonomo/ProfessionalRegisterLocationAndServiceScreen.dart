@@ -157,7 +157,6 @@ class ProfessionalRegisterLocationAndServiceScreenState
       }
   }
 
-// TODO isso aqui ainda vai mudar!
   _gotoCityListScreen(BuildContext context) async {
 
     var key = DROPDOWN_MENU_OPTIONS.keys.firstWhere(
@@ -186,11 +185,13 @@ class ProfessionalRegisterLocationAndServiceScreenState
       }
 
       _trasnformaListaCidadeSelecionadoEmChip();
-    } else {}
+    }
+    else {
+      // EH pq ele nao selecinou estado algum!
+    }
   }
 
-// TODO WHAAATTT?????!!!
-  _navegaEEseraListaDeServicos(BuildContext context) async {
+  _gotoServiceListScreen(BuildContext context) async {
     List<Service> servicosSelecionadoAux = _servicosSelecionados;
 
     _servicosSelecionados = await Navigator.of(context).push(MaterialPageRoute(
@@ -265,7 +266,7 @@ class ProfessionalRegisterLocationAndServiceScreenState
       ),
       color: Colors.blueGrey,
       onPressed: () {
-        _navegaEEseraListaDeServicos(context);
+        _gotoServiceListScreen(context);
       },
     );
 

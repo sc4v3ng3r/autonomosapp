@@ -23,7 +23,6 @@ class Cidade implements Comparable<Cidade> {
 
   @override
   String toString() {
-    // TODO: implement toString
     return "$NOME: $nome $UF: $uf $ID: $id";
   }
 

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-class CadastroUsuarioActivity extends StatefulWidget {
+class CadastroUsuarioScreen extends StatefulWidget {
 
   @override
   CadastroUsuarioState createState() => new CadastroUsuarioState();
 }
 
-class CadastroUsuarioState extends State<CadastroUsuarioActivity>{
+class CadastroUsuarioState extends State<CadastroUsuarioScreen>{
 
   @override
   Widget build(BuildContext context) {

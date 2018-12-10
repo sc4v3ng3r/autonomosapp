@@ -1,12 +1,12 @@
 import 'package:autonos_app/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
-import 'UserRegisterScreen.dart';
+import 'package:autonos_app/ui/screens/UserRegisterScreen.dart';
 import 'package:autonos_app/utility/InputValidator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
-import 'widget/ModalRoundedProgressBar.dart';
+import 'package:autonos_app/ui/widget/ModalRoundedProgressBar.dart';
 import 'package:autonos_app/firebase/FirebaseUserHelper.dart';
-import 'MainScreen.dart';
+import 'package:autonos_app/ui/screens/MainScreen.dart';
 import 'package:autonos_app/model/User.dart';
 import 'package:flutter/services.dart';
 

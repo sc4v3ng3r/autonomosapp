@@ -36,7 +36,7 @@ class ProfessionalData {
     _CIDADES : cidadesAtuantes,
     _SERVICOS : servicosAtuantes,
     _NOTA_FISCAL : emissorNotaFiscal,
-    //ambos podem virar um objeto especifico LOCALIZACAO, facilitara o rastreio!
+    //TODO ambos podem virar um objeto especifico LOCALIZACAO, facilitara o rastreio!
     _LATITUDE : latitude,
     _LONGITUDE : longitude,
   };
@@ -56,7 +56,6 @@ class ProfessionalData {
 
   @override
   String toString() {
-    // TODO: implement toString
     return "$UID: $uid\n$_TIPO_PESSOA: $tipoPessoa\n$_DOCUMENTO $documento\n$_TELEFONE: $telefone";
   }
 }

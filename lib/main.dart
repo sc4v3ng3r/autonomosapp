@@ -1,10 +1,10 @@
 import 'package:autonos_app/model/Service.dart';
-import 'package:autonos_app/ui/LoginScreen.dart';
+import 'package:autonos_app/ui/screens/LoginScreen.dart';
 import 'package:flutter/material.dart';
-import 'package:autonos_app/ui/UserRegisterScreen.dart';
+import 'package:autonos_app/ui/screens/UserRegisterScreen.dart';
 import 'package:autonos_app/firebase/FirebaseUserHelper.dart';
 import 'package:autonos_app/model/User.dart';
-import 'package:autonos_app/ui/MainScreen.dart';
+import 'package:autonos_app/ui/screens/MainScreen.dart';
 
 void main() {
   runApp( new MyApp() );

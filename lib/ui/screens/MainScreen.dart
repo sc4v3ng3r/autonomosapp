@@ -6,8 +6,7 @@ import 'package:autonos_app/ui/widget/ServiceListWidget.dart';
 import 'package:autonos_app/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'widget/UserAccountsHackedDrawerHeader.dart';
-import 'widget/RatingBar.dart';
+import 'package:autonos_app/ui/widget/UserAccountsHackedDrawerHeader.dart';
 
 class MainScreen extends StatefulWidget {
   final User user;
@@ -64,7 +63,10 @@ void _NavegaCadastroAutonomo(BuildContext context){
 
   Navigator.push(
       context,
-      MaterialPageRoute(builder: (BuildContext context) => ProfessionalRegisterBasicInfoScreen()));
+      MaterialPageRoute(builder: (BuildContext context) =>
+          ProfessionalRegisterBasicInfoScreen()
+      )
+  );
 
 }
 
@@ -117,7 +119,7 @@ void _NavegaCadastroAutonomo(BuildContext context){
           ListTile(
             leading: Icon(Icons.directions_walk,color: Colors.red[500],),
             title: Text('Seja Um Autônomo!!!',style: TextStyle(color: Colors.red[500],fontWeight: FontWeight.bold)),
-            onTap: ()=>_NavegaCadastroAutonomo(context),
+            onTap: ()=> _NavegaCadastroAutonomo(context),
 //            onTap: () => Navigator.push(
 //                context,
 //                MaterialPageRoute(builder: (BuildContext context) => CadastroAutonomoPt1())),
