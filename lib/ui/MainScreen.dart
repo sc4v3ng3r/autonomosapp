@@ -1,4 +1,5 @@
 import 'package:autonos_app/bloc/ServiceListWidgetBloc.dart';
+import 'package:autonos_app/ui/PerfilUsuario.dart';
 import 'package:autonos_app/ui/ui_cadastro_autonomo/ProfessionalRegisterBasicInfoScreen.dart';
 import 'package:autonos_app/ui/widget/RatingBar.dart';
 import 'package:autonos_app/model/User.dart';
@@ -6,6 +7,7 @@ import 'package:autonos_app/ui/widget/ServiceListWidget.dart';
 import 'package:autonos_app/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:rxdart/rxdart.dart';
 import 'widget/UserAccountsHackedDrawerHeader.dart';
 import 'widget/RatingBar.dart';
 
@@ -22,6 +24,7 @@ class _MainScreenState extends State<MainScreen> {
   GlobalKey<ScaffoldState> _scaffoldKey;
   final bool sair = false;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  String appBarName = 'Serviços';
 
   //var _perfilFragment;
   int _drawerCurrentPosition = 1;
@@ -48,7 +51,7 @@ class _MainScreenState extends State<MainScreen> {
             },
             icon: Icon(Icons.menu),
           ),
-          title: Text("Main Screen"),
+          title: Text(appBarName),
           automaticallyImplyLeading: false,
           backgroundColor: Colors.red[300],
           elevation: .0,
@@ -151,8 +154,38 @@ void _NavegaCadastroAutonomo(BuildContext context){
       Navigator.pushReplacementNamed(context, '/loginScreen');
     });
   }
+  void appBarChangeName(int position){
+    if(position == 0){
+      setState(() {
+        appBarName = 'Perfil';
+      });
+    }
+    else if(position == 1){
+      setState(() {
+        appBarName = 'Serviços';
+      });
+    }
+    else if(position == 2){
+      setState(() {
+        appBarName = 'Histórico';
+      });
+    }
+    else if(position == 3){
+      setState(() {
+        appBarName = 'Visualizações';
+      });
+    }
+    else if(position == 4){
+      setState(() {
+        appBarName = 'Favoritos';
+      });
+    }
 
+
+  }
   void _setCurrentPosition(int position){
+    appBarChangeName(position);
+
     if (position != _drawerCurrentPosition)
       setState(() => _drawerCurrentPosition = position);
 
@@ -160,25 +193,27 @@ void _NavegaCadastroAutonomo(BuildContext context){
     Navigator.of(context).pop();
   }
 
+  Widget serviceListWidget(){
+    return Center(
+      child: ServiceListWidgetBlocProvider(
+        child: ServiceListWidget(
+          itemsSelectedCallback: null,
+          clickMode: ClickMode.TAP,
+          singleClickCallback: (item) {
+            print("MainScreen clicou em $item");
+          },
+        ),//ClientChooseServicesFragment(),
+      ),
+    );
+  }
+
   Widget _getFragment(int position){
     switch (position){
       case 0:
-        return Center(
-            child: Text("Perfil")
-        );
+        return PerfilUsuario();
 
       case 1:
-        return Center(
-          child: ServiceListWidgetBlocProvider(
-              child: ServiceListWidget(
-                itemsSelectedCallback: null,
-                clickMode: ClickMode.TAP,
-                singleClickCallback: (item) {
-                  print("MainScreen clicou em $item");
-                },
-              ),//ClientChooseServicesFragment(),
-          ),
-        );
+        return serviceListWidget();
 
       case 2:
         return Center(
