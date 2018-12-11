@@ -1,12 +1,12 @@
 import 'package:autonos_app/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
-import 'UserRegisterScreen.dart';
+import 'package:autonos_app/ui/screens/UserRegisterScreen.dart';
 import 'package:autonos_app/utility/InputValidator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
-import 'widget/ModalRoundedProgressBar.dart';
+import 'package:autonos_app/ui/widget/ModalRoundedProgressBar.dart';
 import 'package:autonos_app/firebase/FirebaseUserHelper.dart';
-import 'MainScreen.dart';
+import 'package:autonos_app/ui/screens/MainScreen.dart';
 import 'package:autonos_app/model/User.dart';
 import 'package:flutter/services.dart';
 
@@ -88,14 +88,19 @@ class _LoginScreenState extends State<LoginScreen> {
     print("FirebaseAuth -> Token:" + token);
     _auth.signInWithFacebook(accessToken: token).then((firebaseUser) {
       FirebaseUserHelper.readUserAccountData(firebaseUser.uid).then((user) {
-        print("LIDO COM FACEBOOK ${user.email} ${user.name}");
 
+        /*Se o usuario ja existe no database*/
+        print("LIDO COM FACEBOOK ${user.email} ${user.name}");
+        UserRepository().currentUser = user;
         _goToLoggedScreen(context, user);
+
       }).catchError((dataBaseError) {
         FirebaseUserHelper.writeUserAccountData(firebaseUser)
             .then((createdUser) {
+
           print("USUARIO CRIADO COM SUCESSO!");
           print("CREATED: ${createdUser.name}  ${createdUser.email}");
+          UserRepository().currentUser = createdUser;
 
           _goToLoggedScreen(context, createdUser);
         }).catchError((error) {

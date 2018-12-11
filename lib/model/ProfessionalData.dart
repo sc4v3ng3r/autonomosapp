@@ -5,13 +5,16 @@ class ProfessionalData {
   String tipoPessoa;
   String telefone;
   String descricao;
-  List<String> cidadesAtuantes;
-  List<String> servicosAtuantes;
+  String estadoAtuante;
+  List<String> cidadesAtuantes = new List();
+  List<String> servicosAtuantes = new List();
+  List<String> formasPagamento = new List();
+
   bool emissorNotaFiscal;
 
   // talvez isso seja um node [Location]!
-  double latitude;
-  double longitude;
+  double latitude =0.0;
+  double longitude = 0.0;
   String uid;
 
   static final String UID = "uid";
@@ -24,7 +27,7 @@ class ProfessionalData {
   static final String _NOTA_FISCAL = "emissorNotaFiscal";
   static final String _LATITUDE = "latitude";
   static final String _LONGITUDE = "longitude";
-
+  static final String _FORMAS_PAGAMENTO = "formas_pagamento";
   ProfessionalData();
 
   Map<String, dynamic> toJson() => {
@@ -36,7 +39,8 @@ class ProfessionalData {
     _CIDADES : cidadesAtuantes,
     _SERVICOS : servicosAtuantes,
     _NOTA_FISCAL : emissorNotaFiscal,
-    //ambos podem virar um objeto especifico LOCALIZACAO, facilitara o rastreio!
+    _FORMAS_PAGAMENTO : formasPagamento,
+    //TODO ambos podem virar um objeto especifico LOCALIZACAO, facilitara o rastreio!
     _LATITUDE : latitude,
     _LONGITUDE : longitude,
   };
@@ -51,12 +55,15 @@ class ProfessionalData {
       longitude = json[_LONGITUDE],
       emissorNotaFiscal = json[_NOTA_FISCAL],
       servicosAtuantes = List.from( json[_SERVICOS] ),
+      formasPagamento = List.from( json[_FORMAS_PAGAMENTO] ),
       cidadesAtuantes = List.from( json[_CIDADES] );
 
 
   @override
   String toString() {
-    // TODO: implement toString
-    return "$UID: $uid\n$_TIPO_PESSOA: $tipoPessoa\n$_DOCUMENTO $documento\n$_TELEFONE: $telefone";
+    return "$UID: $uid\n"
+        "$_TIPO_PESSOA: $tipoPessoa\n"
+        "$_DOCUMENTO $documento\n"
+        "$_TELEFONE: $telefone";
   }
 }

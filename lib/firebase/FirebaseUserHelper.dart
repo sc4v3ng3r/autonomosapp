@@ -1,3 +1,4 @@
+import 'package:autonos_app/model/ProfessionalData.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:autonos_app/model/User.dart';
@@ -30,9 +31,11 @@ class FirebaseUserHelper {
     try {
       print("Registrando conta no DB!");
       User user = new User(
-          recentCreatedUser.uid,
-          recentCreatedUser.displayName, // dados do field name
-          recentCreatedUser.email, RATING_INIT_VALUE);
+        uid: recentCreatedUser.uid,
+        email: recentCreatedUser.email,
+        name: recentCreatedUser.displayName,
+        rating: RATING_INIT_VALUE,
+      );
 
       await USERS_REFERENCE.child(recentCreatedUser.uid)
           .set(user.toJson());
@@ -49,6 +52,19 @@ class FirebaseUserHelper {
           print("UserRegisterScreen:: _createAccountDBRegister "
               + error.toString()));*/
     }
+  }
+
+  static void registerUserProfessionalData( ProfessionalData data, void callback(ProfessionalData value) ) async {
+    DatabaseReference ref = FirebaseDatabase.instance.reference()
+        .child(FirebaseReferences.REFERENCE_PROFISSIONAIS);
+
+    ref.child( data.uid ).set( data.toJson() ).then( (_) {
+      callback(data);
+    }).catchError( (onError) {
+      //print("FirebaseUserHelper::registerUserProfessionalData $onError");
+      throw onError;
+    } );
+
   }
 
   // TODO MELHORAR ESSE METODO

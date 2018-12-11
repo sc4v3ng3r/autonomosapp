@@ -1,3 +1,4 @@
+import 'package:autonos_app/bloc/ProfessionalRegisterFlowBloc.dart';
 import 'package:autonos_app/model/Cidade.dart';
 import 'package:autonos_app/ui/ui_cadastro_autonomo/ListagemCidadesScreen.dart';
 import 'package:autonos_app/ui/ui_cadastro_autonomo/ProfessionalRegisterPaymentScreen.dart';
@@ -6,15 +7,14 @@ import 'package:autonos_app/model/Estado.dart';
 import 'package:autonos_app/ui/ui_cadastro_autonomo/ListagemServicosScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:autonos_app/ui/widget/NextButton.dart';
-import 'package:autonos_app/model/ProfessionalData.dart';
 
 class ProfessionalRegisterLocationAndServiceScreen extends StatefulWidget {
-  //TODO usar o bloc de registro... GLOBAL!!
-  ProfessionalData _profissionalData;
+
+  ProfessionalRegisterFlowBloc _bloc;
 
   ProfessionalRegisterLocationAndServiceScreen(
-      {@required ProfessionalData data})
-      : _profissionalData = data;
+      {@required ProfessionalRegisterFlowBloc bloc }
+      ) : _bloc = bloc;
 
   @override
   ProfessionalRegisterLocationAndServiceScreenState createState() =>
@@ -55,15 +55,19 @@ class ProfessionalRegisterLocationAndServiceScreenState
     "TO": "Tocantins"
   };
 
+   //
+  // TODO: IMPLEMENTAR BLOC PARA ESTA TELA. OS DADOS DEVEM FICAR NO MESMO.
 
   List<Cidade> _cidadesSelcionadas = new List();
   List<Service> _servicosSelecionados = new List();
   List<Chip> _chipList = [];
   List<Chip> _chipListServicos = [];
+  Estado _selectedState;
 
   RaisedButton _buttonListCidades;
   List<DropdownMenuItem<String>> _dropDownMenuItems;
   String _dropdownCurrentOption;
+
   final _VERTICAL_SEPARATOR = SizedBox(
     height: 8.0,
   );
@@ -71,7 +75,7 @@ class ProfessionalRegisterLocationAndServiceScreenState
   @override
   void initState() {
     _initDropdownMenu();
-    print(widget._profissionalData);
+    //print(widget._profissionalData);
     super.initState();
   }
 
@@ -85,13 +89,13 @@ class ProfessionalRegisterLocationAndServiceScreenState
     List<DropdownMenuItem<String>> itens = new List();
 
     for (String estado in DROPDOWN_MENU_OPTIONS.values) {
-      itens.add(new DropdownMenuItem(value: estado, child: new Text(estado)));
+      itens.add(new DropdownMenuItem( value: estado, child: new Text(estado)) );
     }
     return itens;
   }
 
   void onDropdownItemSelected(String dataSelected) {
-    if (_dropdownCurrentOption != dataSelected) {
+    if ( _dropdownCurrentOption != dataSelected ) {
       setState(() {
         _cidadesSelcionadas.clear();
         _chipList.clear();
@@ -157,7 +161,6 @@ class ProfessionalRegisterLocationAndServiceScreenState
       }
   }
 
-// TODO isso aqui ainda vai mudar!
   _gotoCityListScreen(BuildContext context) async {
 
     var key = DROPDOWN_MENU_OPTIONS.keys.firstWhere(
@@ -167,13 +170,13 @@ class ProfessionalRegisterLocationAndServiceScreenState
 
     // SE o cara selecionou 1 estado!
     if (key.compareTo(KEY_NONE) != 0) {
-      Estado estadoSelecionado = Estado(_dropdownCurrentOption);
-      estadoSelecionado.sigla = key;
+      _selectedState = Estado(_dropdownCurrentOption);
+      _selectedState.sigla = key;
 
       List<Cidade> cidadesSelecionadasAux = _cidadesSelcionadas;
       _cidadesSelcionadas = await Navigator.of(context).push(
           MaterialPageRoute( builder: (BuildContext context) => ListagemCidades(
-                estado: estadoSelecionado,
+                estado: _selectedState,
                 alreadySelectedCities: cidadesSelecionadasAux,
               )));
 
@@ -186,11 +189,13 @@ class ProfessionalRegisterLocationAndServiceScreenState
       }
 
       _trasnformaListaCidadeSelecionadoEmChip();
-    } else {}
+    }
+    else {
+      // EH pq ele nao selecinou estado algum!
+    }
   }
 
-// TODO WHAAATTT?????!!!
-  _navegaEEseraListaDeServicos(BuildContext context) async {
+  _gotoServiceListScreen(BuildContext context) async {
     List<Service> servicosSelecionadoAux = _servicosSelecionados;
 
     _servicosSelecionados = await Navigator.of(context).push(MaterialPageRoute(
@@ -204,6 +209,8 @@ class ProfessionalRegisterLocationAndServiceScreenState
   }
 
   Widget _buildForm(BuildContext context) {
+
+
     final estadoLabel = Text(
       'Selecione seu estado:',
       style: TextStyle(color: Colors.grey),
@@ -265,7 +272,7 @@ class ProfessionalRegisterLocationAndServiceScreenState
       ),
       color: Colors.blueGrey,
       onPressed: () {
-        _navegaEEseraListaDeServicos(context);
+        _gotoServiceListScreen(context);
       },
     );
 
@@ -280,9 +287,14 @@ class ProfessionalRegisterLocationAndServiceScreenState
       text: '[2/3] Próximo Passo',
       textColor: Colors.white,
       callback: () {
+        _gettingInputData();
         Navigator.of(context).push(MaterialPageRoute(
             builder: (BuildContext context) =>
-                ProfessionalRegisterPaymentScreen()));
+                 ProfessionalRegisterPaymentScreen(
+                   bloc: widget._bloc,
+                 ),
+        )
+        );
       },
     );
 
@@ -308,9 +320,20 @@ class ProfessionalRegisterLocationAndServiceScreenState
     );
   }
 
+  //TODO tem que validar os dados!
+  void _gettingInputData(){
+    widget._bloc.insertLocationsAndServices(
+        state: _selectedState,
+        yourCities: _cidadesSelcionadas,
+        yourServices: _servicosSelecionados);
+  }
+
   @override
   Widget build(BuildContext context) {
     print("ProfessionalRegisterLocationAndServicesScren build()");
+
+    print("data received from previous Screen: ");
+    print(widget._bloc.currentData);
 
     return Scaffold(
       appBar: AppBar(

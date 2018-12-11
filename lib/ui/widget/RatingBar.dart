@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+
+
+//TODO ainda eh stateless tem que ser statefull para mudar o estado!!
+// ou utilizar a tecnica ninja mostrada pelos caras da google
 typedef void RatingChangeCallBack(double rating);
 
 class RatingBar extends StatelessWidget{

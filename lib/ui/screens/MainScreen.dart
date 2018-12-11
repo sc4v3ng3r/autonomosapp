@@ -1,5 +1,5 @@
+import 'package:autonos_app/bloc/ProfessionalRegisterFlowBloc.dart';
 import 'package:autonos_app/bloc/ServiceListWidgetBloc.dart';
-import 'package:autonos_app/ui/PerfilUsuario.dart';
 import 'package:autonos_app/ui/ui_cadastro_autonomo/ProfessionalRegisterBasicInfoScreen.dart';
 import 'package:autonos_app/ui/widget/RatingBar.dart';
 import 'package:autonos_app/model/User.dart';
@@ -7,12 +7,11 @@ import 'package:autonos_app/ui/widget/ServiceListWidget.dart';
 import 'package:autonos_app/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:rxdart/rxdart.dart';
-import 'widget/UserAccountsHackedDrawerHeader.dart';
-import 'widget/RatingBar.dart';
+import 'package:autonos_app/ui/widget/UserAccountsHackedDrawerHeader.dart';
 
 class MainScreen extends StatefulWidget {
   final User user;
+  //final Key _blocKey = new Key( ProfessionalRegisterFlowBlocProvider.BLOC_KEY);
 
   MainScreen( {Key key, @required this.user} ) : super(key: key);
 
@@ -24,7 +23,6 @@ class _MainScreenState extends State<MainScreen> {
   GlobalKey<ScaffoldState> _scaffoldKey;
   final bool sair = false;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  String appBarName = 'Serviços';
 
   //var _perfilFragment;
   int _drawerCurrentPosition = 1;
@@ -51,7 +49,7 @@ class _MainScreenState extends State<MainScreen> {
             },
             icon: Icon(Icons.menu),
           ),
-          title: Text(appBarName),
+          title: Text("Main Screen"),
           automaticallyImplyLeading: false,
           backgroundColor: Colors.red[300],
           elevation: .0,
@@ -67,7 +65,11 @@ void _NavegaCadastroAutonomo(BuildContext context){
 
   Navigator.push(
       context,
-      MaterialPageRoute(builder: (BuildContext context) => ProfessionalRegisterBasicInfoScreen()));
+      MaterialPageRoute(builder: (BuildContext context) =>
+           ProfessionalRegisterBasicInfoScreen(),
+          
+      )
+  );
 
 }
 
@@ -120,7 +122,7 @@ void _NavegaCadastroAutonomo(BuildContext context){
           ListTile(
             leading: Icon(Icons.directions_walk,color: Colors.red[500],),
             title: Text('Seja Um Autônomo!!!',style: TextStyle(color: Colors.red[500],fontWeight: FontWeight.bold)),
-            onTap: ()=>_NavegaCadastroAutonomo(context),
+            onTap: ()=> _NavegaCadastroAutonomo(context),
 //            onTap: () => Navigator.push(
 //                context,
 //                MaterialPageRoute(builder: (BuildContext context) => CadastroAutonomoPt1())),
@@ -154,38 +156,8 @@ void _NavegaCadastroAutonomo(BuildContext context){
       Navigator.pushReplacementNamed(context, '/loginScreen');
     });
   }
-  void appBarChangeName(int position){
-    if(position == 0){
-      setState(() {
-        appBarName = 'Perfil';
-      });
-    }
-    else if(position == 1){
-      setState(() {
-        appBarName = 'Serviços';
-      });
-    }
-    else if(position == 2){
-      setState(() {
-        appBarName = 'Histórico';
-      });
-    }
-    else if(position == 3){
-      setState(() {
-        appBarName = 'Visualizações';
-      });
-    }
-    else if(position == 4){
-      setState(() {
-        appBarName = 'Favoritos';
-      });
-    }
 
-
-  }
   void _setCurrentPosition(int position){
-    appBarChangeName(position);
-
     if (position != _drawerCurrentPosition)
       setState(() => _drawerCurrentPosition = position);
 
@@ -193,27 +165,25 @@ void _NavegaCadastroAutonomo(BuildContext context){
     Navigator.of(context).pop();
   }
 
-  Widget serviceListWidget(){
-    return Center(
-      child: ServiceListWidgetBlocProvider(
-        child: ServiceListWidget(
-          itemsSelectedCallback: null,
-          clickMode: ClickMode.TAP,
-          singleClickCallback: (item) {
-            print("MainScreen clicou em $item");
-          },
-        ),//ClientChooseServicesFragment(),
-      ),
-    );
-  }
-
   Widget _getFragment(int position){
     switch (position){
       case 0:
-        return PerfilUsuario();
+        return Center(
+            child: Text("Perfil")
+        );
 
       case 1:
-        return serviceListWidget();
+        return Center(
+          child: ServiceListWidgetBlocProvider(
+              child: ServiceListWidget(
+                itemsSelectedCallback: null,
+                clickMode: ClickMode.TAP,
+                singleClickCallback: (item) {
+                  print("MainScreen clicou em $item");
+                },
+              ),//ClientChooseServicesFragment(),
+          ),
+        );
 
       case 2:
         return Center(

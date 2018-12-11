@@ -170,7 +170,6 @@ class _ServiceItemViewState extends State<ServiceItemView> {
   @override
   Widget build(BuildContext context) {
     //print("_CityItemViewState build()");
-    // TODO SERVICE BLOC
     _bloc = ServiceListWidgetBlocProvider.of(context);
 
     return
@@ -180,7 +179,7 @@ class _ServiceItemViewState extends State<ServiceItemView> {
           color: (_bloc.isSelected( widget.item)) ? Colors.green[300] : Colors.white,
           child: ListTile(
             title: Text( "${widget.item.name}", style: TextStyle(fontSize: 20.0)),
-            leading: Icon(Icons.location_city),
+            leading: Icon(Icons.room_service),
             onTap: (){
               if ( (widget._clickMode == ClickMode.TAP) &&
                 ( widget._singleClickCallback != null) ) {

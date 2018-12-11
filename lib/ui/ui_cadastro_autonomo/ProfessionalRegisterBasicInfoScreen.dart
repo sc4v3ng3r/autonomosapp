@@ -1,12 +1,9 @@
+import 'package:autonos_app/bloc/ProfessionalRegisterFlowBloc.dart';
 import 'package:autonos_app/ui/ui_cadastro_autonomo/ProfessionalRegisterLocationAndServiceScreen.dart';
-import 'package:autonos_app/ui/ui_cadastro_autonomo/ProfessionalRegisterPaymentScreen.dart';
-import 'package:autonos_app/ui/ui_cadastro_autonomo/PerfilDetalhe.dart';
 import 'package:autonos_app/ui/widget/NextButton.dart';
 import 'package:autonos_app/utility/InputValidator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
-import 'package:autonos_app/utility/UserRepository.dart';
-import 'package:autonos_app/model/User.dart';
 import 'package:autonos_app/model/ProfessionalData.dart';
 
 class ProfessionalRegisterBasicInfoScreen extends StatefulWidget {
@@ -18,7 +15,7 @@ class ProfessionalRegisterBasicInfoScreenState extends State<ProfessionalRegiste
   int _radioValue = 0;
   String _tipoPessoa = '';
   //TODO SOMENTE ENQUANTO NÃO TEMOS BLOC
-  ProfessionalData _profissionalData;
+  //ProfessionalData _profissionalData;
   var typeCpfMask;
   var typeCnpjMask;
 
@@ -28,6 +25,7 @@ class ProfessionalRegisterBasicInfoScreenState extends State<ProfessionalRegiste
   FocusNode _tipoPessoaFocus;
   FocusNode _descricaoFocus;
   FocusNode _telefoneFocus;
+  ProfessionalRegisterFlowBloc _bloc;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -70,6 +68,8 @@ class ProfessionalRegisterBasicInfoScreenState extends State<ProfessionalRegiste
     _tipoPessoaFocus = new FocusNode();
     _descricaoFocus = new FocusNode();
     _telefoneFocus = new FocusNode();
+    _bloc = new ProfessionalRegisterFlowBloc();
+
     super.initState();
   }
 
@@ -272,19 +272,27 @@ class ProfessionalRegisterBasicInfoScreenState extends State<ProfessionalRegiste
       callback: (){
 
         if(_inputValidation()){
+          _bloc.insertBasicProfessionalInformation(
+                typePeople: _tipoPessoa,
+                documentNumber: _typeCpfOrCnpj().text,
+                phone: _typeTelefoneMask.text,
+                description: _tellMeAboutYouController.text);
+          /*
           _profissionalData = ProfessionalData();
           _profissionalData.tipoPessoa = _tipoPessoa;
           _profissionalData.documento = _typeCpfOrCnpj().text;
           _profissionalData.telefone = _typeTelefoneMask.text;
           _profissionalData.descricao = _tellMeAboutYouController.text;
-
+          */
           //TODO falta as referencias aos documentos "fotos"
-
 
           Navigator.of(context).push(
               MaterialPageRoute(builder:
                   (BuildContext context) =>
-                      ProfessionalRegisterLocationAndServiceScreen( data: _profissionalData,) )
+                      ProfessionalRegisterLocationAndServiceScreen(
+                        bloc: _bloc,
+                      )
+              ),
           );
         }
       },

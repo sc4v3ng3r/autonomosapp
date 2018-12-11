@@ -79,40 +79,4 @@ class FirebaseServicesHelper {
 
   }
 
-  /*
-  static Future<List<Service>> getServices(String subarea) async {
-    DatabaseReference reference = FirebaseDatabase.instance.reference()
-        .child(FirebaseReferences.REFERENCE_AREA)
-        .child(subarea).child(FirebaseReferences.REFERENCE_SERVICOS);
-    List<Service> serviceList = new List();
-
-    try {
-      //TODO SO ESTAR LENDO UMA UNICA VEZ!!
-      DataSnapshot snapshot = await reference.once();
-      if (snapshot!=null){
-
-        List<String> services = List.from( snapshot.value );
-        Iterator it = services.iterator;
-        int index = 0;
-        while(it.moveNext()){
-          serviceList.add(  Service.fromString(index, it.current.toString()) );
-        }
-        print("FirebaseServicesHelper:: TOTAL: ${serviceList.length}");
-      }
-    }
-
-    catch (ex){
-      print( "FirebaseServicesHelper::" + ex.toString());
-      throw ex;
-    }
-    return serviceList;
-  }*/
-
-  /*
-  *
-  * {-LSK9pnMMl680YrXVKXo: {name: Tradutor}, -LSK9plUDNNpqZ5eAX5z: {name: Imobiliária} },
-  *
-  *
-  *
-  * */
 }
