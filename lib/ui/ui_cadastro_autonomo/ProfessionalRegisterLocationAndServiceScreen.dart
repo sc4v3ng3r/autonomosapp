@@ -330,10 +330,6 @@ class ProfessionalRegisterLocationAndServiceScreenState
 
   @override
   Widget build(BuildContext context) {
-    print("ProfessionalRegisterLocationAndServicesScren build()");
-
-    print("data received from previous Screen: ");
-    print(widget._bloc.currentData);
 
     return Scaffold(
       appBar: AppBar(

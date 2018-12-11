@@ -45,26 +45,13 @@ class FirebaseUserHelper {
 
     catch (ex) {
       throw ex;
-     /* print("Erro ao registar conta do Database");
-      recentCreatedUser.delete()
-          .then((onValue) => FirebaseAuth.instance.signOut())
-          .catchError((error) =>
-          print("UserRegisterScreen:: _createAccountDBRegister "
-              + error.toString()));*/
     }
   }
 
-  static void registerUserProfessionalData( ProfessionalData data, void callback(ProfessionalData value) ) async {
+  static Future<void> registerUserProfessionalData( ProfessionalData data ) {
     DatabaseReference ref = FirebaseDatabase.instance.reference()
         .child(FirebaseReferences.REFERENCE_PROFISSIONAIS);
-
-    ref.child( data.uid ).set( data.toJson() ).then( (_) {
-      callback(data);
-    }).catchError( (onError) {
-      //print("FirebaseUserHelper::registerUserProfessionalData $onError");
-      throw onError;
-    } );
-
+    return ref.child( data.uid ).set( data.toJson() );
   }
 
   // TODO MELHORAR ESSE METODO

@@ -1,5 +1,6 @@
 import 'package:autonos_app/bloc/ProfessionalRegisterFlowBloc.dart';
 import 'package:autonos_app/model/ProfessionalData.dart';
+import 'package:autonos_app/ui/screens/MainScreen.dart';
 import 'package:autonos_app/ui/widget/NextButton.dart';
 import 'package:autonos_app/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
@@ -121,7 +122,19 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
         widget._bloc.currentData.formasPagamento = _formasDePagamentoChipSelecionado;
 
         FirebaseUserHelper
-            .registerUserProfessionalData(widget._bloc.currentData, _professionalDataStored);
+            .registerUserProfessionalData(widget._bloc.currentData)
+            .then( (_) {
+              UserRepository().currentUser.professionalData = widget._bloc.currentData;
+            })
+            .catchError((onError) {
+              print("registerUserProfessionalData $onError");
+            });
+
+        Navigator.pushAndRemoveUntil(context,
+            MaterialPageRoute(
+                builder: (BuildContext context) =>
+                    MainScreen() ),
+                (Route<dynamic> route)  => false);
 
 
         // burn into DB!
@@ -146,22 +159,9 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
     return list;
   }
 
-  void _professionalDataStored(ProfessionalData data){
-    if (data != null){
-      UserRepository().currentUser.professionalData = data;
-      print("data stored OK! $data");
-    } else {
-      print("Something goes wrong!!");
-    }
-
-  }
 
   @override
   Widget build(BuildContext context) {
-
-
-    print("Received data from previous Screen");
-    print(widget._bloc.currentData);
 
     return Scaffold(
       appBar: AppBar(

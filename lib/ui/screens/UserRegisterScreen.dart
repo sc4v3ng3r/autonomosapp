@@ -355,8 +355,9 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
                         if (results) {
                           _showSnackBar(context, "Usuário registrado com sucesso!");
                           Navigator.pushAndRemoveUntil(context,
-                              MaterialPageRoute(builder: (BuildContext context) =>
-                                  MainScreen(user: _recentCreatedUser)),
+                              MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      MainScreen() ),
                                   (Route<dynamic> route)  => false);
                         }
                         else // o usuario pode ja estar registrado ou dar erro na hora do registro!

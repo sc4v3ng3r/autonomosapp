@@ -430,7 +430,7 @@ class _LoginScreenState extends State<LoginScreen> {
         context,
         MaterialPageRoute(
           maintainState: true,
-            builder: (BuildContext context) => MainScreen(user: user)));
+            builder: (BuildContext context) => MainScreen()));
   }
 
   void _showSnackBarInfo(BuildContext ctx, String msg) {

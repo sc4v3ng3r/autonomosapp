@@ -1,5 +1,5 @@
-import 'package:autonos_app/bloc/ProfessionalRegisterFlowBloc.dart';
 import 'package:autonos_app/bloc/ServiceListWidgetBloc.dart';
+import 'package:autonos_app/ui/screens/LoginScreen.dart';
 import 'package:autonos_app/ui/ui_cadastro_autonomo/ProfessionalRegisterBasicInfoScreen.dart';
 import 'package:autonos_app/ui/widget/RatingBar.dart';
 import 'package:autonos_app/model/User.dart';
@@ -11,9 +11,7 @@ import 'package:autonos_app/ui/widget/UserAccountsHackedDrawerHeader.dart';
 
 class MainScreen extends StatefulWidget {
   final User user;
-  //final Key _blocKey = new Key( ProfessionalRegisterFlowBlocProvider.BLOC_KEY);
-
-  MainScreen( {Key key, @required this.user} ) : super(key: key);
+  MainScreen( {Key key} ) :  user = UserRepository().currentUser, super(key: key);
 
   @override
   _MainScreenState createState() => _MainScreenState();
@@ -33,8 +31,6 @@ class _MainScreenState extends State<MainScreen> {
     print("Main initState");
     super.initState();
     _scaffoldKey = new GlobalKey<ScaffoldState>();
-    //_perfilFragment =  CityListWidgetBlocProvider(
-    //    child: CityListWidget() );
   }
 
   @override
@@ -123,10 +119,8 @@ void _NavegaCadastroAutonomo(BuildContext context){
             leading: Icon(Icons.directions_walk,color: Colors.red[500],),
             title: Text('Seja Um Autônomo!!!',style: TextStyle(color: Colors.red[500],fontWeight: FontWeight.bold)),
             onTap: ()=> _NavegaCadastroAutonomo(context),
-//            onTap: () => Navigator.push(
-//                context,
-//                MaterialPageRoute(builder: (BuildContext context) => CadastroAutonomoPt1())),
           ),
+
           Divider(),
 
           ListTile(
@@ -142,19 +136,18 @@ void _NavegaCadastroAutonomo(BuildContext context){
   }
 
   _logout(){
-    _auth.signOut().then((_){
-      Navigator.pop(context);
 
-      Navigator.pushNamed(context, '/loginScreen');
+    _auth.signOut();
+    //TODO WORK AROUND USER REPOSITORY
+    UserRepository r = new UserRepository();
+    r.currentUser = null;
 
-      //TODO WORK AROUND USER REPOSITORY
-      UserRepository r = new UserRepository();
-      r.currentUser = null;
-
-    }).catchError( (onError) {
-      //Navigator.pop(context);
-      Navigator.pushReplacementNamed(context, '/loginScreen');
-    });
+    Navigator.pop(context);
+    Navigator.pushAndRemoveUntil(context,
+        MaterialPageRoute(
+            builder: (BuildContext context) =>
+                LoginScreen() ),
+            (Route<dynamic> route)  => false);
   }
 
   void _setCurrentPosition(int position){

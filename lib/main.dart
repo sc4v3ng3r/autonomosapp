@@ -42,7 +42,6 @@ class ScreenSelector extends StatefulWidget {
 class _ScreenSelectorState extends State<ScreenSelector>{
 
   var _container;
-  //Future<FirebaseUser> _future;
   @override
   void initState() {
     _container = Container(color: Colors.transparent,);
@@ -70,7 +69,7 @@ class _ScreenSelectorState extends State<ScreenSelector>{
 
             if (snapshot.data != null){
               UserRepository().currentUser = snapshot.data;
-              return MainScreen(user: snapshot.data);
+              return MainScreen();
             }
 
             else {
