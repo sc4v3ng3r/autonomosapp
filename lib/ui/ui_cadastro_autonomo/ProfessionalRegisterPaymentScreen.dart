@@ -1,9 +1,20 @@
+import 'package:autonos_app/bloc/ProfessionalRegisterFlowBloc.dart';
+import 'package:autonos_app/model/ProfessionalData.dart';
 import 'package:autonos_app/ui/widget/NextButton.dart';
+import 'package:autonos_app/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
+import 'package:autonos_app/firebase/FirebaseUserHelper.dart';
 
 class ProfessionalRegisterPaymentScreen extends StatefulWidget {
+
+  final ProfessionalRegisterFlowBloc _bloc;
+
+  ProfessionalRegisterPaymentScreen({@required ProfessionalRegisterFlowBloc bloc}) :
+        _bloc = bloc;
+
   @override
-  ProfessionalRegisterPaymentScreenState createState() => ProfessionalRegisterPaymentScreenState();
+  ProfessionalRegisterPaymentScreenState createState() =>
+      ProfessionalRegisterPaymentScreenState();
 }
 
 class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterPaymentScreen> {
@@ -22,7 +33,7 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
   Color _colorChip = Colors.blueGrey[200];
   List<String> _formasDePagamentoChipSelecionado = <String>[];
 
-  //TODO WHAAATTTTTT ?????????????????????
+
   Iterable<Widget> get _transformaFormasDePagamentoEmChip sync* {
     for (String nomePagamento in _formasDePagamento) {
       yield Padding(
@@ -50,12 +61,12 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
 
   void _emiteNotaChange(int i){
     _radioValue = i;
-    //setState(() {
+    setState(() {
       if(i == 0)
         _emiteNota = false;
       else
         _emiteNota = true;
-    //});
+    });
   }
 
   List<Widget> _buildForm() {
@@ -105,7 +116,15 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
       textColor: Colors.white,
       buttonColor: Colors.green[300],
       callback: () {
-        print("Finalizar cadastro!");
+
+        widget._bloc.currentData.emissorNotaFiscal = _emiteNota;
+        widget._bloc.currentData.formasPagamento = _formasDePagamentoChipSelecionado;
+
+        FirebaseUserHelper
+            .registerUserProfessionalData(widget._bloc.currentData, _professionalDataStored);
+
+
+        // burn into DB!
       },
     );
 
@@ -127,8 +146,23 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
     return list;
   }
 
+  void _professionalDataStored(ProfessionalData data){
+    if (data != null){
+      UserRepository().currentUser.professionalData = data;
+      print("data stored OK! $data");
+    } else {
+      print("Something goes wrong!!");
+    }
+
+  }
+
   @override
   Widget build(BuildContext context) {
+
+
+    print("Received data from previous Screen");
+    print(widget._bloc.currentData);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -142,5 +176,13 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
         children: _buildForm(),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    widget._bloc.currentData.uid = UserRepository().currentUser.uid;
+    super.initState();
+
   }
 }

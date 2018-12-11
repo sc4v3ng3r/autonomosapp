@@ -1,5 +1,6 @@
 import 'package:autonos_app/model/Service.dart';
 import 'package:autonos_app/ui/screens/LoginScreen.dart';
+import 'package:autonos_app/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
 import 'package:autonos_app/ui/screens/UserRegisterScreen.dart';
 import 'package:autonos_app/firebase/FirebaseUserHelper.dart';
@@ -68,6 +69,7 @@ class _ScreenSelectorState extends State<ScreenSelector>{
             print("Snapshot:  ${snapshot.data} ");
 
             if (snapshot.data != null){
+              UserRepository().currentUser = snapshot.data;
               return MainScreen(user: snapshot.data);
             }
 

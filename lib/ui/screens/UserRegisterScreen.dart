@@ -441,9 +441,10 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
     try {
       print("Registrando conta no DB!");
       User user = new User(
-          recentCreatedUser.uid,
-          _name, // dados do field name
-          recentCreatedUser.email, RATING_INIT_VALUE);
+          uid: recentCreatedUser.uid,
+          email: recentCreatedUser.email,
+          name: recentCreatedUser.displayName,
+          rating: RATING_INIT_VALUE);
 
       await _userReference.child(recentCreatedUser.uid)
           .set(user.toJson());

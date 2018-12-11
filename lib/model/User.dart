@@ -17,7 +17,7 @@ class User {
   static final String RATING = "rating";
   static final String PICTURE_URL = "photo_url";
 
-  User(String uid, String name, String email, double rating) :
+  User( {String uid, String name, String email, double rating} ) :
     uid = uid,
     name = name,
     email = email,

@@ -1,3 +1,4 @@
+import 'package:autonos_app/bloc/ProfessionalRegisterFlowBloc.dart';
 import 'package:autonos_app/bloc/ServiceListWidgetBloc.dart';
 import 'package:autonos_app/ui/ui_cadastro_autonomo/ProfessionalRegisterBasicInfoScreen.dart';
 import 'package:autonos_app/ui/widget/RatingBar.dart';
@@ -10,6 +11,7 @@ import 'package:autonos_app/ui/widget/UserAccountsHackedDrawerHeader.dart';
 
 class MainScreen extends StatefulWidget {
   final User user;
+  //final Key _blocKey = new Key( ProfessionalRegisterFlowBlocProvider.BLOC_KEY);
 
   MainScreen( {Key key, @required this.user} ) : super(key: key);
 
@@ -64,7 +66,8 @@ void _NavegaCadastroAutonomo(BuildContext context){
   Navigator.push(
       context,
       MaterialPageRoute(builder: (BuildContext context) =>
-          ProfessionalRegisterBasicInfoScreen()
+           ProfessionalRegisterBasicInfoScreen(),
+          
       )
   );
 

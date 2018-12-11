@@ -78,7 +78,7 @@ class CityListWidgetBloc {
 }
 
 class CityListWidgetBlocProvider extends InheritedWidget {
-  final bloc = CityListWidgetBloc();
+  final _bloc = CityListWidgetBloc();
 
   CityListWidgetBlocProvider({Key key, Widget child})
       : super(key: key, child: child);
@@ -89,6 +89,6 @@ class CityListWidgetBlocProvider extends InheritedWidget {
   static CityListWidgetBloc of(BuildContext context) {
     return (context.inheritFromWidgetOfExactType(CityListWidgetBlocProvider)
             as CityListWidgetBlocProvider)
-        .bloc;
+        ._bloc;
   }
 }

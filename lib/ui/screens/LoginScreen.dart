@@ -88,14 +88,19 @@ class _LoginScreenState extends State<LoginScreen> {
     print("FirebaseAuth -> Token:" + token);
     _auth.signInWithFacebook(accessToken: token).then((firebaseUser) {
       FirebaseUserHelper.readUserAccountData(firebaseUser.uid).then((user) {
-        print("LIDO COM FACEBOOK ${user.email} ${user.name}");
 
+        /*Se o usuario ja existe no database*/
+        print("LIDO COM FACEBOOK ${user.email} ${user.name}");
+        UserRepository().currentUser = user;
         _goToLoggedScreen(context, user);
+
       }).catchError((dataBaseError) {
         FirebaseUserHelper.writeUserAccountData(firebaseUser)
             .then((createdUser) {
+
           print("USUARIO CRIADO COM SUCESSO!");
           print("CREATED: ${createdUser.name}  ${createdUser.email}");
+          UserRepository().currentUser = createdUser;
 
           _goToLoggedScreen(context, createdUser);
         }).catchError((error) {
