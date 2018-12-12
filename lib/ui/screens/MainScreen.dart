@@ -59,11 +59,9 @@ class _MainScreenState extends State<MainScreen> {
 void _NavegaCadastroAutonomo(BuildContext context){
   Navigator.pop(context);
 
-  Navigator.push(
-      context,
+  Navigator.of(context).push(
       MaterialPageRoute(builder: (BuildContext context) =>
            ProfessionalRegisterBasicInfoScreen(),
-          
       )
   );
 

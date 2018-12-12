@@ -1,4 +1,3 @@
-import 'package:autonos_app/model/Service.dart';
 import 'package:autonos_app/ui/screens/LoginScreen.dart';
 import 'package:autonos_app/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +17,13 @@ class MyApp extends StatefulWidget{
 
 class _MyAppState extends State<MyApp> {
   // This widget is the root of your application.
+
+  @override
+  void initState() {
+    // TODO: implement initState
+
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
         return MaterialApp(
