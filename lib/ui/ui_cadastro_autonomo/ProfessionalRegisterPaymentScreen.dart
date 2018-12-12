@@ -120,11 +120,12 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
 
         widget._bloc.currentData.emissorNotaFiscal = _emiteNota;
         widget._bloc.currentData.formasPagamento = _formasDePagamentoChipSelecionado;
+        _finalizeRegister();
+        /*UserRepository().currentUser.professionalData = widget._bloc.currentData;
 
-        FirebaseUserHelper
-            .registerUserProfessionalData(widget._bloc.currentData)
+         FirebaseUserHelper.registerUserProfessionalData(widget._bloc.currentData)
             .then( (_) {
-              UserRepository().currentUser.professionalData = widget._bloc.currentData;
+              print("ProfessionalRegisterPaymentScreen::updating userRepository data");
             })
             .catchError((onError) {
               print("registerUserProfessionalData $onError");
@@ -136,8 +137,7 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
                     MainScreen() ),
                 (Route<dynamic> route)  => false);
 
-
-        // burn into DB!
+                */
       },
     );
 
@@ -160,6 +160,21 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
   }
 
 
+  Future<void> _finalizeRegister() async {
+    await FirebaseUserHelper.registerUserProfessionalData(widget._bloc.currentData)
+        .catchError( (onError) {
+          // TODO EXEIBIR ERRO NA TELA!
+          print("registerUserProfessionalData $onError");
+    });
+
+    UserRepository().currentUser.professionalData = widget._bloc.currentData;
+    Navigator.pushAndRemoveUntil(context,
+        MaterialPageRoute(
+            builder: (BuildContext context) =>
+                MainScreen() ),
+            (Route<dynamic> route)  => false);
+
+  }
   @override
   Widget build(BuildContext context) {
 

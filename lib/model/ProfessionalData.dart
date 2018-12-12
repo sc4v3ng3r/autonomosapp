@@ -38,6 +38,7 @@ class ProfessionalData {
     _TIPO_PESSOA : tipoPessoa,
     _TELEFONE : telefone,
     _DESCRICAO : descricao,
+    _ESTADO_ATUANTE : estadoAtuante,
     _CIDADES : cidadesAtuantes,
     _SERVICOS : servicosAtuantes,
     _NOTA_FISCAL : emissorNotaFiscal,
@@ -55,6 +56,7 @@ class ProfessionalData {
       descricao = json[_DESCRICAO],
       latitude = json[_LATITUDE],
       longitude = json[_LONGITUDE],
+      estadoAtuante = json[_ESTADO_ATUANTE],
       emissorNotaFiscal = json[_NOTA_FISCAL],
       servicosAtuantes = List.from( json[_SERVICOS] ),
       formasPagamento = List.from( json[_FORMAS_PAGAMENTO] ),
@@ -67,6 +69,7 @@ class ProfessionalData {
       telefone = snapshot.value[_TELEFONE],
       descricao = snapshot.value[_DESCRICAO],
       emissorNotaFiscal = snapshot.value[_NOTA_FISCAL],
+      estadoAtuante = snapshot.value[_ESTADO_ATUANTE],
       latitude = double.parse( snapshot.value[_LATITUDE].toString() ),
       longitude = double.parse(snapshot.value[_LONGITUDE].toString() ),
       servicosAtuantes = List.from( snapshot.value[_SERVICOS]),
@@ -78,6 +81,7 @@ class ProfessionalData {
     return "$UID: $uid\n"
         "$_TIPO_PESSOA: $tipoPessoa\n"
         "$_DOCUMENTO $documento\n"
-        "$_TELEFONE: $telefone";
+        "$_TELEFONE: $telefone\n"
+        "$_ESTADO_ATUANTE $estadoAtuante";
   }
 }

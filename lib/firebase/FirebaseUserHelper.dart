@@ -1,3 +1,4 @@
+import 'package:autonos_app/firebase/FirebaseUfCidadesServicosProfissionaisHelper.dart';
 import 'package:autonos_app/model/ProfessionalData.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -62,9 +63,10 @@ class FirebaseUserHelper {
     }
   }
 
-  static Future<void> registerUserProfessionalData( ProfessionalData data ) {
+  static Future<void> registerUserProfessionalData( final ProfessionalData data ) {
     DatabaseReference ref = FirebaseDatabase.instance.reference()
         .child(FirebaseReferences.REFERENCE_PROFISSIONAIS);
+    FirebaseUfCidadesServicosProfissionaisHelper.writeIntoRelationship(data);
     return ref.child( data.uid ).set( data.toJson() );
   }
 
