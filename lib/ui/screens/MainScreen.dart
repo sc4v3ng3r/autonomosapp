@@ -1,5 +1,6 @@
 import 'package:autonos_app/bloc/ProfessionalRegisterFlowBloc.dart';
 import 'package:autonos_app/bloc/ServiceListWidgetBloc.dart';
+import 'package:autonos_app/ui/screens/PerfilUsuario.dart';
 import 'package:autonos_app/ui/ui_cadastro_autonomo/ProfessionalRegisterBasicInfoScreen.dart';
 import 'package:autonos_app/ui/widget/RatingBar.dart';
 import 'package:autonos_app/model/User.dart';
@@ -26,6 +27,8 @@ class _MainScreenState extends State<MainScreen> {
 
   //var _perfilFragment;
   int _drawerCurrentPosition = 1;
+  String appBarName = 'Serviços';
+  Color appBarColor = Colors.red[300];
 
 
   @override
@@ -49,9 +52,9 @@ class _MainScreenState extends State<MainScreen> {
             },
             icon: Icon(Icons.menu),
           ),
-          title: Text("Main Screen"),
+          title: Text(appBarName),
           automaticallyImplyLeading: false,
-          backgroundColor: Colors.red[300],
+          backgroundColor: appBarColor,
           elevation: .0,
         ),
 
@@ -156,8 +159,28 @@ void _NavegaCadastroAutonomo(BuildContext context){
       Navigator.pushReplacementNamed(context, '/loginScreen');
     });
   }
-
+  void _changeAppBarName(int position){
+    if(position == 0){
+        appBarColor = Colors.green[300];
+        appBarName = 'Perfil';
+    }else if(position == 1){
+        appBarColor = Colors.red[300];
+        appBarName = 'Serviços';
+    }else if(position == 2){
+      appBarColor = Colors.red[300];
+      appBarName = 'Histórico';
+    }else if(position == 3){
+      appBarColor = Colors.red[300];
+      appBarName = 'Visualizações';
+    }else if(position == 4){
+      appBarColor = Colors.red[300];
+      appBarName = 'Favoritos';
+    }
+  }
   void _setCurrentPosition(int position){
+
+    setState(() => _changeAppBarName(position));
+
     if (position != _drawerCurrentPosition)
       setState(() => _drawerCurrentPosition = position);
 
@@ -169,7 +192,7 @@ void _NavegaCadastroAutonomo(BuildContext context){
     switch (position){
       case 0:
         return Center(
-            child: Text("Perfil")
+            child: PerfilUsuario()
         );
 
       case 1:
