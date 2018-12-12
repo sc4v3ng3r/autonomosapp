@@ -16,17 +16,16 @@ class MyApp extends StatefulWidget{
 }
 
 class _MyAppState extends State<MyApp> {
-  // This widget is the root of your application.
-
   @override
   void initState() {
-    // TODO: implement initState
-
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
-        return MaterialApp(
+    print("My app build()");
+      return MaterialApp(
+
             debugShowCheckedModeBanner: false,
             initialRoute: '/',
             routes: {
@@ -34,6 +33,7 @@ class _MyAppState extends State<MyApp> {
               '/userRegisterScreen' : (context) => UserRegisterScreen(),
             },
             home: ScreenSelector(),
+
         );
   }
 }
@@ -47,26 +47,23 @@ class ScreenSelector extends StatefulWidget {
 
 class _ScreenSelectorState extends State<ScreenSelector>{
 
-  var _container;
   @override
   void initState() {
-    _container = Container(color: Colors.transparent,);
     super.initState();
-    //_future = ;
   }
 
   @override
   Widget build(BuildContext context) {
-
+    print("ScreenSelector build()");
     return FutureBuilder<User>(
-      future: FirebaseUserHelper.currentLoggedUser(),/*_future,*/
+      future: FirebaseUserHelper.currentLoggedUser(),
       builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
         switch ( snapshot.connectionState ) {
           case ConnectionState.none:
           case ConnectionState.active:
           case ConnectionState.waiting:
             print("STATE ${snapshot.connectionState.toString()}");
-            return _container;
+            return Container(color: Colors.transparent,);
 
             //TODO MELHORAR ESSA VERIFICACAO!
           case ConnectionState.done:

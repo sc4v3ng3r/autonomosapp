@@ -1,4 +1,6 @@
 
+import 'package:firebase_database/firebase_database.dart';
+
 class ProfessionalData {
 
   String documento;
@@ -9,9 +11,7 @@ class ProfessionalData {
   List<String> cidadesAtuantes = new List();
   List<String> servicosAtuantes = new List();
   List<String> formasPagamento = new List();
-
   bool emissorNotaFiscal;
-
   // talvez isso seja um node [Location]!
   double latitude =0.0;
   double longitude = 0.0;
@@ -27,7 +27,9 @@ class ProfessionalData {
   static final String _NOTA_FISCAL = "emissorNotaFiscal";
   static final String _LATITUDE = "latitude";
   static final String _LONGITUDE = "longitude";
-  static final String _FORMAS_PAGAMENTO = "formas_pagamento";
+  static final String _FORMAS_PAGAMENTO = "formasPagamento";
+  static final String _ESTADO_ATUANTE = "estadoAtuante";
+
   ProfessionalData();
 
   Map<String, dynamic> toJson() => {
@@ -58,7 +60,19 @@ class ProfessionalData {
       formasPagamento = List.from( json[_FORMAS_PAGAMENTO] ),
       cidadesAtuantes = List.from( json[_CIDADES] );
 
-
+  ProfessionalData.fromSnapshot(DataSnapshot snapshot) :
+      uid = snapshot.value[UID],
+      documento = snapshot.value[_DOCUMENTO],
+      tipoPessoa = snapshot.value[_TIPO_PESSOA],
+      telefone = snapshot.value[_TELEFONE],
+      descricao = snapshot.value[_DESCRICAO],
+      emissorNotaFiscal = snapshot.value[_NOTA_FISCAL],
+      latitude = double.parse( snapshot.value[_LATITUDE].toString() ),
+      longitude = double.parse(snapshot.value[_LONGITUDE].toString() ),
+      servicosAtuantes = List.from( snapshot.value[_SERVICOS]),
+      cidadesAtuantes = List.from( snapshot.value[_CIDADES] ),
+      formasPagamento = List.from( snapshot.value[_FORMAS_PAGAMENTO]);
+  
   @override
   String toString() {
     return "$UID: $uid\n"
