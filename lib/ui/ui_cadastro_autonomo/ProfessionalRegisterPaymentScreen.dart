@@ -1,5 +1,4 @@
 import 'package:autonos_app/bloc/ProfessionalRegisterFlowBloc.dart';
-import 'package:autonos_app/model/ProfessionalData.dart';
 import 'package:autonos_app/ui/screens/MainScreen.dart';
 import 'package:autonos_app/ui/widget/NextButton.dart';
 import 'package:autonos_app/utility/UserRepository.dart';
@@ -33,7 +32,6 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
   bool _emiteNota = false;
   Color _colorChip = Colors.blueGrey[200];
   List<String> _formasDePagamentoChipSelecionado = <String>[];
-
 
   Iterable<Widget> get _transformaFormasDePagamentoEmChip sync* {
     for (String nomePagamento in _formasDePagamento) {
@@ -120,24 +118,7 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
 
         widget._bloc.currentData.emissorNotaFiscal = _emiteNota;
         widget._bloc.currentData.formasPagamento = _formasDePagamentoChipSelecionado;
-        _finalizeRegister();
-        /*UserRepository().currentUser.professionalData = widget._bloc.currentData;
-
-         FirebaseUserHelper.registerUserProfessionalData(widget._bloc.currentData)
-            .then( (_) {
-              print("ProfessionalRegisterPaymentScreen::updating userRepository data");
-            })
-            .catchError((onError) {
-              print("registerUserProfessionalData $onError");
-            });
-
-        Navigator.pushAndRemoveUntil(context,
-            MaterialPageRoute(
-                builder: (BuildContext context) =>
-                    MainScreen() ),
-                (Route<dynamic> route)  => false);
-
-                */
+        _finishRegister();
       },
     );
 
@@ -160,7 +141,7 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
   }
 
 
-  Future<void> _finalizeRegister() async {
+  Future<void> _finishRegister() async {
     await FirebaseUserHelper.registerUserProfessionalData(widget._bloc.currentData)
         .catchError( (onError) {
           // TODO EXEIBIR ERRO NA TELA!

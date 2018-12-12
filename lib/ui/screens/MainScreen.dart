@@ -9,10 +9,12 @@ import 'package:autonos_app/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:autonos_app/ui/widget/UserAccountsHackedDrawerHeader.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:autonos_app/utility/LocationUtility.dart';
 
 class MainScreen extends StatefulWidget {
   //final User user;
-  MainScreen( {Key key} ) : super(key: key);
+  MainScreen({Key key}) : super(key: key);
 
   @override
   _MainScreenState createState() => _MainScreenState();
@@ -41,46 +43,45 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     print("MainScreen build()");
     return Scaffold(
-        key: _scaffoldKey,
-        appBar: AppBar(
-          leading: IconButton(
-            onPressed: () {
-              _scaffoldKey.currentState.openDrawer();
-            },
-            icon: Icon(Icons.menu),
-          ),
-          title: Text(appBarName),
-          automaticallyImplyLeading: false,
-          backgroundColor: appBarColor,
-          elevation: .0,
+      key: _scaffoldKey,
+      appBar: AppBar(
+        leading: IconButton(
+          onPressed: () {
+            _scaffoldKey.currentState.openDrawer();
+          },
+          icon: Icon(Icons.menu),
         ),
-
-        drawer: _drawerMenu(context),
-        body: _getFragment( _drawerCurrentPosition ),
+        title: Text(appBarName),
+        automaticallyImplyLeading: false,
+        backgroundColor: appBarColor,
+        elevation: .0,
+      ),
+      drawer: _drawerMenu(context),
+      body: _getFragment(_drawerCurrentPosition),
     );
   }
 
-void _NavegaCadastroAutonomo(BuildContext context){
-  Navigator.pop(context);
+  void _NavegaCadastroAutonomo(BuildContext context) {
+    Navigator.pop(context);
 
-  Navigator.of(context).push(
-      MaterialPageRoute(builder: (BuildContext context) =>
-           ProfessionalRegisterBasicInfoScreen(),
-      )
-  );
-
-}
-
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (BuildContext context) => ProfessionalRegisterBasicInfoScreen(),
+    ));
+  }
 
   Drawer _drawerMenu(BuildContext context) {
-
     List<Widget> drawerOptions = List();
 
     final drawerHeader = UserAccountsHackedDrawerHeader(
       accountEmail: Text('${_user.email}'),
       accountName: Text('${_user.name}'),
-      ratingBar: RatingBar(starCount: 5, rating: 4.3,),
-      currentAccountPicture: CircleAvatar(backgroundColor: Colors.white,),
+      ratingBar: RatingBar(
+        starCount: 5,
+        rating: 4.3,
+      ),
+      currentAccountPicture: CircleAvatar(
+        backgroundColor: Colors.white,
+      ),
     );
     drawerOptions.add(drawerHeader);
 
@@ -107,7 +108,7 @@ void _NavegaCadastroAutonomo(BuildContext context){
     );
     drawerOptions.add(optionHistory);
 
-    final optionViews =ListTile(
+    final optionViews = ListTile(
       leading: Icon(Icons.remove_red_eye),
       title: Text('Visualizações'),
       onTap: () => _setCurrentPosition(3),
@@ -124,12 +125,17 @@ void _NavegaCadastroAutonomo(BuildContext context){
     // TODO IF (CONDITION)
     if (_user.professionalData == null) {
       print("MainScreen User is not a professional!!!");
-      final optionRegister =  ListTile(
-        leading: Icon(Icons.directions_walk,color: Colors.red[500],),
-        title: Text('Seja Um Autônomo!!!',style: TextStyle(color: Colors.red[500],fontWeight: FontWeight.bold)),
-        onTap: ()=> _NavegaCadastroAutonomo(context),
+      final optionRegister = ListTile(
+        leading: Icon(
+          Icons.directions_walk,
+          color: Colors.red[500],
+        ),
+        title: Text('Seja Um Autônomo!!!',
+            style:
+                TextStyle(color: Colors.red[500], fontWeight: FontWeight.bold)),
+        onTap: () => _NavegaCadastroAutonomo(context),
       );
-      drawerOptions.add( optionRegister);
+      drawerOptions.add(optionRegister);
     }
 
     drawerOptions.add(Divider());
@@ -150,40 +156,39 @@ void _NavegaCadastroAutonomo(BuildContext context){
     );
   }
 
-  _logout(){
+  _logout() {
     _auth.signOut();
     //TODO WORK AROUND USER REPOSITORY
     UserRepository r = new UserRepository();
     r.currentUser = null;
 
     Navigator.pop(context);
-    Navigator.pushAndRemoveUntil(context,
-        MaterialPageRoute(
-            builder: (BuildContext context) =>
-                LoginScreen() ),
-            (Route<dynamic> route)  => false);
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (BuildContext context) => LoginScreen()),
+        (Route<dynamic> route) => false);
   }
 
-  void _changeAppBarName(int position){
-    if(position == 0){
-        appBarColor = Colors.green[300];
-        appBarName = 'Perfil';
-    }else if(position == 1){
-        appBarColor = Colors.red[300];
-        appBarName = 'Serviços';
-    }else if(position == 2){
+  void _changeAppBarName(int position) {
+    if (position == 0) {
+      appBarColor = Colors.green[300];
+      appBarName = 'Perfil';
+    } else if (position == 1) {
+      appBarColor = Colors.red[300];
+      appBarName = 'Serviços';
+    } else if (position == 2) {
       appBarColor = Colors.red[300];
       appBarName = 'Histórico';
-    }else if(position == 3){
+    } else if (position == 3) {
       appBarColor = Colors.red[300];
       appBarName = 'Visualizações';
-    }else if(position == 4){
+    } else if (position == 4) {
       appBarColor = Colors.red[300];
       appBarName = 'Favoritos';
     }
   }
-  void _setCurrentPosition(int position){
 
+  void _setCurrentPosition(int position) {
     setState(() => _changeAppBarName(position));
 
     if (position != _drawerCurrentPosition)
@@ -193,23 +198,22 @@ void _NavegaCadastroAutonomo(BuildContext context){
     Navigator.of(context).pop();
   }
 
-  Widget _getFragment(int position){
-    switch (position){
+  Widget _getFragment(int position) {
+    switch (position) {
       case 0:
-        return Center(
-            child: PerfilUsuario()
-        );
+        return Center(child: PerfilUsuario());
 
       case 1:
         return Center(
           child: ServiceListWidgetBlocProvider(
-              child: ServiceListWidget(
-                itemsSelectedCallback: null,
-                clickMode: ClickMode.TAP,
-                singleClickCallback: (item) {
-                  print("MainScreen clicou em $item");
-                },
-              ),//ClientChooseServicesFragment(),
+            child: ServiceListWidget(
+              itemsSelectedCallback: null,
+              clickMode: ClickMode.TAP,
+              singleClickCallback: (item) async {
+                print("item clicked: ${item}");
+                _listItemClickHandle();
+              },
+            ), //ClientChooseServicesFragment(),
           ),
         );
 
@@ -235,4 +239,13 @@ void _NavegaCadastroAutonomo(BuildContext context){
     }
   }
 
-}// end of class
+  void _listItemClickHandle() async {
+    Position location = await LocationUtility.getCurrentPosition();
+
+    if (location!=null){
+      print("LA: ${location.latitude} LO: ${location.longitude}");
+    } else {
+      print("LOCATION IS NULL!!!!");
+    }
+  }
+} // end of class
