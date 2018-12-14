@@ -18,7 +18,7 @@ class MainActivity(): FlutterActivity() {
 
         MethodChannel(flutterView, CHANNEL).setMethodCallHandler { call, result ->
             if (call.method == "show") {
-                val intent = Intent(this, NativeMapScreen::class.java)
+                val intent = Intent(this, NativeMapActivity::class.java)
                 startActivity(intent)
                 result.success(true)
             }

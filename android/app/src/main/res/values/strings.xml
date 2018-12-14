@@ -3,4 +3,5 @@
     <string name="app_name">Autonomos</string>
     <string name="facebook_app_id">254907575382202</string>
     <string name="fb_login_protocol_scheme">fb254907575382202</string>
+    <string name="title_activity_maps">Map</string>
 </resources>
