@@ -11,9 +11,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:autonos_app/ui/widget/UserAccountsHackedDrawerHeader.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:autonos_app/utility/LocationUtility.dart';
+import 'package:flutter/services.dart';
 
 class MainScreen extends StatefulWidget {
-  //final User user;
   MainScreen({Key key}) : super(key: key);
 
   @override
@@ -24,12 +24,22 @@ class _MainScreenState extends State<MainScreen> {
   GlobalKey<ScaffoldState> _scaffoldKey;
   final bool sair = false;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  static const platform = const MethodChannel(
+      "autonomos.com.br.jopeb.autonosapp");
 
   //var _perfilFragment;
   int _drawerCurrentPosition = 1;
   String appBarName = 'Serviços';
   Color appBarColor = Colors.red[300];
   User _user;
+  BuildContext _buildContext;
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _buildContext = null;
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -42,6 +52,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     print("MainScreen build()");
+    _buildContext = context;
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -239,13 +250,42 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
-  void _listItemClickHandle() async {
-    Position location = await LocationUtility.getCurrentPosition();
-
+  void _listItemClickHandle()  async{
+    await _showNativeView();
+    /*Position location = await LocationUtility.getCurrentPosition();
     if (location!=null){
       print("LA: ${location.latitude} LO: ${location.longitude}");
+
+      /*
+      Navigator.of(context).push(MaterialPageRoute(
+        builder: (BuildContext context) => GoogleMap(onMapCreated: (controller) {
+          print("onMapCreated");
+        },),
+      ));
+      */
     } else {
       print("LOCATION IS NULL!!!!");
+    }*/
+  }
+
+  //chamando metodo nativo
+  Future<Null> _showNativeView() async {
+    try {
+      var result = await platform.invokeMethod('show');
+
+    } on PlatformException catch(e) {
+
+      print("ERROR ${e.message} ${e.code}");
+    }
+
+  }
+
+  //metodo que trata as chamadas do nativo ao flutter
+  Future<dynamic> _handleMethod(MethodCall call) async {
+    switch(call.method) {
+      case "message":
+        debugPrint(call.arguments);
+        return new Future.value("");
     }
   }
 } // end of class
