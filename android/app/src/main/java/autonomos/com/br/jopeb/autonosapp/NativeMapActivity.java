@@ -14,11 +14,17 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class NativeMapActivity extends AppCompatActivity implements OnMapReadyCallback{
 
   private GoogleMap m_map;
+  public static final String KEY_LATITUDE = "latitude";
+  public static final String KEY_LONGITUDE = "longitude";
+  private LatLng m_myPlace;
 
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_maps);
+
+    Bundle args = getIntent().getExtras();
+    m_myPlace = new LatLng( args.getDouble(KEY_LATITUDE), args.getDouble(KEY_LONGITUDE) );
 
     SupportMapFragment fragment =  (SupportMapFragment) getSupportFragmentManager()
             .findFragmentById(R.id.map);
@@ -29,12 +35,12 @@ public class NativeMapActivity extends AppCompatActivity implements OnMapReadyCa
 
 
   @Override
-  public void onMapReady(GoogleMap googleMap) {
+  public void onMapReady( GoogleMap googleMap ) {
     m_map = googleMap;
-    // Add a marker in Sydney and move the camera
-    LatLng sydney = new LatLng(-34.0, 151.0);
-    m_map.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-    m_map.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+    m_map.addMarker(new MarkerOptions().position(m_myPlace).title("Marker in Sydney"));
+    //m_map.moveCamera(CameraUpdateFactory.newLatLng(m_myPlace) );
+    m_map.animateCamera(CameraUpdateFactory.newLatLngZoom(
+            m_myPlace, 14.0f), 1500, null );
 
   }
 }

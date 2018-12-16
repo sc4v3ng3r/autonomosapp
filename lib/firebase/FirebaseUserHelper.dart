@@ -66,6 +66,7 @@ class FirebaseUserHelper {
   static Future<void> registerUserProfessionalData( final ProfessionalData data ) {
     DatabaseReference ref = FirebaseDatabase.instance.reference()
         .child(FirebaseReferences.REFERENCE_PROFISSIONAIS);
+
     FirebaseUfCidadesServicosProfissionaisHelper.writeIntoRelationship(data);
     return ref.child( data.uid ).set( data.toJson() );
   }

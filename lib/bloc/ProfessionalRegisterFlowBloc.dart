@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:autonos_app/model/Cidade.dart';
 import 'package:autonos_app/model/Estado.dart';
+import 'package:autonos_app/model/Location.dart';
 import 'package:autonos_app/model/Service.dart';
 import 'package:flutter/material.dart';
 import 'package:autonos_app/model/ProfessionalData.dart';
@@ -29,12 +30,17 @@ class ProfessionalRegisterFlowBloc {
   void insertLocationsAndServices( {
     @required Estado state,
     @required List<Cidade> yourCities,
-    @required List<Service> yourServices } ){
+    @required List<Service> yourServices,
+    @required String professionalName,
+    @required Location currentLocation} ){
 
+      _professionalData.nome = professionalName;
       _professionalData.estadoAtuante =  state.sigla;
+      _professionalData.latitude = currentLocation.latitude;
+      _professionalData.longitude = currentLocation.longitude;
 
       yourCities.forEach( (cidade) {
-        _professionalData.cidadesAtuantes.add( cidade.id );
+        _professionalData.cidadesAtuantes.add( cidade.nome );
       });
 
       yourServices.forEach( (service) {

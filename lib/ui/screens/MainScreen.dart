@@ -1,10 +1,15 @@
 import 'package:autonos_app/bloc/ServiceListWidgetBloc.dart';
+import 'package:autonos_app/firebase/FirebaseUfCidadesServicosProfissionaisHelper.dart';
+import 'package:autonos_app/model/Estado.dart';
+import 'package:autonos_app/model/Location.dart';
+import 'package:autonos_app/model/Service.dart';
 import 'package:autonos_app/ui/screens/LoginScreen.dart';
 import 'package:autonos_app/ui/screens/PerfilUsuario.dart';
 import 'package:autonos_app/ui/ui_cadastro_autonomo/ProfessionalRegisterBasicInfoScreen.dart';
 import 'package:autonos_app/ui/widget/RatingBar.dart';
 import 'package:autonos_app/model/User.dart';
 import 'package:autonos_app/ui/widget/ServiceListWidget.dart';
+import 'package:autonos_app/utility/PermissionUtiliy.dart';
 import 'package:autonos_app/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -24,20 +29,18 @@ class _MainScreenState extends State<MainScreen> {
   GlobalKey<ScaffoldState> _scaffoldKey;
   final bool sair = false;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  static const platform = const MethodChannel(
-      "autonomos.com.br.jopeb.autonosapp");
+  static const platform =
+      const MethodChannel("autonomos.com.br.jopeb.autonosapp");
 
   //var _perfilFragment;
   int _drawerCurrentPosition = 1;
   String appBarName = 'Serviços';
   Color appBarColor = Colors.red[300];
   User _user;
-  BuildContext _buildContext;
 
   @override
   void dispose() {
     // TODO: implement dispose
-    _buildContext = null;
     super.dispose();
   }
 
@@ -47,13 +50,13 @@ class _MainScreenState extends State<MainScreen> {
     super.initState();
     _scaffoldKey = new GlobalKey<ScaffoldState>();
     _user = UserRepository().currentUser;
+    _initUserCurrentPosision();
   }
 
   @override
   Widget build(BuildContext context) {
     print("MainScreen build()");
-    _buildContext = context;
-    return Scaffold(
+    var layout = Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
         leading: IconButton(
@@ -70,6 +73,16 @@ class _MainScreenState extends State<MainScreen> {
       drawer: _drawerMenu(context),
       body: _getFragment(_drawerCurrentPosition),
     );
+    /*
+    LocationUtility.getCurrentPosition().then((position) {
+      Location location = new Location(
+          latitude: position.latitude, longitude: position.longitude);
+      UserRepository().currentLocation = location;
+    }).catchError((error) {
+      print("ERRO GETTING CURRENT USER POSITION $error");
+    });*/
+
+    return layout;
   }
 
   void _NavegaCadastroAutonomo(BuildContext context) {
@@ -222,7 +235,8 @@ class _MainScreenState extends State<MainScreen> {
               clickMode: ClickMode.TAP,
               singleClickCallback: (item) async {
                 print("item clicked: ${item}");
-                _listItemClickHandle();
+
+                _serviceListItemClickHandle(item);
               },
             ), //ClientChooseServicesFragment(),
           ),
@@ -250,39 +264,79 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
-  void _listItemClickHandle()  async{
-    await _showNativeView();
-    /*Position location = await LocationUtility.getCurrentPosition();
-    if (location!=null){
-      print("LA: ${location.latitude} LO: ${location.longitude}");
+  void _serviceListItemClickHandle(Service item) async {
+    //Position location = await LocationUtility.getCurrentPosition();
+    Location location = UserRepository().currentLocation;
+    if (location == null) {
 
-      /*
-      Navigator.of(context).push(MaterialPageRoute(
-        builder: (BuildContext context) => GoogleMap(onMapCreated: (controller) {
-          print("onMapCreated");
-        },),
-      ));
-      */
-    } else {
-      print("LOCATION IS NULL!!!!");
-    }*/
-  }
-
-  //chamando metodo nativo
-  Future<Null> _showNativeView() async {
-    try {
-      var result = await platform.invokeMethod('show');
-
-    } on PlatformException catch(e) {
-
-      print("ERROR ${e.message} ${e.code}");
+      LocationUtility.getCurrentPosition().then((position) {
+        if (position == null) {
+          print("NAO FOI POSSIVEL BOBTER A POSICAO ATUAL!!");
+          //possivelmente o usuario nao deu a permissao de obter a posicao!
+          // avisamos  a ele que nao podera seguir!!
+        } else {
+          // temos a localizacao,
+          _goAhead(location, item);
+        }
+      }).catchError((error) {
+        print(error);
+      });
     }
 
+    else {
+      _goAhead(location, item);
+    }
+  }
+
+  void _initUserCurrentPosision(){
+    LocationUtility.getCurrentPosition().then( (position) {
+      if (position != null){
+        var location = new Location(
+            latitude: position.latitude, longitude: position.longitude);
+        UserRepository().currentLocation = location;
+      }
+
+      else {
+        print("NAO FOI POSSIVEL OBTER A POSICAO ATUAL!");
+      }
+    })
+    .catchError((error) {
+      print(error);
+    });
+  }
+
+  void _goAhead(Location location, Service serviceItem) async {
+    Geolocator()
+        .placemarkFromCoordinates(location.latitude, location.longitude)
+        .then((placemarks) {
+
+      var localPlace = placemarks[0];
+      print(localPlace.subAdministratieArea); // cidade
+      print(localPlace.administrativeArea); // estado
+      String sigla = Estado.keyOfState(localPlace.administrativeArea);
+
+      FirebaseUfCidadesServicosProfissionaisHelper
+          .getProfessionalsIdsFromCityAndService(
+              estadoSigla: sigla,
+              cidadeNome: localPlace.subAdministratieArea,
+              serviceId: serviceItem.id);
+      //_showNativeMapActivity(location.latitude, location.longitude);
+    }).catchError((error) {});
+  }
+
+  //chamando metodo nativo que exibi o maps activity
+  Future<Null> _showNativeMapActivity(double lat, double long) async {
+    try {
+      var result = await platform.invokeMethod(
+          'show_maps_activity', {"latitude": lat, "longitude": long});
+    } on PlatformException catch (e) {
+      print("ERROR ${e.message} ${e.code}");
+    }
   }
 
   //metodo que trata as chamadas do nativo ao flutter
   Future<dynamic> _handleMethod(MethodCall call) async {
-    switch(call.method) {
+    switch (call.method) {
       case "message":
         debugPrint(call.arguments);
         return new Future.value("");
