@@ -1,3 +1,4 @@
+import 'package:autonos_app/utility/UserRepository.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -354,6 +355,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
                         showProgressBar(false);
                         if (results) {
                           _showSnackBar(context, "Usuário registrado com sucesso!");
+
                           Navigator.pushAndRemoveUntil(context,
                               MaterialPageRoute(
                                   builder: (BuildContext context) =>
@@ -423,8 +425,9 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
           email: email, password: password);
 
       //print("FIREBASE USER: ${firebaseUser}"  );
-      User userCreated = await _createAccountDBRegister(firebaseUser);
 
+      User userCreated = await _createAccountDBRegister(firebaseUser);
+      UserRepository().currentUser = userCreated;
       returnFlag = true;
       //essa atribuicao deve mesmo ficar aqui??
       _recentCreatedUser = userCreated;
@@ -440,11 +443,14 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
   Future<User> _createAccountDBRegister(FirebaseUser recentCreatedUser) async {
 
     try {
+      var name = recentCreatedUser.displayName;
       print("Registrando conta no DB!");
+      if (name == null)
+        name = _nameController.text;
       User user = new User(
           uid: recentCreatedUser.uid,
           email: recentCreatedUser.email,
-          name: recentCreatedUser.displayName,
+          name: name,
           rating: RATING_INIT_VALUE);
 
       await _userReference.child(recentCreatedUser.uid)

@@ -94,11 +94,11 @@ class FirebaseUserHelper {
         .child(FirebaseReferences.REFERENCE_PROFISSIONAIS);
 
     try {
-      print("getting firebase user");
+      //print("getting firebase user");
       FirebaseUser fbUser = await AUTH.currentUser();
-      print("FB user got it!");
+      //print("FB user got it!");
       if (fbUser != null) {
-        print("firebase user NOT NULL,getting snapshot");
+        //print("firebase user NOT NULL,getting snapshot");
         DataSnapshot snapshot = await ref.child(fbUser.uid).once();
         if (snapshot.value != null) {
           print("data snapshot ${snapshot.value.toString()}");

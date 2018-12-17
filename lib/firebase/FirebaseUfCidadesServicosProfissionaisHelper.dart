@@ -30,15 +30,6 @@ class FirebaseUfCidadesServicosProfissionaisHelper {
         .child( estadoSigla ).child( cidadeNome ).child( serviceId );
 
     return ref.once();
-        /*
-        .then( (snapshot) {
-      if (snapshot.value != null){
-        print("data recovered ${snapshot.value.toString()}");
-      }
-      else print("NULL SNAPSHOT");
-    }
-    ).catchError( (error) { throw error; } );
-    */
   }
 
 }
