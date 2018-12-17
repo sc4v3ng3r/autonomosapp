@@ -53,7 +53,7 @@ class ProfessionalRegisterFlowBloc {
     List<String> tiposPagamento
 
   }){
-
+    _professionalData.formasPagamento = tiposPagamento;
     _professionalData.emissorNotaFiscal = emissorNotaFiscal;
 
   }

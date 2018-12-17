@@ -21,21 +21,24 @@ class FirebaseUfCidadesServicosProfissionaisHelper {
 
   }
 
-  static getProfessionalsIdsFromCityAndService({
+  static Future<DataSnapshot> getProfessionalsIdsFromCityAndService({
     @required String estadoSigla, @required String cidadeNome,
     @required String serviceId }) {
 
     DatabaseReference ref = FirebaseDatabase.instance.reference()
         .child(FirebaseReferences.REFERENCE_UF_CIDADES_SERVICOS_PROFISSIONAIS)
-        .child( estadoSigla ).child( cidadeNome ).child( serviceId);
+        .child( estadoSigla ).child( cidadeNome ).child( serviceId );
 
-    ref.once().then( (snapshot) {
+    return ref.once();
+        /*
+        .then( (snapshot) {
       if (snapshot.value != null){
         print("data recovered ${snapshot.value.toString()}");
       }
       else print("NULL SNAPSHOT");
     }
-    ).catchError( (error) {} );
-
+    ).catchError( (error) { throw error; } );
+    */
   }
+
 }

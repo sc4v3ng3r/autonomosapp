@@ -12,29 +12,28 @@ class FirebaseUserHelper {
 
   static final DatabaseReference USERS_REFERENCE = FirebaseDatabase.instance
       .reference()
-      .child( FirebaseReferences.REFERENCE_USERS );
+      .child(FirebaseReferences.REFERENCE_USERS);
 
   static Future<User> readUserAccountData(String uid) async {
-    DatabaseReference proRef = FirebaseDatabase.instance.reference()
+    DatabaseReference proRef = FirebaseDatabase.instance
+        .reference()
         .child(FirebaseReferences.REFERENCE_PROFISSIONAIS);
 
     User user;
     try {
       DataSnapshot snapshot = await USERS_REFERENCE.child(uid).once();
-      if (snapshot.value != null){
+      if (snapshot.value != null) {
         print("FirebaseUserHelper user $uid exist in DB!");
         user = User.fromDataSnapshot(snapshot);
       }
 
-       DataSnapshot professionalData = await proRef.child( user.uid ).once();
-       if ( (professionalData.value != null) ){
-         print("FirebaseUserHelper user $uid has pro data ${professionalData.value.toString()}");
-         user.professionalData = ProfessionalData.fromSnapshot( professionalData);
-       }
-
-    }
-
-    catch (ex) {
+      DataSnapshot professionalData = await proRef.child(user.uid).once();
+      if ((professionalData.value != null)) {
+        print(
+            "FirebaseUserHelper user $uid has pro data ${professionalData.value.toString()}");
+        user.professionalData = ProfessionalData.fromSnapshot(professionalData);
+      }
+    } catch (ex) {
       print("FirebaseUserHelper ${ex.toString()}");
       throw ex;
     }
@@ -42,7 +41,8 @@ class FirebaseUserHelper {
     return user;
   }
 
-  static Future<User> writeUserAccountData(FirebaseUser recentCreatedUser)  async {
+  static Future<User> writeUserAccountData(
+      FirebaseUser recentCreatedUser) async {
     try {
       print("Registrando conta no DB!");
       User user = new User(
@@ -52,66 +52,81 @@ class FirebaseUserHelper {
         rating: RATING_INIT_VALUE,
       );
 
-      await USERS_REFERENCE.child(recentCreatedUser.uid)
-          .set(user.toJson());
+      await USERS_REFERENCE.child(recentCreatedUser.uid).set(user.toJson());
 
       return user;
-    }
-
-    catch (ex) {
+    } catch (ex) {
       throw ex;
     }
   }
 
-  static Future<void> registerUserProfessionalData( final ProfessionalData data ) {
-    DatabaseReference ref = FirebaseDatabase.instance.reference()
+  static Future<void> registerUserProfessionalData(
+      final ProfessionalData data) {
+    DatabaseReference ref = FirebaseDatabase.instance
+        .reference()
         .child(FirebaseReferences.REFERENCE_PROFISSIONAIS);
 
     FirebaseUfCidadesServicosProfissionaisHelper.writeIntoRelationship(data);
-    return ref.child( data.uid ).set( data.toJson() );
+    return ref.child(data.uid).set(data.toJson());
   }
 
   // TODO MELHORAR ESSE METODO
   static Future<User> currentLoggedUser() async {
     try {
       FirebaseUser fbUser = await AUTH.currentUser();
-      return await readUserAccountData( fbUser.uid );
+      return await readUserAccountData(fbUser.uid);
       //return user;
-    }
-    catch (ex){
+    } catch (ex) {
       print("FirebaseUserHelper::" + ex.toString());
       throw ex;
     }
-
   }
 
   //TODO terminar de implementar essa versão de método!
   static Future<User> getCurrentUser() async {
     User user;
-    DatabaseReference ref = FirebaseDatabase.instance.reference()
-        .child(FirebaseReferences.REFERENCE_USERS );
+    DatabaseReference ref = FirebaseDatabase.instance
+        .reference()
+        .child(FirebaseReferences.REFERENCE_USERS);
 
-    DatabaseReference proRef = FirebaseDatabase.instance.reference()
-      .child(FirebaseReferences.REFERENCE_PROFISSIONAIS);
+    DatabaseReference proRef = FirebaseDatabase.instance
+        .reference()
+        .child(FirebaseReferences.REFERENCE_PROFISSIONAIS);
 
-    try{
+    try {
       print("getting firebase user");
       FirebaseUser fbUser = await AUTH.currentUser();
       print("FB user got it!");
-      if (fbUser != null){
+      if (fbUser != null) {
         print("firebase user NOT NULL,getting snapshot");
-        DataSnapshot snapshot = await ref.child( fbUser.uid ).once();
-        if (snapshot.value != null){
+        DataSnapshot snapshot = await ref.child(fbUser.uid).once();
+        if (snapshot.value != null) {
           print("data snapshot ${snapshot.value.toString()}");
         }
       }
-
-    } catch (error){
-        print(error);
+    } catch (error) {
+      print(error);
     }
 
     print("USER RETURNED $user");
     return user;
-
   }
+
+
+  static Future<Map<String,dynamic>> getProfessionalsData( List<String> ids) async {
+
+    DatabaseReference ref = FirebaseDatabase.instance
+        .reference()
+        .child(FirebaseReferences.REFERENCE_PROFISSIONAIS);
+
+    Map<String, dynamic> map = Map();
+    for(String id in ids){
+     var snapshot = await ref.child(id).once();
+      print(snapshot.value.toString());
+      map.putIfAbsent( id, () => snapshot.value );
+     //list.add(  );
+    }
+    return map;
+  }
+
 }

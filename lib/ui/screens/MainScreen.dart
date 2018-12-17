@@ -1,7 +1,9 @@
 import 'package:autonos_app/bloc/ServiceListWidgetBloc.dart';
 import 'package:autonos_app/firebase/FirebaseUfCidadesServicosProfissionaisHelper.dart';
+import 'package:autonos_app/firebase/FirebaseUserHelper.dart';
 import 'package:autonos_app/model/Estado.dart';
 import 'package:autonos_app/model/Location.dart';
+import 'package:autonos_app/model/ProfessionalData.dart';
 import 'package:autonos_app/model/Service.dart';
 import 'package:autonos_app/ui/screens/LoginScreen.dart';
 import 'package:autonos_app/ui/screens/PerfilUsuario.dart';
@@ -37,6 +39,7 @@ class _MainScreenState extends State<MainScreen> {
   String appBarName = 'Serviços';
   Color appBarColor = Colors.red[300];
   User _user;
+  Placemark _placemark;
 
   @override
   void dispose() {
@@ -46,17 +49,17 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   void initState() {
-    print("Main initState");
     super.initState();
-    _scaffoldKey = new GlobalKey<ScaffoldState>();
     _user = UserRepository().currentUser;
-    _initUserCurrentPosision();
+    _initUserCurrentPosition();
+    print("Main initState");
+    _scaffoldKey = new GlobalKey<ScaffoldState>();
   }
 
   @override
   Widget build(BuildContext context) {
-    print("MainScreen build()");
-    var layout = Scaffold(
+    //print("MainScreen build()");
+    var screenLayout = Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
         leading: IconButton(
@@ -73,16 +76,8 @@ class _MainScreenState extends State<MainScreen> {
       drawer: _drawerMenu(context),
       body: _getFragment(_drawerCurrentPosition),
     );
-    /*
-    LocationUtility.getCurrentPosition().then((position) {
-      Location location = new Location(
-          latitude: position.latitude, longitude: position.longitude);
-      UserRepository().currentLocation = location;
-    }).catchError((error) {
-      print("ERRO GETTING CURRENT USER POSITION $error");
-    });*/
 
-    return layout;
+    return screenLayout;
   }
 
   void _NavegaCadastroAutonomo(BuildContext context) {
@@ -268,7 +263,6 @@ class _MainScreenState extends State<MainScreen> {
     //Position location = await LocationUtility.getCurrentPosition();
     Location location = UserRepository().currentLocation;
     if (location == null) {
-
       LocationUtility.getCurrentPosition().then((position) {
         if (position == null) {
           print("NAO FOI POSSIVEL BOBTER A POSICAO ATUAL!!");
@@ -288,16 +282,24 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
-  void _initUserCurrentPosision(){
+  void _initUserCurrentPosition(){
     LocationUtility.getCurrentPosition().then( (position) {
       if (position != null){
+        LocationUtility.doGeoCoding( position )
+            .then( (placeMarks){
+              _placemark = placeMarks[0];
+
+        }).catchError( (error) { throw error;});
+
         var location = new Location(
             latitude: position.latitude, longitude: position.longitude);
         UserRepository().currentLocation = location;
+
       }
 
       else {
-        print("NAO FOI POSSIVEL OBTER A POSICAO ATUAL!");
+        var snack = SnackBar( content: Text("Não foi possível obter sua localização"),);
+        Scaffold.of(context).showSnackBar(snack);
       }
     })
     .catchError((error) {
@@ -305,30 +307,49 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
+  // TODO método denome provisorio!
   void _goAhead(Location location, Service serviceItem) async {
-    Geolocator()
-        .placemarkFromCoordinates(location.latitude, location.longitude)
-        .then((placemarks) {
 
-      var localPlace = placemarks[0];
-      print(localPlace.subAdministratieArea); // cidade
-      print(localPlace.administrativeArea); // estado
-      String sigla = Estado.keyOfState(localPlace.administrativeArea);
+      print(_placemark.subAdministratieArea); // cidade
+      print(_placemark.administrativeArea); // estado
+      String sigla = Estado.keyOfState(_placemark.administrativeArea);
 
       FirebaseUfCidadesServicosProfissionaisHelper
-          .getProfessionalsIdsFromCityAndService(
-              estadoSigla: sigla,
-              cidadeNome: localPlace.subAdministratieArea,
-              serviceId: serviceItem.id);
-      //_showNativeMapActivity(location.latitude, location.longitude);
-    }).catchError((error) {});
+          .getProfessionalsIdsFromCityAndService( estadoSigla: sigla,
+              cidadeNome: _placemark.subAdministratieArea,
+              serviceId: serviceItem.id).then(
+              (ProsIdsnapshot) {
+                if (ProsIdsnapshot.value != null) {
+                  Map<String, dynamic> idsMap = Map.from(ProsIdsnapshot.value);
+                  List<dynamic> dataList = new List();
+                  FirebaseUserHelper.getProfessionalsData(
+                      idsMap.keys.toList() ).then((dataMap) {
+                    dataMap.forEach((key, value)
+                    {
+                      dataList.add(value);
+                      //print("KEY: $key VALUE: $value");
+                    });
+
+                    _showNativeMapActivity(dataList);
+                  });
+                }
+
+                else {
+
+                  // EH PQ NAO HA PROFISISONAIS PARA TAL SERVICO EM TAL CIDADE!
+                }
+          });
   }
 
   //chamando metodo nativo que exibi o maps activity
-  Future<Null> _showNativeMapActivity(double lat, double long) async {
+  Future<Null> _showNativeMapActivity(List<dynamic> dataMapList) async {
     try {
       var result = await platform.invokeMethod(
-          'show_maps_activity', {"latitude": lat, "longitude": long});
+          'show_maps_activity', {
+            "dataList": dataMapList,
+            "localLat": UserRepository().currentLocation.latitude,
+            "localLong":UserRepository().currentLocation.longitude,
+      });
     } on PlatformException catch (e) {
       print("ERROR ${e.message} ${e.code}");
     }
