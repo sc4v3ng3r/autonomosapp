@@ -1,10 +1,12 @@
 import 'package:autonos_app/bloc/ProfessionalRegisterFlowBloc.dart';
 import 'package:autonos_app/model/Cidade.dart';
+import 'package:autonos_app/model/Location.dart';
 import 'package:autonos_app/ui/ui_cadastro_autonomo/ListagemCidadesScreen.dart';
 import 'package:autonos_app/ui/ui_cadastro_autonomo/ProfessionalRegisterPaymentScreen.dart';
 import 'package:autonos_app/model/Service.dart';
 import 'package:autonos_app/model/Estado.dart';
 import 'package:autonos_app/ui/ui_cadastro_autonomo/ListagemServicosScreen.dart';
+import 'package:autonos_app/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
 import 'package:autonos_app/ui/widget/NextButton.dart';
 
@@ -23,37 +25,9 @@ class ProfessionalRegisterLocationAndServiceScreen extends StatefulWidget {
 
 class ProfessionalRegisterLocationAndServiceScreenState
     extends State<ProfessionalRegisterLocationAndServiceScreen> {
-  static const String KEY_NONE = "NONE";
-  static const Map<String, String> DROPDOWN_MENU_OPTIONS = const {
-    KEY_NONE: "Selecione seu Estado",
-    "AC": "Acre",
-    "AL": "Alagoas",
-    "AM": "Amazonas",
-    "AP": "Amapá",
-    "BA": "Bahia",
-    "CE": "Ceará",
-    "DF": "Distrito Federal",
-    "ES": "Espírito Santo",
-    "GO": "Goiás",
-    "MA": "Maranhão",
-    "MG": "Minas Gerais",
-    "MS": "Mato Grosso do Sul",
-    "MT": "Mato Grosso",
-    "PA": "Pará",
-    "PB": "Paraíba",
-    "PE": "Pernambuco",
-    "PI": "Piauí",
-    "PR": "Paraná",
-    "RJ": "Rio de Janeiro",
-    "RN": "Rio Grande do Norte",
-    "RO": "Rondônia",
-    "RR": "Roraima",
-    "RS": "Rio Grande do Sul",
-    "SC": "Santa Catarina",
-    "SE": "Sergipe",
-    "SP": "São Paulo",
-    "TO": "Tocantins"
-  };
+
+  static const String KEY_NONE = Estado.KEY_NONE;
+  static const Map<String, String> DROPDOWN_MENU_OPTIONS = Estado.STATES_MAP;
 
    //
   // TODO: IMPLEMENTAR BLOC PARA ESTA TELA. OS DADOS DEVEM FICAR NO MESMO.
@@ -63,19 +37,17 @@ class ProfessionalRegisterLocationAndServiceScreenState
   List<Chip> _chipList = [];
   List<Chip> _chipListServicos = [];
   Estado _selectedState;
+  // TODO MEMBRO TEMPORARIO
 
   RaisedButton _buttonListCidades;
   List<DropdownMenuItem<String>> _dropDownMenuItems;
   String _dropdownCurrentOption;
 
-  final _VERTICAL_SEPARATOR = SizedBox(
-    height: 8.0,
-  );
+  final _VERTICAL_SEPARATOR = SizedBox( height: 8.0,);
 
   @override
   void initState() {
     _initDropdownMenu();
-    //print(widget._profissionalData);
     super.initState();
   }
 
@@ -287,7 +259,9 @@ class ProfessionalRegisterLocationAndServiceScreenState
       text: '[2/3] Próximo Passo',
       textColor: Colors.white,
       callback: () {
+
         _gettingInputData();
+
         Navigator.of(context).push(MaterialPageRoute(
             builder: (BuildContext context) =>
                  ProfessionalRegisterPaymentScreen(
@@ -325,7 +299,9 @@ class ProfessionalRegisterLocationAndServiceScreenState
     widget._bloc.insertLocationsAndServices(
         state: _selectedState,
         yourCities: _cidadesSelcionadas,
-        yourServices: _servicosSelecionados);
+        yourServices: _servicosSelecionados,
+        currentLocation: UserRepository().currentLocation,
+        professionalName: UserRepository().currentUser.name );
   }
 
   @override

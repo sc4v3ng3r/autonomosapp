@@ -8,6 +8,7 @@ class ProfessionalData {
   String telefone;
   String descricao;
   String estadoAtuante;
+  String nome;
   List<String> cidadesAtuantes = new List();
   List<String> servicosAtuantes = new List();
   List<String> formasPagamento = new List();
@@ -18,22 +19,24 @@ class ProfessionalData {
   String uid;
 
   static final String UID = "uid";
+  static final String _NOME = "nome";
   static final String _DOCUMENTO = "documento";
   static final String _TIPO_PESSOA = "tipoPessoa";
   static final String _TELEFONE = "telefone";
   static final String _DESCRICAO = "descricao";
-  static final String _CIDADES = "cidadesAtuantes";
-  static final String _SERVICOS = "servicosAtuantes";
+  static final String _CIDADES = "cidadesAtuantes"; // array
+  static final String _SERVICOS = "servicosAtuantes"; // array
   static final String _NOTA_FISCAL = "emissorNotaFiscal";
   static final String _LATITUDE = "latitude";
   static final String _LONGITUDE = "longitude";
-  static final String _FORMAS_PAGAMENTO = "formasPagamento";
+  static final String _FORMAS_PAGAMENTO = "formasPagamento"; // array
   static final String _ESTADO_ATUANTE = "estadoAtuante";
 
   ProfessionalData();
 
   Map<String, dynamic> toJson() => {
     UID: uid, // tavez nao fique aqui
+    _NOME : nome,
     _DOCUMENTO : documento,
     _TIPO_PESSOA : tipoPessoa,
     _TELEFONE : telefone,
@@ -50,6 +53,7 @@ class ProfessionalData {
 
   ProfessionalData.fromJson(Map<String, dynamic> json) :
       uid = json[UID],
+      nome = json[_NOME],
       documento = json[_DOCUMENTO],
       tipoPessoa = json[_TIPO_PESSOA],
       telefone = json[_TELEFONE],
@@ -62,8 +66,9 @@ class ProfessionalData {
       formasPagamento = List.from( json[_FORMAS_PAGAMENTO] ),
       cidadesAtuantes = List.from( json[_CIDADES] );
 
-  ProfessionalData.fromSnapshot(DataSnapshot snapshot) :
+  ProfessionalData.fromSnapshot( DataSnapshot snapshot ) :
       uid = snapshot.value[UID],
+      nome= snapshot.value[_NOME],
       documento = snapshot.value[_DOCUMENTO],
       tipoPessoa = snapshot.value[_TIPO_PESSOA],
       telefone = snapshot.value[_TELEFONE],
@@ -72,7 +77,7 @@ class ProfessionalData {
       estadoAtuante = snapshot.value[_ESTADO_ATUANTE],
       latitude = double.parse( snapshot.value[_LATITUDE].toString() ),
       longitude = double.parse(snapshot.value[_LONGITUDE].toString() ),
-      servicosAtuantes = List.from( snapshot.value[_SERVICOS]),
+      servicosAtuantes = List.from( snapshot.value[_SERVICOS] ),
       cidadesAtuantes = List.from( snapshot.value[_CIDADES] ),
       formasPagamento = List.from( snapshot.value[_FORMAS_PAGAMENTO]);
   
@@ -82,6 +87,8 @@ class ProfessionalData {
         "$_TIPO_PESSOA: $tipoPessoa\n"
         "$_DOCUMENTO $documento\n"
         "$_TELEFONE: $telefone\n"
-        "$_ESTADO_ATUANTE $estadoAtuante";
+        "$_ESTADO_ATUANTE $estadoAtuante\n"
+        "$_LATITUDE: $latitude\n"
+        "$_LONGITUDE: $longitude" ;
   }
 }

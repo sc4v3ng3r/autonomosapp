@@ -28,6 +28,10 @@ class LocationUtility {
     return null;
   }
 
+  static Future<List<Placemark>> doGeoCoding(Position position) async {
+    return Geolocator().placemarkFromCoordinates(
+        position.latitude, position.longitude);
+  }
 
 }
 
