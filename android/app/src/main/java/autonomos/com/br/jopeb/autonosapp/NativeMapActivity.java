@@ -1,8 +1,12 @@
 package autonomos.com.br.jopeb.autonosapp;
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -12,21 +16,26 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.lang.annotation.Native;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import autonomos.com.br.jopeb.autonosapp.adapter.ProfessionalMarkInfoAdapter;
 
-public class NativeMapActivity extends AppCompatActivity implements OnMapReadyCallback{
+
+public class NativeMapActivity extends AppCompatActivity implements OnMapReadyCallback,
+        GoogleMap.OnMarkerClickListener {
 
   private GoogleMap m_map;
   public static final String KEY_DATA_LIST = "dataList";
   public static final String KEY_LATITUDE = "latitude";
   public static final String KEY_LONGITUDE = "longitude";
-  private static final String KEY_NOME = "nome";
+  public static final String KEY_UID = "uid";
+  public static final String KEY_NOME = "nome";
+  public static final String KEY_TELEFONE ="telefone";
 
   private ArrayList<HashMap<String,Object>> m_dataList;
-
   private LatLng m_myPlace;
 
   @Override
@@ -49,6 +58,8 @@ public class NativeMapActivity extends AppCompatActivity implements OnMapReadyCa
   @Override
   public void onMapReady( GoogleMap googleMap ) {
     m_map = googleMap;
+
+    m_map.setInfoWindowAdapter( new ProfessionalMarkInfoAdapter(NativeMapActivity.this));
     Iterator<HashMap<String,Object>> listIterator = m_dataList.iterator();
     while (listIterator.hasNext()){
       HashMap<String, Object> json = listIterator.next();
@@ -56,16 +67,23 @@ public class NativeMapActivity extends AppCompatActivity implements OnMapReadyCa
       MarkerOptions markerOptions = new MarkerOptions();
       Double lat = (Double)json.get(KEY_LATITUDE);
       Double lng = (Double)json.get(KEY_LONGITUDE);
+
       markerOptions.position(new LatLng( lat, lng) );
-
       markerOptions.draggable(false);
-      markerOptions.title( (String)json.get(KEY_NOME));
-      m_map.addMarker( markerOptions );
 
+      m_map.addMarker( markerOptions ).setTag( json );
+      m_map.setOnMarkerClickListener( this );
     }
-    //m_map.addMarker(new MarkerOptions().position(m_myPlace).title("Marker in Sydney"));
+
     m_map.moveCamera(CameraUpdateFactory.newLatLng(m_myPlace) );
     m_map.animateCamera(CameraUpdateFactory.newLatLngZoom(m_myPlace, 12.0f), 1500, null );
 
   }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+      //Log.i("DBG", "usuario: " + marker.getTag());
+      //avisar ao flutter qual item foi clicado!!!
+      return false;
+    }
 }

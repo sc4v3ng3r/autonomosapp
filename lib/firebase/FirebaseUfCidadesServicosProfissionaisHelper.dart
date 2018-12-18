@@ -5,7 +5,7 @@ import 'package:meta/meta.dart';
 
 class FirebaseUfCidadesServicosProfissionaisHelper {
 
-  static void writeIntoRelationship(ProfessionalData data){
+  static void writeIntoRelationship( ProfessionalData data ){
     DatabaseReference ref = FirebaseDatabase.instance.reference()
         .child(FirebaseReferences.REFERENCE_UF_CIDADES_SERVICOS_PROFISSIONAIS)
         .child( data.estadoAtuante);
@@ -18,7 +18,6 @@ class FirebaseUfCidadesServicosProfissionaisHelper {
         });
       }
     }
-
   }
 
   static Future<DataSnapshot> getProfessionalsIdsFromCityAndService({
