@@ -82,7 +82,8 @@ public class NativeMapActivity extends AppCompatActivity implements OnMapReadyCa
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-      //Log.i("DBG", "usuario: " + marker.getTag());
+      HashMap<String,Object> data = (HashMap<String, Object>) marker.getTag();
+      Log.i("DBG", "usuario: " + data.get( KEY_UID ));
       //avisar ao flutter qual item foi clicado!!!
       return false;
     }

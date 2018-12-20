@@ -82,6 +82,7 @@ class FirebaseUserHelper {
     }
   }
 
+
   //TODO terminar de implementar essa versão de método!
   static Future<User> getCurrentUser() async {
     User user;

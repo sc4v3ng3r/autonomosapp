@@ -33,7 +33,10 @@ class ServiceListWidgetBloc {
   }
 
   loadServicesFromWeb() {
-    FirebaseServicesHelper.getAllServices( _onData );
+    if (_mainDataList == null)
+      FirebaseServicesHelper.getAllServices( _onData );
+    else
+      _onData(_mainDataList);
     //_lastKey = key;
   }
 

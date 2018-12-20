@@ -4,11 +4,11 @@ import 'package:autonos_app/ui/widget/NextButton.dart';
 import 'package:autonos_app/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
 import 'package:autonos_app/firebase/FirebaseUserHelper.dart';
+import 'package:autonos_app/ui/widget/ModalRoundedProgressBar.dart';
 
 class ProfessionalRegisterPaymentScreen extends StatefulWidget {
 
   final ProfessionalRegisterFlowBloc _bloc;
-
   ProfessionalRegisterPaymentScreen({@required ProfessionalRegisterFlowBloc bloc}) :
         _bloc = bloc;
 
@@ -28,6 +28,7 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
     "Pickpay"
   ];
 
+  ProgressBarHandler _handler;
   int _radioValue = 0;
   bool _emiteNota = false;
   Color _colorChip = Colors.blueGrey[200];
@@ -68,7 +69,7 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
     });
   }
 
-  List<Widget> _buildForm() {
+  Widget _buildForm() {
 
     final formasDePagamentoLabel = Padding(
       padding: EdgeInsets.fromLTRB(16.0, 32.0, 16.0, 16.0),
@@ -134,49 +135,58 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
         ],
       ),
     );
-    var list = new List<Widget>();
-    list.add(form);
 
-    return list;
+    return form;
   }
 
 
   Future<void> _finishRegister() async {
-    await FirebaseUserHelper.registerUserProfessionalData(widget._bloc.currentData)
-        .catchError( (onError) {
-          // TODO EXEIBIR ERRO NA TELA!
-          print("registerUserProfessionalData $onError");
+    _handler.show();
+    FirebaseUserHelper.registerUserProfessionalData(widget._bloc.currentData)
+        .then( (_) {
+          _handler.dismiss();
+          UserRepository().currentUser.professionalData = widget._bloc.currentData;
+          Navigator.pushAndRemoveUntil(context,
+              MaterialPageRoute(
+                  builder: (BuildContext context) =>
+                      MainScreen() ),
+                  (Route<dynamic> route)  => false);
+
+    } ).catchError((error) {
+        _handler.dismiss();
+        print("registerUserProfessionalData $error");
     });
-
-    UserRepository().currentUser.professionalData = widget._bloc.currentData;
-    Navigator.pushAndRemoveUntil(context,
-        MaterialPageRoute(
-            builder: (BuildContext context) =>
-                MainScreen() ),
-            (Route<dynamic> route)  => false);
-
   }
+
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
+    var modal = ModalRoundedProgressBar(
+        handleCallback: (handler){ _handler = handler; },
+        message: "Registrando...",);
+
+    var scaffold = Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Text(
-          'Formas de Pagamento',
+        title: Text( 'Formas de Pagamento',
           style: TextStyle(color: Colors.blueGrey),
         ),
-        iconTheme: IconThemeData(color: Colors.red[300]),
-      ),
-      body: new Stack(
-        children: _buildForm(),
-      ),
-    );
+        iconTheme: IconThemeData(color: Colors.red[300]), ),
+
+        body: _buildForm(),
+      );
+
+      return Stack(
+        children: <Widget>[
+          scaffold,
+          modal
+        ],
+      );
+
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     widget._bloc.currentData.uid = UserRepository().currentUser.uid;
     super.initState();
 

@@ -15,7 +15,6 @@ class ServiceListWidget extends StatefulWidget {
   final ClickMode _clickMode;
   final Function _singleClickCallback;
 
-
   ServiceListWidget( {
 
     void itemsSelectedCallback(List<Service> selectedItems),
@@ -49,7 +48,7 @@ class _ServiceListWidgetState extends State<ServiceListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    print("_CityListWidgetState build()");
+    //print("_CityListWidgetState build()");
 
     _bloc = ServiceListWidgetBlocProvider.of(context);
     _bloc.loadServicesFromWeb();
@@ -84,14 +83,15 @@ class _ServiceListWidgetState extends State<ServiceListWidget> {
             return Column(
               children: <Widget>[
                 searchBar,
-                CircularProgressIndicator(),
-                Text("CARREGANDO..."),
+                CircularProgressIndicator(
+                  semanticsLabel: "Carregando...",
+                ),
+
               ],
             );
 
           case ConnectionState.active:
           case ConnectionState.done:
-          //print("stream builder");
             return Column(
               children: <Widget>[
                 searchBar,
@@ -99,7 +99,6 @@ class _ServiceListWidgetState extends State<ServiceListWidget> {
                     snapshot.data,
                     singleClickCallback: widget._singleClickCallback,
                     clickMode: widget._clickMode,
-
                 ),
               ],
             );
@@ -110,7 +109,6 @@ class _ServiceListWidgetState extends State<ServiceListWidget> {
     );
   }
 }
-
 
 class ListWidget extends AbstractDataListWidget< Service > {
   final _clickMode;
@@ -170,7 +168,8 @@ class _ServiceItemViewState extends State<ServiceItemView> {
   @override
   Widget build(BuildContext context) {
     //print("_CityItemViewState build()");
-    _bloc = ServiceListWidgetBlocProvider.of(context);
+    if (_bloc == null)
+      _bloc = ServiceListWidgetBlocProvider.of(context);
 
     return
       Padding(

@@ -8,6 +8,7 @@ import 'package:autonos_app/model/Service.dart';
 import 'package:autonos_app/ui/screens/LoginScreen.dart';
 import 'package:autonos_app/ui/screens/PerfilUsuario.dart';
 import 'package:autonos_app/ui/ui_cadastro_autonomo/ProfessionalRegisterBasicInfoScreen.dart';
+import 'package:autonos_app/ui/widget/ModalRoundedProgressBar.dart';
 import 'package:autonos_app/ui/widget/RatingBar.dart';
 import 'package:autonos_app/model/User.dart';
 import 'package:autonos_app/ui/widget/ServiceListWidget.dart';
@@ -40,10 +41,10 @@ class _MainScreenState extends State<MainScreen> {
   Color appBarColor = Colors.red[300];
   User _user;
   Placemark _placemark;
+  ProgressBarHandler _progressBarHandler;
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
   }
 
@@ -58,8 +59,14 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    //print("MainScreen build()");
-    var screenLayout = Scaffold(
+
+    var modal = ModalRoundedProgressBar(
+        message: "Buscando Profissionais...",
+        handleCallback: (handler){
+          _progressBarHandler = handler;
+        });
+
+    var scaffold= Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
         leading: IconButton(
@@ -73,11 +80,18 @@ class _MainScreenState extends State<MainScreen> {
         backgroundColor: appBarColor,
         elevation: .0,
       ),
-      drawer: _drawerMenu(context),
-      body: _getFragment(_drawerCurrentPosition),
-    );
+      drawer: _drawerMenuBuild(context),
+      body: _getFragment( _drawerCurrentPosition ),
+      );
 
-    return screenLayout;
+      return Stack(
+          children: <Widget>[
+            scaffold,
+            modal,
+          ],
+      );
+
+
   }
 
   void _NavegaCadastroAutonomo(BuildContext context) {
@@ -88,7 +102,7 @@ class _MainScreenState extends State<MainScreen> {
     ));
   }
 
-  Drawer _drawerMenu(BuildContext context) {
+  Drawer _drawerMenuBuild(BuildContext context) {
     List<Widget> drawerOptions = List();
 
     final drawerHeader = UserAccountsHackedDrawerHeader(
@@ -141,7 +155,6 @@ class _MainScreenState extends State<MainScreen> {
     );
     drawerOptions.add(optionFavorites);
 
-    // TODO IF (CONDITION)
     if (_user.professionalData == null) {
       print("MainScreen User is not a professional!!!");
       final optionRegister = ListTile(
@@ -223,18 +236,14 @@ class _MainScreenState extends State<MainScreen> {
         return Center(child: PerfilUsuario());
 
       case 1:
-        return Center(
-          child: ServiceListWidgetBlocProvider(
-            child: ServiceListWidget(
-              itemsSelectedCallback: null,
-              clickMode: ClickMode.TAP,
-              singleClickCallback: (item) async {
-                print("item clicked: ${item}");
-
-                _serviceListItemClickHandle(item);
-              },
-            ), //ClientChooseServicesFragment(),
-          ),
+        return ServiceListWidgetBlocProvider(
+          child: ServiceListWidget(
+            itemsSelectedCallback: null,
+            clickMode: ClickMode.TAP,
+            singleClickCallback: (item) {
+              _serviceListItemClickHandle(item);
+            },
+          ), //ClientChooseServicesFragment(),
         );
 
       case 2:
@@ -298,8 +307,10 @@ class _MainScreenState extends State<MainScreen> {
       }
 
       else {
-        var snack = SnackBar( content: Text("Não foi possível obter sua localização"),);
-        Scaffold.of(context).showSnackBar(snack);
+        var snack = SnackBar(
+          content: Text("Não foi possível obter sua localização"),
+          backgroundColor: Colors.red,);
+          Scaffold.of(context).showSnackBar(snack);
       }
     })
     .catchError((error) {
@@ -309,40 +320,47 @@ class _MainScreenState extends State<MainScreen> {
 
   // TODO método denome provisorio!
   void _goAhead(Location location, Service serviceItem) async {
-
-      print(_placemark.subAdministratieArea); // cidade
-      print(_placemark.administrativeArea); // estado
       String sigla = Estado.keyOfState(_placemark.administrativeArea);
 
+      _progressBarHandler.show();
       FirebaseUfCidadesServicosProfissionaisHelper
           .getProfessionalsIdsFromCityAndService( estadoSigla: sigla,
               cidadeNome: _placemark.subAdministratieArea,
               serviceId: serviceItem.id).then(
-              (ProsIdsnapshot) {
-                if (ProsIdsnapshot.value != null) {
-                  Map<String, dynamic> idsMap = Map.from(ProsIdsnapshot.value);
+              (snapshotProfIds) {
+                if (snapshotProfIds.value != null) {
+                  Map<String, dynamic> idsMap = Map.from(snapshotProfIds.value);
                   List<dynamic> dataList = new List();
                   FirebaseUserHelper.getProfessionalsData(
                       idsMap.keys.toList() ).then((dataMap) {
-                    dataMap.forEach((key, value)
-                    {
-                      dataList.add(value);
-                      //print("KEY: $key VALUE: $value");
-                    });
+                        dataMap.forEach( (key, value) => dataList.add(value) );
+                        _showAndroidNativeMapActivity(dataList);
 
-                    _showNativeMapActivity(dataList);
-                  });
+                      });
                 }
 
                 else {
-
                   // EH PQ NAO HA PROFISISONAIS PARA TAL SERVICO EM TAL CIDADE!
+                  //desbloquear tela
+                  _progressBarHandler.dismiss();
+                  _showWarningSnackbar(serviceItem.name, _placemark.subAdministratieArea);
+
                 }
           });
   }
 
-  //chamando metodo nativo que exibi o maps activity
-  Future<Null> _showNativeMapActivity(List<dynamic> dataMapList) async {
+  void _showWarningSnackbar(String serviceName,String cityName){
+    _scaffoldKey.currentState.showSnackBar(
+        SnackBar(content: Text("Não há profissonais para $serviceName "
+            "disponíveis em $cityName",
+          ),
+          backgroundColor: Colors.red,
+        )
+    );
+  }
+
+
+  Future<Null> _showAndroidNativeMapActivity(List<dynamic> dataMapList) async {
     try {
       var result = await platform.invokeMethod(
           'show_maps_activity', {
@@ -350,17 +368,23 @@ class _MainScreenState extends State<MainScreen> {
             "localLat": UserRepository().currentLocation.latitude,
             "localLong":UserRepository().currentLocation.longitude,
       });
+      _progressBarHandler.dismiss();
     } on PlatformException catch (e) {
       print("ERROR ${e.message} ${e.code}");
     }
   }
 
+  /**
+  *Esse MÉTODO SERÁ RESPONSÁVEL POR RECEBER AS CHAMADAS DO LADO
+   * ANDROID NATIVO PARA O FLUTTER.*/
   //metodo que trata as chamadas do nativo ao flutter
-  Future<dynamic> _handleMethod(MethodCall call) async {
+
+  /*Future<dynamic> _handleMethod(MethodCall call) async {
     switch (call.method) {
       case "message":
         debugPrint(call.arguments);
         return new Future.value("");
     }
-  }
+  }*/
+
 } // end of class

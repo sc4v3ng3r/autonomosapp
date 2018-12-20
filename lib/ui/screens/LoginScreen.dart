@@ -29,6 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController _emailController;
   TextEditingController _passwordController;
   GlobalKey<FormState> _globalKey;
+  ProgressBarHandler _handler;
   bool _autoValidate;
   bool _showProgressBar = false;
   var _email, _password;
@@ -55,7 +56,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void initiateFacebookLogin(BuildContext context) async {
-    showProgressBar(true);
+    _handler.show();
     final facebookLogin = new FacebookLogin();
     final facebookLoginResult = await facebookLogin
         .logInWithReadPermissions(['email', 'public_profile']);
@@ -63,13 +64,13 @@ class _LoginScreenState extends State<LoginScreen> {
     switch (facebookLoginResult.status) {
       case FacebookLoginStatus.error:
         print("Error");
-        showProgressBar(false);
+        _handler.dismiss();
         //onLoginStatusChanged(false);
         break;
 
       case FacebookLoginStatus.cancelledByUser:
         print("CancelledByUser");
-        showProgressBar(false);
+        _handler.dismiss();
         //onLoginStatusChanged(false);
         break;
 
@@ -106,12 +107,12 @@ class _LoginScreenState extends State<LoginScreen> {
         }).catchError((error) {
           print("ERRO AO CRIAR USUARIO NO DB COM FACEBOOK!");
           print(error.toString());
-          showProgressBar(false);
+          _handler.dismiss();
         });
       });
     }).catchError((facebookError) {
       print(facebookError.toString());
-      showProgressBar(false);
+      _handler.dismiss();
     });
   }
 
@@ -364,10 +365,12 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
 
+    var progressBar = ModalRoundedProgressBar(
+      handleCallback: ((handler){ _handler = handler; } ),);
+
     List<Widget> widgetList = new List();
     widgetList.add(form);
-
-    if (_showProgressBar == true) widgetList.add(new ModalRoundedProgressBar());
+    widgetList.add( progressBar);
 
     return widgetList;
   }
@@ -401,7 +404,8 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void firebaseLogin(BuildContext context) {
-    showProgressBar(true);
+    _handler.show();
+
     FirebaseAuth auth = FirebaseAuth.instance;
 
     auth
@@ -416,11 +420,11 @@ class _LoginScreenState extends State<LoginScreen> {
         _goToLoggedScreen(context, user);
       }).catchError((onError) {
         print(onError.toString());
-        showProgressBar(false);
+        _handler.dismiss();
       });
     }).catchError((firebaseError) {
       print(firebaseError.toString());
-      showProgressBar(false);
+      _handler.dismiss();
     });
   }
 
@@ -448,9 +452,11 @@ class _LoginScreenState extends State<LoginScreen> {
       }));
   }
 
+  /*
   void showProgressBar(bool flag) {
     setState(() {
       _showProgressBar = flag;
     });
-  }
+  }*/
+
 } //end of class
