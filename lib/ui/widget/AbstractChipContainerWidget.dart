@@ -45,7 +45,7 @@ class _AbstractChipContainerWidgetState<T> extends State<AbstractChipContainerWi
 
   @override
   Widget build(BuildContext context) {
-    print("AbstractChipContainerWidget build()");
+    //print("AbstractChipContainerWidget build()");
     return Padding(
       padding: EdgeInsets.all(8.0),
       child: Wrap(
@@ -57,7 +57,7 @@ class _AbstractChipContainerWidgetState<T> extends State<AbstractChipContainerWi
   }
 
   List<Widget> _getChipList(){
-    print("AbstractChipContainerWidget getChipList()");
+    //print("AbstractChipContainerWidget getChipList()");
     List<Chip> chipList = new List();
     if (widget._deletedCallback == null){
 

@@ -1,6 +1,5 @@
 import 'package:autonos_app/bloc/ProfessionalRegisterFlowBloc.dart';
 import 'package:autonos_app/model/Cidade.dart';
-import 'package:autonos_app/model/Location.dart';
 import 'package:autonos_app/ui/ui_cadastro_autonomo/ListagemCidadesScreen.dart';
 import 'package:autonos_app/ui/ui_cadastro_autonomo/ProfessionalRegisterPaymentScreen.dart';
 import 'package:autonos_app/model/Service.dart';
@@ -36,7 +35,7 @@ class ProfessionalRegisterLocationAndServiceScreenState
   //
   // TODO: IMPLEMENTAR BLOC PARA ESTA TELA. OS DADOS DEVEM FICAR NO MESMO.
 
-  List<Cidade> _cidadesSelcionadas = new List();
+  List<Cidade> _cidadesSelecionadas = new List();
   List<Service> _servicosSelecionados = new List();
   Estado _selectedState;
   RaisedButton _buttonListCidades;
@@ -68,7 +67,7 @@ class ProfessionalRegisterLocationAndServiceScreenState
   void onDropdownItemSelected(String dataSelected) {
     if ( _dropdownCurrentOption != dataSelected ) {
       setState(() {
-        _cidadesSelcionadas.clear();
+        _cidadesSelecionadas.clear();
         _cityChipController.clear();
         _dropdownCurrentOption = dataSelected;
       });
@@ -89,23 +88,27 @@ class ProfessionalRegisterLocationAndServiceScreenState
       _selectedState = Estado(_dropdownCurrentOption);
       _selectedState.sigla = key;
 
-      List<Cidade> cidadesSelecionadasAux = List.from(_cidadesSelcionadas);
-      _cidadesSelcionadas = await Navigator.of(context).push(
+      List<Cidade> cidadesSelecionadasAux = List.from(_cidadesSelecionadas);
+
+      _cidadesSelecionadas = await Navigator.of(context).push(
           MaterialPageRoute( builder: (BuildContext context) => ListagemCidades(
                 estado: _selectedState,
-                alreadySelectedCities: cidadesSelecionadasAux,
-              )));
+                alreadySelectedCities: _cidadesSelecionadas,
+              )
+          )
+      );
 
       /*Se ele já havia ido à cityListwidget selecionou algumas cidades,
       * retornou para a atual tela, mas resolveu ir novamente na CityListWidget,
       * e não selecionou nada, mantemos o registro das cidades que já foram selecionadas
       * na primeira ida da CityListWidget.*/
-      if (_cidadesSelcionadas == null) {
-        _cidadesSelcionadas = cidadesSelecionadasAux;
-      }
+      if (_cidadesSelecionadas == null) {
+        print("CIDADES SELECIONADAS E NULL!! AUXILIA IS ${cidadesSelecionadasAux.length}");
+        _cidadesSelecionadas = cidadesSelecionadasAux;
+      } else
+        print("retornou ${_cidadesSelecionadas.length} cidades");
       _cityChipController.clear();
-      _cityChipController.addAll(_cidadesSelcionadas);
-
+      _cityChipController.addAll( _cidadesSelecionadas );
     }
     else {
       // EH pq ele nao selecinou estado algum!
@@ -113,7 +116,6 @@ class ProfessionalRegisterLocationAndServiceScreenState
   }
 
   _gotoServiceListScreen(BuildContext context) async {
-
     List<Service> servicosSelecionadoAux = List.from(_servicosSelecionados);
 
     _servicosSelecionados = await Navigator.of(context).push(MaterialPageRoute(
@@ -170,8 +172,8 @@ class ProfessionalRegisterLocationAndServiceScreenState
     final cityChipContainer = CityChipContainer(
       controllerCallback: (controller) { _cityChipController = controller; },
       onDelete: ( serviceDeleted ){
-        if(_cidadesSelcionadas.contains(serviceDeleted))
-          _cidadesSelcionadas.remove(serviceDeleted);
+        if(_cidadesSelecionadas.contains(serviceDeleted))
+          _cidadesSelecionadas.remove(serviceDeleted);
       },
     );
 
@@ -245,7 +247,7 @@ class ProfessionalRegisterLocationAndServiceScreenState
   void _gettingInputData(){
     widget._bloc.insertLocationsAndServices(
         state: _selectedState,
-        yourCities: _cidadesSelcionadas,
+        yourCities: _cidadesSelecionadas,
         yourServices: _servicosSelecionados,
         currentLocation: UserRepository().currentLocation,
         professionalName: UserRepository().currentUser.name );
@@ -253,7 +255,6 @@ class ProfessionalRegisterLocationAndServiceScreenState
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
