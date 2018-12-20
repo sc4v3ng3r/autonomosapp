@@ -24,7 +24,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
   TextEditingController _passwordController;
   FocusNode _passwordConfirmFocus;
   TextEditingController _passwordConfirmController;
-  User _recentCreatedUser;
+  ProgressBarHandler _handler;
 
   DatabaseReference _userReference;
   static final RATING_INIT_VALUE = 5.0;
@@ -340,7 +340,6 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
 
     final registerButton = Builder(builder: (BuildContext context) {
       return Padding(
-//        borderRadius: BorderRadius.circular(30.0),
         padding: EdgeInsets.fromLTRB(16.0, .0, 16.0, .0),
         child: MaterialButton(
           padding: EdgeInsets.fromLTRB(16.0, .0, 16.0, .0),
@@ -348,11 +347,11 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
           onPressed: () {
 
             if ( _inputValidation() == true ) {
-              showProgressBar(true);
+              _handler.show();
 
               _createUserAccount( _email,  _password).then(
                       (results) {
-                        showProgressBar(false);
+                        _handler.dismiss();
                         if (results) {
                           _showSnackBar(context, "Usuário registrado com sucesso!");
 
@@ -368,7 +367,6 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
                       });
             }
           },
-//          minWidth: 130.0,
           color: Colors.red,
           child: Text(
             "Confirmar",
@@ -407,11 +405,11 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
 
     var list = new List<Widget>();
     list.add(form);
+    var progressBar = ModalRoundedProgressBar(
+      handleCallback: (handler){_handler = handler; },
+    );
 
-    if ( _showProgressBar ) {
-      var progressBar = ModalRoundedProgressBar();
-      list.add(progressBar);
-    }
+    list.add(progressBar);
     return list;
   }
 
@@ -429,8 +427,6 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
       User userCreated = await _createAccountDBRegister(firebaseUser);
       UserRepository().currentUser = userCreated;
       returnFlag = true;
-      //essa atribuicao deve mesmo ficar aqui??
-      _recentCreatedUser = userCreated;
     }
 
     catch ( ex ){
@@ -530,10 +526,11 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
       }
     }
   }*/
-  void showProgressBar(bool flag){
+
+  /*void showProgressBar(bool flag){
     setState(() {
       _showProgressBar = flag;
     });
-  }
+  }*/
 
 }

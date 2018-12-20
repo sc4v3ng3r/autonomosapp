@@ -5,4 +5,9 @@
              Flutter draws its first frame -->
         <item name="android:windowBackground">@drawable/splashscreen_background</item>
     </style>
+
+    <style name="RatingBarStyle" parent="Theme.AppCompat">
+        <item name="colorControlNormal">#eef91b</item>
+        <item name="colorControlActivated">#eef91b</item>
+    </style>
 </resources>

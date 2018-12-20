@@ -1,17 +1,12 @@
 package autonomos.com.br.jopeb.autonosapp;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-
 import io.flutter.app.FlutterActivity;
 import io.flutter.plugin.common.MethodCall;
-import io.flutter.plugins.GeneratedPluginRegistrant;
 import io.flutter.plugin.common.MethodChannel;
+import io.flutter.plugins.GeneratedPluginRegistrant;
 
 
 public class MainActivity extends FlutterActivity {
@@ -27,6 +22,7 @@ public class MainActivity extends FlutterActivity {
 
     new MethodChannel(getFlutterView(), CHANNEL).setMethodCallHandler(
             new MethodChannel.MethodCallHandler() {
+
               @Override
               public void onMethodCall(MethodCall methodCall, MethodChannel.Result result) {
                 switch (methodCall.method){
@@ -34,18 +30,6 @@ public class MainActivity extends FlutterActivity {
                     ArrayList< HashMap<String,Object> > dataList = methodCall.argument("dataList");
                     Double latitude = methodCall.argument("localLat");
                     Double longitude = methodCall.argument("localLong");
-                    /*
-                    Log.i("DBG", "list size: " + dataList.size());
-                    Iterator< HashMap<String,String> > iterator = dataList.iterator();
-
-                    while( iterator.hasNext() ){
-                      Log.i("DBG", "==== PROFESSIONAL DATA ====");
-                      HashMap<String,String> json = iterator.next();
-
-                      for (String key: json.keySet()) {
-                        Log.i("DBG", key + " : " + json.get(key) ) ;
-                      }
-                    }*/
 
                     Intent it = new Intent(MainActivity.this, NativeMapActivity.class);
                     it.putExtra(NativeMapActivity.KEY_DATA_LIST, dataList );
@@ -58,7 +42,6 @@ public class MainActivity extends FlutterActivity {
                     default:
                       break;
                 }
-
               }
             }
     );

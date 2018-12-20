@@ -7,6 +7,8 @@ import 'package:autonos_app/model/User.dart';
 import 'package:autonos_app/ui/screens/MainScreen.dart';
 
 void main() {
+
+
   runApp( new MyApp() );
 }
 
@@ -16,6 +18,7 @@ class MyApp extends StatefulWidget{
 }
 
 class _MyAppState extends State<MyApp> {
+
   @override
   void initState() {
     super.initState();
@@ -23,9 +26,8 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    print("My app build()");
+    print("Myapp build()");
       return MaterialApp(
-
             debugShowCheckedModeBanner: false,
             initialRoute: '/',
             routes: {
@@ -36,6 +38,16 @@ class _MyAppState extends State<MyApp> {
 
         );
   }
+
+  Future<Widget> _selectHomeScreen() async {
+    User user = await FirebaseUserHelper.currentLoggedUser();
+    if (user == null )
+      return LoginScreen();
+
+    UserRepository().currentUser = user;
+    return MainScreen();
+  }
+
 }
 
 class ScreenSelector extends StatefulWidget {
@@ -63,7 +75,7 @@ class _ScreenSelectorState extends State<ScreenSelector>{
           case ConnectionState.active:
           case ConnectionState.waiting:
             print("STATE ${snapshot.connectionState.toString()}");
-            return Container(color: Colors.transparent,);
+            return Stack();
 
             //TODO MELHORAR ESSA VERIFICACAO!
           case ConnectionState.done:
