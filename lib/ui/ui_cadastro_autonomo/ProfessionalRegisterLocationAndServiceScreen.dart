@@ -6,13 +6,16 @@ import 'package:autonos_app/ui/ui_cadastro_autonomo/ProfessionalRegisterPaymentS
 import 'package:autonos_app/model/Service.dart';
 import 'package:autonos_app/model/Estado.dart';
 import 'package:autonos_app/ui/ui_cadastro_autonomo/ListagemServicosScreen.dart';
+import 'package:autonos_app/ui/widget/CityChipContainer.dart';
 import 'package:autonos_app/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
 import 'package:autonos_app/ui/widget/NextButton.dart';
+import 'package:autonos_app/ui/widget/ServiceChipContainer.dart';
+import 'package:autonos_app/ui/widget/ChipContainerController.dart';
 
 class ProfessionalRegisterLocationAndServiceScreen extends StatefulWidget {
 
-  ProfessionalRegisterFlowBloc _bloc;
+  final ProfessionalRegisterFlowBloc _bloc;
 
   ProfessionalRegisterLocationAndServiceScreen(
       {@required ProfessionalRegisterFlowBloc bloc }
@@ -28,17 +31,14 @@ class ProfessionalRegisterLocationAndServiceScreenState
 
   static const String KEY_NONE = Estado.KEY_NONE;
   static const Map<String, String> DROPDOWN_MENU_OPTIONS = Estado.STATES_MAP;
-
-   //
+  ChipContainerController _serviceChipController;
+  ChipContainerController _cityChipController;
+  //
   // TODO: IMPLEMENTAR BLOC PARA ESTA TELA. OS DADOS DEVEM FICAR NO MESMO.
 
   List<Cidade> _cidadesSelcionadas = new List();
   List<Service> _servicosSelecionados = new List();
-  List<Chip> _chipList = [];
-  List<Chip> _chipListServicos = [];
   Estado _selectedState;
-  // TODO MEMBRO TEMPORARIO
-
   RaisedButton _buttonListCidades;
   List<DropdownMenuItem<String>> _dropDownMenuItems;
   String _dropdownCurrentOption;
@@ -54,7 +54,6 @@ class ProfessionalRegisterLocationAndServiceScreenState
   void _initDropdownMenu() {
     _dropDownMenuItems = getDropDownMenuItems();
     _dropdownCurrentOption = _dropDownMenuItems[0].value;
-    print("dropdown current option $_dropdownCurrentOption");
   }
 
   List<DropdownMenuItem<String>> getDropDownMenuItems() {
@@ -70,67 +69,12 @@ class ProfessionalRegisterLocationAndServiceScreenState
     if ( _dropdownCurrentOption != dataSelected ) {
       setState(() {
         _cidadesSelcionadas.clear();
-        _chipList.clear();
+        _cityChipController.clear();
         _dropdownCurrentOption = dataSelected;
       });
       // TODO DEVEMOS HABILITAR E/OU DESABILITAR O BOTÃO DE SELECIONAR CIDADE DE ACORDO
       // COM A OPÇÃO SELECIONADA
     }
-  }
-
-  void removeCidadeChip(Cidade cidade) {
-    _cidadesSelcionadas.remove(cidade);
-    _trasnformaListaCidadeSelecionadoEmChip();
-  }
-
-  void removeServicoChip(Service service) {
-    _servicosSelecionados.remove(service);
-    _trasnformaListaServicosSelecionadoEmChip();
-  }
-
-// deve ir para um outro Bloc
-  void _trasnformaListaCidadeSelecionadoEmChip() {
-    _chipList.clear();
-    if (_cidadesSelcionadas != null)
-      for (Cidade city in _cidadesSelcionadas) {
-        Chip chip = Chip(
-          onDeleted: () {
-            setState(() {
-              removeCidadeChip(city);
-            });
-          },
-          backgroundColor: Colors.red[200],
-          label: Text(
-            city.nome,
-            style: TextStyle(color: Colors.white),
-          ),
-        );
-        setState(() {
-          _chipList.add(chip);
-        });
-      }
-  }
-
-  void _trasnformaListaServicosSelecionadoEmChip() {
-    _chipListServicos.clear();
-    if (_servicosSelecionados != null)
-      for (Service service in _servicosSelecionados) {
-        Chip chip = Chip(
-          onDeleted: () {
-            setState(() {
-              removeServicoChip(service);
-            });
-          },
-          backgroundColor: Colors.blueGrey[300],
-          label: Text(
-            service.name,
-            style: TextStyle(color: Colors.white),
-          ),
-        );
-        setState(() {
-          _chipListServicos.add(chip);
-        });
-      }
   }
 
   _gotoCityListScreen(BuildContext context) async {
@@ -145,7 +89,7 @@ class ProfessionalRegisterLocationAndServiceScreenState
       _selectedState = Estado(_dropdownCurrentOption);
       _selectedState.sigla = key;
 
-      List<Cidade> cidadesSelecionadasAux = _cidadesSelcionadas;
+      List<Cidade> cidadesSelecionadasAux = List.from(_cidadesSelcionadas);
       _cidadesSelcionadas = await Navigator.of(context).push(
           MaterialPageRoute( builder: (BuildContext context) => ListagemCidades(
                 estado: _selectedState,
@@ -159,8 +103,9 @@ class ProfessionalRegisterLocationAndServiceScreenState
       if (_cidadesSelcionadas == null) {
         _cidadesSelcionadas = cidadesSelecionadasAux;
       }
+      _cityChipController.clear();
+      _cityChipController.addAll(_cidadesSelcionadas);
 
-      _trasnformaListaCidadeSelecionadoEmChip();
     }
     else {
       // EH pq ele nao selecinou estado algum!
@@ -168,20 +113,25 @@ class ProfessionalRegisterLocationAndServiceScreenState
   }
 
   _gotoServiceListScreen(BuildContext context) async {
-    List<Service> servicosSelecionadoAux = _servicosSelecionados;
+
+    List<Service> servicosSelecionadoAux = List.from(_servicosSelecionados);
 
     _servicosSelecionados = await Navigator.of(context).push(MaterialPageRoute(
         builder: (BuildContext context) => ListagemServicos(
               alreadySelectedServices: _servicosSelecionados,
-            )));
+            )
+        )
+    );
+
+    //se o usuario nao selecionou nenhum servico
     if (_servicosSelecionados == null) {
       _servicosSelecionados = servicosSelecionadoAux;
     }
-    _trasnformaListaServicosSelecionadoEmChip();
+    _serviceChipController.clear();
+    _serviceChipController.addAll( _servicosSelecionados);
   }
 
   Widget _buildForm(BuildContext context) {
-
 
     final estadoLabel = Text(
       'Selecione seu estado:',
@@ -198,8 +148,7 @@ class ProfessionalRegisterLocationAndServiceScreenState
       ],
     );
 
-    final cidadeLabel = Text(
-      'Cidades que você atua:',
+    final cidadeLabel = Text( 'Cidades que você atua:',
       style: TextStyle(color: Colors.grey),
       maxLines: 1,
       textAlign: TextAlign.center,
@@ -210,36 +159,30 @@ class ProfessionalRegisterLocationAndServiceScreenState
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              'Cidades ',
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              '($_dropdownCurrentOption)',
-              style: TextStyle(color: Colors.black54),
-            ),
+            Text( 'Cidades ', style: TextStyle(color: Colors.white), ),
+            Text( '($_dropdownCurrentOption)', style: TextStyle(color: Colors.black54),),
           ],
         ),
         onPressed: () {
           _gotoCityListScreen(context);
         });
 
-    final listChip = Padding(
-        padding: EdgeInsets.symmetric(horizontal: 8.0),
-        child: Wrap(children: _chipList));
+    final cityChipContainer = CityChipContainer(
+      controllerCallback: (controller) { _cityChipController = controller; },
+      onDelete: ( serviceDeleted ){
+        if(_cidadesSelcionadas.contains(serviceDeleted))
+          _cidadesSelcionadas.remove(serviceDeleted);
+      },
+    );
 
-    final areasDeAtuacaoLabel = Text(
-      'Areas de atuação:',
-      style: TextStyle(
-        color: Colors.grey,
-      ),
+    final areasDeAtuacaoLabel = Text( 'Areas de atuação:',
+      style: TextStyle( color: Colors.grey, ),
       maxLines: 1,
       textAlign: TextAlign.center,
     );
 
     final buttonListServico = RaisedButton(
-      child: Text(
-        'Serviços',
+      child: Text( 'Serviços',
         style: TextStyle(color: Colors.white),
       ),
       color: Colors.blueGrey,
@@ -248,11 +191,15 @@ class ProfessionalRegisterLocationAndServiceScreenState
       },
     );
 
-    final listChipServico = Padding(
-        padding: EdgeInsets.symmetric(horizontal: 8.0),
-        child: Wrap(
-          children: _chipListServicos,
-        ));
+    final serviceChipContainer = ServiceChipContainer(
+      onDelete: (serviceDeleted) {
+        if (_servicosSelecionados.contains( serviceDeleted )){
+          print("deleting ${serviceDeleted.name}");
+          _servicosSelecionados.remove( serviceDeleted );
+        }
+      },
+      controllerCallback: (controller) { _serviceChipController = controller; },
+    );
 
     final nextButton = NextButton(
       buttonColor: Colors.green[300],
@@ -281,12 +228,12 @@ class ProfessionalRegisterLocationAndServiceScreenState
         _VERTICAL_SEPARATOR,
         cidadeLabel,
         _buttonListCidades,
-        listChip,
+        cityChipContainer,
         Divider(),
         _VERTICAL_SEPARATOR,
         areasDeAtuacaoLabel,
         buttonListServico,
-        listChipServico,
+        serviceChipContainer,
         Divider(),
         _VERTICAL_SEPARATOR,
         nextButton,
@@ -310,7 +257,7 @@ class ProfessionalRegisterLocationAndServiceScreenState
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Atuação',
+          'Localização & Serviços',
           style: TextStyle(color: Colors.blueGrey),
         ),
         backgroundColor: Colors.white,
@@ -321,12 +268,6 @@ class ProfessionalRegisterLocationAndServiceScreenState
         child: _buildForm(context),
       ),
     );
-  }
-
-  void _changeDropdownCurrentOption(String option){
-    setState(() {
-      _dropdownCurrentOption = option;
-    });
   }
 
 }
