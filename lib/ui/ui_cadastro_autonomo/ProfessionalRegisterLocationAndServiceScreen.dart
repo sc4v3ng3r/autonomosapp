@@ -202,10 +202,11 @@ class ProfessionalRegisterLocationAndServiceScreenState
       },
       controllerCallback: (controller) { _serviceChipController = controller; },
     );
-
+//    bool a = true;
     final nextButton = NextButton(
       buttonColor: Colors.green[300],
       text: '[2/3] Próximo Passo',
+//      text: a ? 'a': 'b',
       textColor: Colors.white,
       callback: () {
 

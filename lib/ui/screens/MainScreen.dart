@@ -39,6 +39,9 @@ class _MainScreenState extends State<MainScreen> {
   int _drawerCurrentPosition = 1;
   String appBarName = 'Serviços';
   Color appBarColor = Colors.red[300];
+  Color appBarNameColor = Colors.white;
+  Color appBarIconMenuColor = Colors.white;
+  double _elevation = .0;
   User _user;
   Placemark _placemark;
   ProgressBarHandler _progressBarHandler;
@@ -73,12 +76,12 @@ class _MainScreenState extends State<MainScreen> {
           onPressed: () {
             _scaffoldKey.currentState.openDrawer();
           },
-          icon: Icon(Icons.menu),
+          icon: Icon(Icons.menu,color: appBarIconMenuColor,),
         ),
-        title: Text(appBarName),
+        title: Text(appBarName, style: TextStyle(color: appBarNameColor),),
         automaticallyImplyLeading: false,
         backgroundColor: appBarColor,
-        elevation: .0,
+        elevation: _elevation,
       ),
       drawer: _drawerMenuBuild(context),
       body: _getFragment( _drawerCurrentPosition ),
@@ -203,20 +206,38 @@ class _MainScreenState extends State<MainScreen> {
 
   void _changeAppBarName(int position) {
     if (position == 0) {
-      appBarColor = Colors.green[300];
+      appBarColor = Colors.white;
       appBarName = 'Perfil';
+      appBarNameColor = Colors.blueGrey;
+      appBarIconMenuColor = Colors.red[300];
+      _elevation = 4.0;
     } else if (position == 1) {
-      appBarColor = Colors.red[300];
+      appBarColor = Colors.red[400];
       appBarName = 'Serviços';
+      appBarNameColor = Colors.white;
+      appBarIconMenuColor = Colors.white;
+      _elevation = .0;
     } else if (position == 2) {
-      appBarColor = Colors.red[300];
+      appBarColor = Colors.white;
       appBarName = 'Histórico';
+      _elevation = .0;
+      appBarNameColor = Colors.blueGrey;
+      appBarIconMenuColor = Colors.red[300];
+      _elevation = 4.0;
     } else if (position == 3) {
-      appBarColor = Colors.red[300];
+      appBarColor = Colors.white;
       appBarName = 'Visualizações';
+      _elevation = .0;
+      appBarNameColor = Colors.blueGrey;
+      appBarIconMenuColor = Colors.red[300];
+      _elevation = 4.0;
     } else if (position == 4) {
-      appBarColor = Colors.red[300];
+      appBarColor = Colors.white;
       appBarName = 'Favoritos';
+      _elevation = .0;
+      appBarNameColor = Colors.blueGrey;
+      appBarIconMenuColor = Colors.red[300];
+      _elevation = 4.0;
     }
   }
 

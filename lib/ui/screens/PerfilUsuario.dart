@@ -1,5 +1,14 @@
+import 'package:autonos_app/bloc/ProfessionalRegisterFlowBloc.dart';
+import 'package:autonos_app/firebase/FirebaseServicesHelper.dart';
+import 'package:autonos_app/firebase/FirebaseUserHelper.dart';
+import 'package:autonos_app/model/Service.dart';
+import 'package:autonos_app/model/User.dart';
+import 'package:autonos_app/ui/ui_cadastro_autonomo/ProfessionalRegisterLocationAndServiceScreen.dart';
 import 'package:autonos_app/ui/widget/AccountDetailsLayout.dart';
+import 'package:autonos_app/ui/widget/ModalRoundedProgressBar.dart';
+import 'package:autonos_app/ui/widget/MyDivisorLayout.dart';
 import 'package:autonos_app/ui/widget/RatingBar.dart';
+import 'package:autonos_app/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
 
 class PerfilUsuario extends StatefulWidget {
@@ -9,74 +18,132 @@ class PerfilUsuario extends StatefulWidget {
 
 class PerfilUsuarioState extends State<PerfilUsuario> {
   static double _nota = 4.3;
+  User user;
+  FirebaseServicesHelper servicesHelper;
+  String name = '';
+  ProgressBarHandler _progressBarHandler;
+  ProfessionalRegisterFlowBloc _bloc;
+
+  double ratingUser = .0;
+
   final SizedBox _VERTICAL_SEPARATOR = SizedBox(
     height: 16.0,
   );
+  RatingBar ratingBar;
+  MyDivisor myDivisor;
 
-  RatingBar ratingBar = new RatingBar(rating: _nota);
 
-  List<Widget> servicoList = [
-    Chip(label: Text('Pedreiro'),padding: EdgeInsets.all(4.0),backgroundColor: Colors.white,),
-    Chip(label: Text('Padeiro'),padding: EdgeInsets.all(4.0),backgroundColor: Colors.white,),
-    Chip(label: Text('Costureira'),padding: EdgeInsets.all(4.0),backgroundColor: Colors.white,),
-    Chip(label: Text('Eletricista'),padding: EdgeInsets.all(4.0),backgroundColor: Colors.white,),
-    Chip(label: Text('Caseiro'),padding: EdgeInsets.all(4.0),backgroundColor: Colors.white,),
-    Chip(label: Text('Jardineiro'),padding: EdgeInsets.all(4.0),backgroundColor: Colors.white,),
-  ];
+  @override
+  void initState() {
+    _progressBarHandler = new ProgressBarHandler();
+    _bloc = new ProfessionalRegisterFlowBloc();
+    _getUser();
+    myDivisor = new MyDivisor();
+    super.initState();
+  }
 
-  List<Widget> cidadesList = [
-    Chip(label: Text('Feira de Santana'),padding: EdgeInsets.all(4.0),backgroundColor: Colors.white,),
-    Chip(label: Text('Serrinha'),padding: EdgeInsets.all(4.0),backgroundColor: Colors.white,),
-    Chip(label: Text('Nova Fátima'),padding: EdgeInsets.all(4.0),backgroundColor: Colors.white,),
-    Chip(label: Text('Riachão'),padding: EdgeInsets.all(4.0),backgroundColor: Colors.white,),
-    Chip(label: Text('Santa Barbara'),padding: EdgeInsets.all(4.0),backgroundColor: Colors.white,),
-    Chip(label: Text('Humildes'),padding: EdgeInsets.all(4.0),backgroundColor: Colors.white,),
-  ];
+  static Widget chipCidade(String nomeItem){
+    return Chip(
+      label: Text(nomeItem),
+      padding: EdgeInsets.all(4.0),
+      backgroundColor: Colors.red[300],
+      labelStyle: TextStyle(color: Colors.white),
+    );
+  }
+  static Widget chipServico(String nomeItem){
+    return Chip(
+      label: Text(nomeItem),
+      padding: EdgeInsets.all(4.0),
+      backgroundColor: Colors.blueGrey[300],
+      labelStyle: TextStyle(color: Colors.white),
+    );
+  }
+
+
+  void _getUser() async{
+    user = await FirebaseUserHelper.currentLoggedUser();
+    if(user!=null){
+      if(user.professionalData != null){
+        print('É UM PROFISSIONAL');
+      }else{
+        print('NÃO É UM PROFISSIONAL');
+      }
+//     _progressBarHandler.dismiss();
+      name = user.name;
+      ratingUser = user.rating;
+      ratingBar = new RatingBar(rating: ratingUser);
+      print('User Não NULO, Nome = $name');
+    }else{
+      print('User NULO');
+    }
+  }
+//  Future<Widget> _selectHomeScreen() async {
+//    User user = await FirebaseUserHelper.currentLoggedUser();
+//    if (user == null )
+//      return LoginScreen();
+//
+//    UserRepository().currentUser = user;
+//    return MainScreen();
+//  }
+  List<Widget> servicoList = new List();
+//  [
+//    chipServico('Pedreiro'),
+//    chipServico('Padeiro'),
+//    chipServico('Coatureira'),
+//    chipServico('Eletricista'),
+//    chipServico('Caseiro'),
+//    chipServico('Jardineiro'),
+//    Text('Pedreiro'),
+//    Text('Padeiro'),
+//    Text('Coatureira'),
+//    Text('Eletricista'),
+//    Text('Caseiro'),
+//    Text('Jardineiro'),
+//  ];
+  List<Widget> cidadesList = new List();
 
   Widget _servicos(){
+    List<String> servicosUser = user.professionalData.servicosAtuantes;
+    print(user.professionalData.servicosAtuantes.toString());
+    if(servicoList.length == 0)
+    for(String servico in servicosUser){
+      servicoList.add(chipServico(servico));
+    }
+
     return Container(
       padding: EdgeInsets.all(8.0),
-      child: Card(
-//        margin: EdgeInsets.all(-3.0),
-        color: Colors.blueGrey,
-        child: ExpansionTile(
-          title: Text('Meus serviços',style: TextStyle(color: Colors.white),),
-          children: <Widget>[
-            Wrap(
-              children: servicoList,
-            )
-          ],
+        child: Wrap(
+          spacing: 4.0,
+          children: servicoList
         ),
-      ),
     );
   }
 
   Widget _cidades(){
+    List<String> cidadesUser = user.professionalData.cidadesAtuantes;
+    if(cidadesList.length == 0 )
+    for(String cidade in cidadesUser){
+      cidadesList.add(chipCidade(cidade));
+    }
+
     return Padding(
       padding: EdgeInsets.all(8.0),
-      child:       Card(
-        color: Colors.red[300],
-        child: ExpansionTile(
-          title: Text('Cidades',style: TextStyle(color: Colors.white),),
-          children: <Widget>[
-            Wrap(
-              children: cidadesList,
-            )
-          ],
-        ),
-      ),
+
+          child: Wrap(
+            spacing: 4.0,
+            children: cidadesList,
+          ),
+//      ),
     );
   }
-
   List<Widget> _buildForm() {
-
     final nome = Expanded(
       child: Row(
 //              mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Flexible(
             child: Text(
-              'Usuário do Autonomos',
+              '$name',
               style: TextStyle(color: Colors.blueGrey, fontSize: 20.0),
             ),
           ),
@@ -91,7 +158,7 @@ class PerfilUsuarioState extends State<PerfilUsuario> {
         children: <Widget>[
           Flexible(
             child: Text(
-              'email@email.com',
+              user.email,
               style: TextStyle(color: Colors.blueGrey, fontSize: 16.0),
             ),
           ),
@@ -104,7 +171,7 @@ class PerfilUsuarioState extends State<PerfilUsuario> {
       children: <Widget>[
         Flexible(
           child: Text(
-            '(00)00000-0000',
+            user.professionalData.telefone,
             style: TextStyle(color: Colors.blueGrey),
           ),
         ),
@@ -128,22 +195,10 @@ class PerfilUsuarioState extends State<PerfilUsuario> {
       children: <Widget>[
         ratingBar,
         Text(
-          '($_nota)',
+          '($ratingUser)',
           style: TextStyle(color: Colors.blueGrey),
         ),
       ],
-    );
-
-
-    final divisor1 = Expanded(child: Container(
-      color: Colors.grey[300],
-      height: 1.0,
-      padding: EdgeInsets.fromLTRB(16.0, .0, .0, .0),
-      margin: EdgeInsets.fromLTRB(16.0, .0, 8.0, .0),
-    ));
-
-    final divisor = Row(
-      children: <Widget>[divisor1],
     );
 
     final InformacoesBasicas = Padding(
@@ -156,32 +211,112 @@ class PerfilUsuarioState extends State<PerfilUsuario> {
       children: <Widget>[rating, email, telefone],
     );
 
+    final _editingPerfilText1 = Text(
+        'Precisa editar as cidades ou serviços?',
+      style: TextStyle(color: Colors.grey[500],fontSize: 12.0),
+    );
+//    final _textEditing2 = TextB(
+//        'Clique aqui',
+//    );
+    final _editingPerfilText2 = Flexible(
+      child: FlatButton(onPressed:
+          (){
+            _bloc.insertBasicProfessionalInformation(
+                typePeople: null,
+                documentNumber: null,
+                phone: null,
+                description: null);
+            Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (BuildContext context)=>
+                    ProfessionalRegisterLocationAndServiceScreen(
+                      bloc: _bloc,
+                    ))
+                );
+          },
+          padding: EdgeInsets.fromLTRB(.0, .0, 16.0, .0),
+          child: Text('Clique aqui.',style: TextStyle(fontSize: 12.0,fontWeight: FontWeight.bold),)),
+    );
+
+    final _editingPerfilTextGroup = Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: <Widget>[
+        _editingPerfilText1,
+        _editingPerfilText2
+      ],
+    );
     final form = Form(
       child: ListView(
         children: <Widget>[
           InformacoesBasicas,
           emailTelRatingGroup,
           _VERTICAL_SEPARATOR,
-          divisor,
+          myDivisor.divisorGroup('Cidades'),
           _cidades(),
-          _servicos()
+          myDivisor.divisorGroup('Serviços'),
+          _servicos(),
+          _editingPerfilTextGroup
+//          _textEditingCidadePt1
         ],
       ),
     );
+
+
     List<Widget> list = new List();
     list.add(form);
-
     return list;
   }
+
+  Scaffold _showScreen(){
+//    _progressBarHandler.show();
+    return Scaffold(
+        body: Center(
+          child: Stack(
+            children: _buildForm(),
+          ),
+        ));
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Scaffold(
-        body: Center(
-      child: Stack(
-        children: _buildForm(),
-      ),
-    ));
+
+    var modal = ModalRoundedProgressBar(
+        handleCallback: (handler){
+          _progressBarHandler = handler;
+        });
+
+    return FutureBuilder<User>(
+
+      future: FirebaseUserHelper.currentLoggedUser(),
+      builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
+        switch ( snapshot.connectionState ) {
+          case ConnectionState.none:
+//            return _progressBarHandler.show();
+          case ConnectionState.active:
+//            return _progressBarHandler.show();
+          case ConnectionState.waiting:
+            print("STATE ${snapshot.connectionState.toString()}");
+            return Stack();
+
+        //TODO MELHORAR ESSA VERIFICACAO!
+          case ConnectionState.done:
+            print("STATE ${snapshot.connectionState.toString()}");
+            print("Snapshot:  ${snapshot.data} ");
+
+            if (snapshot.data != null){
+              UserRepository().currentUser = snapshot.data;
+              return Stack(
+                children: <Widget>[
+                  _showScreen(),
+                  modal
+                ],
+              );
+            }
+        }
+      },
+    );
   }
 }
