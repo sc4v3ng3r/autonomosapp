@@ -212,7 +212,7 @@ class _MainScreenState extends State<MainScreen> {
       appBarIconMenuColor = Colors.red[300];
       _elevation = 4.0;
     } else if (position == 1) {
-      appBarColor = Colors.red[400];
+      appBarColor = Colors.red[300];
       appBarName = 'Serviços';
       appBarNameColor = Colors.white;
       appBarIconMenuColor = Colors.white;

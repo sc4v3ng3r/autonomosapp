@@ -8,7 +8,9 @@ import 'package:autonos_app/ui/widget/AccountDetailsLayout.dart';
 import 'package:autonos_app/ui/widget/ModalRoundedProgressBar.dart';
 import 'package:autonos_app/ui/widget/MyDivisorLayout.dart';
 import 'package:autonos_app/ui/widget/RatingBar.dart';
+import 'package:autonos_app/ui/widget/ServiceListProfissionalWidget.dart';
 import 'package:autonos_app/utility/UserRepository.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 class PerfilUsuario extends StatefulWidget {
@@ -39,6 +41,7 @@ class PerfilUsuarioState extends State<PerfilUsuario> {
     _bloc = new ProfessionalRegisterFlowBloc();
     _getUser();
     myDivisor = new MyDivisor();
+    _createListService();
     super.initState();
   }
 
@@ -102,16 +105,28 @@ class PerfilUsuarioState extends State<PerfilUsuario> {
 //  ];
   List<Widget> cidadesList = new List();
 
-  Widget _servicos(){
+  Future<String> _getNomeServivos(String servico) async{
+    DataSnapshot firebase = await FirebaseDatabase.instance.reference().child('servicos').child(servico).child('name').once();
+    print('VALOR DA LISTA:'+firebase.value.toString());
+    setState(() {
+      servicoList.add(chipServico(firebase.value.toString()));
+    });
+  }
+  void _createListService() async{
     List<String> servicosUser = user.professionalData.servicosAtuantes;
     print(user.professionalData.servicosAtuantes.toString());
-    if(servicoList.length == 0)
+
     for(String servico in servicosUser){
-      servicoList.add(chipServico(servico));
+      _getNomeServivos(servico);
+//      servicoList.add(chipServico(servico));
     }
+  }
+  Widget _servicos(){
+    if(servicoList.length == 0)
+      _createListService();
 
     return Container(
-      padding: EdgeInsets.all(8.0),
+      padding: EdgeInsets.all(12.0),
         child: Wrap(
           spacing: 4.0,
           children: servicoList
@@ -127,7 +142,7 @@ class PerfilUsuarioState extends State<PerfilUsuario> {
     }
 
     return Padding(
-      padding: EdgeInsets.all(8.0),
+      padding: EdgeInsets.all(12.0),
 
           child: Wrap(
             spacing: 4.0,
@@ -254,7 +269,7 @@ class PerfilUsuarioState extends State<PerfilUsuario> {
           myDivisor.divisorGroup('Cidades'),
           _cidades(),
           myDivisor.divisorGroup('Serviços'),
-          _servicos(),
+          ServiceListProfissionalWidget(serviceList: servicoList, user: user),
           _editingPerfilTextGroup
 //          _textEditingCidadePt1
         ],
