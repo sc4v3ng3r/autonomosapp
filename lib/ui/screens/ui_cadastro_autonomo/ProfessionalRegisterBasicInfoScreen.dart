@@ -1,5 +1,5 @@
 import 'package:autonos_app/bloc/ProfessionalRegisterFlowBloc.dart';
-import 'package:autonos_app/ui/ui_cadastro_autonomo/ProfessionalRegisterLocationAndServiceScreen.dart';
+import 'package:autonos_app/ui/screens/ui_cadastro_autonomo/ProfessionalRegisterLocationAndServiceScreen.dart';
 import 'package:autonos_app/ui/widget/NextButton.dart';
 import 'package:autonos_app/utility/InputValidator.dart';
 import 'package:flutter/material.dart';

@@ -1,10 +1,10 @@
 import 'package:autonos_app/bloc/ProfessionalRegisterFlowBloc.dart';
 import 'package:autonos_app/model/Cidade.dart';
-import 'package:autonos_app/ui/ui_cadastro_autonomo/ListagemCidadesScreen.dart';
-import 'package:autonos_app/ui/ui_cadastro_autonomo/ProfessionalRegisterPaymentScreen.dart';
+import 'package:autonos_app/ui/screens/ui_cadastro_autonomo/ListagemCidadesScreen.dart';
+import 'package:autonos_app/ui/screens/ui_cadastro_autonomo/ProfessionalRegisterPaymentScreen.dart';
 import 'package:autonos_app/model/Service.dart';
 import 'package:autonos_app/model/Estado.dart';
-import 'package:autonos_app/ui/ui_cadastro_autonomo/ListagemServicosScreen.dart';
+import 'package:autonos_app/ui/screens/ui_cadastro_autonomo/ListagemServicosScreen.dart';
 import 'package:autonos_app/ui/widget/CityChipContainer.dart';
 import 'package:autonos_app/utility/UserRepository.dart';
 import 'package:flutter/material.dart';

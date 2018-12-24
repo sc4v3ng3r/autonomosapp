@@ -6,8 +6,8 @@ import 'package:autonos_app/model/Location.dart';
 import 'package:autonos_app/model/ProfessionalData.dart';
 import 'package:autonos_app/model/Service.dart';
 import 'package:autonos_app/ui/screens/LoginScreen.dart';
-import 'package:autonos_app/ui/screens/PerfilUsuario.dart';
-import 'package:autonos_app/ui/ui_cadastro_autonomo/ProfessionalRegisterBasicInfoScreen.dart';
+import 'package:autonos_app/ui/screens/ui_perfil_usuario/PerfilUsuarioScreen.dart';
+import 'package:autonos_app/ui/screens/ui_cadastro_autonomo/ProfessionalRegisterBasicInfoScreen.dart';
 import 'package:autonos_app/ui/widget/ModalRoundedProgressBar.dart';
 import 'package:autonos_app/ui/widget/RatingBar.dart';
 import 'package:autonos_app/model/User.dart';
@@ -254,7 +254,7 @@ class _MainScreenState extends State<MainScreen> {
   Widget _getFragment(int position) {
     switch (position) {
       case 0:
-        return Center(child: PerfilUsuario());
+        return Center(child: PerfilUsuarioScreen());
 
       case 1:
         return ServiceListWidgetBlocProvider(
