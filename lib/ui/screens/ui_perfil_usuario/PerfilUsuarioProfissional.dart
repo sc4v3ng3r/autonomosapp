@@ -17,8 +17,6 @@ class PerfilUsuarioProfissionalScreen extends StatefulWidget{
  PerfilUsuarioProfissionalScreenState createState() {
     return new PerfilUsuarioProfissionalScreenState();
   }
-
-
 }
 
 class PerfilUsuarioProfissionalScreenState extends State<PerfilUsuarioProfissionalScreen>{

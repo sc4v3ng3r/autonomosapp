@@ -11,11 +11,12 @@ import 'package:flutter/material.dart';
 import 'package:autonos_app/ui/widget/NextButton.dart';
 import 'package:autonos_app/ui/widget/ServiceChipContainer.dart';
 import 'package:autonos_app/ui/widget/ChipContainerController.dart';
+import 'package:autonos_app/ui/widget/StateDropDownWidget.dart';
+import 'package:autonos_app/ui/widget/EditableButton.dart';
 
 class ProfessionalRegisterLocationAndServiceScreen extends StatefulWidget {
 
   final ProfessionalRegisterFlowBloc _bloc;
-
   ProfessionalRegisterLocationAndServiceScreen(
       {@required ProfessionalRegisterFlowBloc bloc }
       ) : _bloc = bloc;
@@ -32,55 +33,31 @@ class ProfessionalRegisterLocationAndServiceScreenState
   static const Map<String, String> DROPDOWN_MENU_OPTIONS = Estado.STATES_MAP;
   ChipContainerController _serviceChipController;
   ChipContainerController _cityChipController;
+  EditableButtonController _buttonController;
   //
   // TODO: IMPLEMENTAR BLOC PARA ESTA TELA. OS DADOS DEVEM FICAR NO MESMO.
 
   List<Cidade> _cidadesSelecionadas = new List();
   List<Service> _servicosSelecionados = new List();
   Estado _selectedState;
-  RaisedButton _buttonListCidades;
-  List<DropdownMenuItem<String>> _dropDownMenuItems;
   String _dropdownCurrentOption;
 
   final _VERTICAL_SEPARATOR = SizedBox( height: 8.0,);
 
   @override
   void initState() {
-    _initDropdownMenu();
     super.initState();
   }
 
-  void _initDropdownMenu() {
-    _dropDownMenuItems = getDropDownMenuItems();
-    _dropdownCurrentOption = _dropDownMenuItems[0].value;
-  }
-
-  List<DropdownMenuItem<String>> getDropDownMenuItems() {
-    List<DropdownMenuItem<String>> itens = new List();
-
-    for (String estado in DROPDOWN_MENU_OPTIONS.values) {
-      itens.add(new DropdownMenuItem( value: estado, child: new Text(estado)) );
-    }
-    return itens;
-  }
-
-  void onDropdownItemSelected(String dataSelected) {
-    if ( _dropdownCurrentOption != dataSelected ) {
-      setState(() {
-        _cidadesSelecionadas.clear();
-        _cityChipController.clear();
-        _dropdownCurrentOption = dataSelected;
-      });
-      // TODO DEVEMOS HABILITAR E/OU DESABILITAR O BOTÃO DE SELECIONAR CIDADE DE ACORDO
-      // COM A OPÇÃO SELECIONADA
-    }
-  }
-
-  _gotoCityListScreen(BuildContext context) async {
-
+  String _getStateKey(String stateName){
     var key = DROPDOWN_MENU_OPTIONS.keys.firstWhere(
-        (k) => DROPDOWN_MENU_OPTIONS[k] == _dropdownCurrentOption,
+            (k) => DROPDOWN_MENU_OPTIONS[k] == stateName,
         orElse: () => null);
+    return key;
+  }
+
+  _gotoCityListScreen() async {
+    var key = _getStateKey(_dropdownCurrentOption);
     print("$key $_dropdownCurrentOption selecionado");
 
     // SE o cara selecionou 1 estado!
@@ -115,7 +92,7 @@ class ProfessionalRegisterLocationAndServiceScreenState
     }
   }
 
-  _gotoServiceListScreen(BuildContext context) async {
+  _gotoServiceListScreen() async {
     List<Service> servicosSelecionadoAux = List.from(_servicosSelecionados);
 
     _servicosSelecionados = await Navigator.of(context).push(MaterialPageRoute(
@@ -140,13 +117,24 @@ class ProfessionalRegisterLocationAndServiceScreenState
       style: TextStyle(color: Colors.grey),
     );
 
-    final estados = Row(
+    List<String> stateList = DROPDOWN_MENU_OPTIONS.values.toList();
+    final dropDownButton = Row(
       children: <Widget>[
-        new DropdownButton(
-            hint: Text("Selecione um estado"),
-            value: _dropdownCurrentOption,
-            items: getDropDownMenuItems(),
-            onChanged: onDropdownItemSelected),
+        StateDropDownWidget(
+          items: stateList,
+          initialValue: stateList[0],
+          title: "Selecione seu Estado",
+          onItemSelected: (String item) {
+            _cityChipController.clear();
+            _cidadesSelecionadas.clear();
+            _dropdownCurrentOption = item;
+            var key = _getStateKey(item);
+            if (key == KEY_NONE)
+              _buttonController.changeSecondName("");
+            else
+              _buttonController.changeSecondName(item);
+          },
+        )
       ],
     );
 
@@ -156,18 +144,14 @@ class ProfessionalRegisterLocationAndServiceScreenState
       textAlign: TextAlign.center,
     );
 
-    _buttonListCidades = RaisedButton(
-        color: Colors.red[300],
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text( 'Cidades ', style: TextStyle(color: Colors.white), ),
-            Text( '($_dropdownCurrentOption)', style: TextStyle(color: Colors.black54),),
-          ],
-        ),
-        onPressed: () {
-          _gotoCityListScreen(context);
-        });
+    final cityButton = EditableButton(
+      controllerCallback: (controller) {
+        _buttonController = controller;
+      },
+      onPressed: (){
+        _gotoCityListScreen();
+      },
+    );
 
     final cityChipContainer = CityChipContainer(
       controllerCallback: (controller) { _cityChipController = controller; },
@@ -189,7 +173,7 @@ class ProfessionalRegisterLocationAndServiceScreenState
       ),
       color: Colors.blueGrey,
       onPressed: () {
-        _gotoServiceListScreen(context);
+        _gotoServiceListScreen();
       },
     );
 
@@ -226,11 +210,12 @@ class ProfessionalRegisterLocationAndServiceScreenState
       shrinkWrap: true,
       children: <Widget>[
         estadoLabel,
-        estados,
+        dropDownButton,
+        //estados,
         Divider(),
         _VERTICAL_SEPARATOR,
         cidadeLabel,
-        _buttonListCidades,
+        cityButton,
         cityChipContainer,
         Divider(),
         _VERTICAL_SEPARATOR,
@@ -258,8 +243,7 @@ class ProfessionalRegisterLocationAndServiceScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Localização & Serviços',
+        title: Text('Localização & Serviços',
           style: TextStyle(color: Colors.blueGrey),
         ),
         backgroundColor: Colors.white,
