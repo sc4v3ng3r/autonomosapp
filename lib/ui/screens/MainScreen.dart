@@ -3,7 +3,6 @@ import 'package:autonos_app/firebase/FirebaseUfCidadesServicosProfissionaisHelpe
 import 'package:autonos_app/firebase/FirebaseUserHelper.dart';
 import 'package:autonos_app/model/Estado.dart';
 import 'package:autonos_app/model/Location.dart';
-import 'package:autonos_app/model/ProfessionalData.dart';
 import 'package:autonos_app/model/Service.dart';
 import 'package:autonos_app/ui/screens/LoginScreen.dart';
 import 'package:autonos_app/ui/screens/ui_perfil_usuario/PerfilUsuarioScreen.dart';
@@ -20,9 +19,12 @@ import 'package:autonos_app/ui/widget/UserAccountsHackedDrawerHeader.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:autonos_app/utility/LocationUtility.dart';
 import 'package:flutter/services.dart';
+import 'package:autonos_app/ui/widget/GenericAlertDialog.dart';
+import 'dart:io' show Platform;
 
 class MainScreen extends StatefulWidget {
   MainScreen({Key key}) : super(key: key);
+
 
   @override
   _MainScreenState createState() => _MainScreenState();
@@ -55,7 +57,7 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     super.initState();
     _user = UserRepository().currentUser;
-    _initUserCurrentPosition();
+    //_getUserCurrentPosition();
     print("Main initState");
     _scaffoldKey = new GlobalKey<ScaffoldState>();
   }
@@ -262,7 +264,8 @@ class _MainScreenState extends State<MainScreen> {
             itemsSelectedCallback: null,
             clickMode: ClickMode.TAP,
             singleClickCallback: (item) {
-              _serviceListItemClickHandle(item);
+              _serviceClickedCallback(item);
+              //_serviceListItemClickHandle(item);
             },
           ), //ClientChooseServicesFragment(),
         );
@@ -289,61 +292,78 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
-  void _serviceListItemClickHandle(Service item) async {
-    //Position location = await LocationUtility.getCurrentPosition();
+  void _serviceClickedCallback(Service item) async{
     Location location = UserRepository().currentLocation;
+    var results = false;
+
     if (location == null) {
-      LocationUtility.getCurrentPosition().then((position) {
-        if (position == null) {
-          print("NAO FOI POSSIVEL BOBTER A POSICAO ATUAL!!");
-          //possivelmente o usuario nao deu a permissao de obter a posicao!
-          // avisamos  a ele que nao podera seguir!!
-        } else {
-          // temos a localizacao,
-          _goAhead(location, item);
+      _progressBarHandler.show();
+      results = await _updateUserCurrentPosition();
+      if (results)
+        _fetchProfessionalsAndGoToMapScreen(item);
+      else {
+        _progressBarHandler.dismiss();
+        print("Não foi possível buscar profisisonais!");
+        return;
+      }
+    }
+    else{
+      _progressBarHandler.show();
+      _fetchProfessionalsAndGoToMapScreen(item);
+    }
+
+  }
+
+  Future<bool> _showLocationPermissionReasonDialog() async {
+    return await showDialog(context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context){
+        return GenericAlertDialog(
+          title: "Permissão de Localização",
+          content: Text("Autônomos precisa acessar a localização do dispositivo"),
+          positiveButtonContent: Text("Conceder Permissão"),
+          negativeButtonContent: Text("Cancelar"),
+        );
+      }
+    );
+  }
+
+  Future<bool> _updateUserCurrentPosition() async {
+    if (Platform.isAndroid){
+      var permission = await _handleLocationPermissionForAndroid();
+
+      if (permission){
+        Position position = await LocationUtility.getCurrentPosition();
+        if (position != null){
+          var placeMarks = await LocationUtility.doGeoCoding( position );
+          _placemark = placeMarks[0];
+          var location = Location(
+              latitude: position.latitude,
+              longitude: position.longitude);
+          UserRepository().currentLocation = location;
+          return true;
         }
-      }).catchError((error) {
-        print(error);
-      });
+
+        else {
+          //GPS provavelmente desligado!
+          return false;
+        }
+      }
+
+      return false;
     }
 
     else {
-      _goAhead(location, item);
+      //TODO iOS implementation
+      return false;
     }
-  }
 
-  void _initUserCurrentPosition(){
-    LocationUtility.getCurrentPosition().then( (position) {
-      if (position != null){
-        LocationUtility.doGeoCoding( position )
-            .then( (placeMarks){
-              _placemark = placeMarks[0];
-
-        }).catchError( (error) { throw error;});
-
-        var location = new Location(
-            latitude: position.latitude, longitude: position.longitude);
-        UserRepository().currentLocation = location;
-
-      }
-
-      else {
-        var snack = SnackBar(
-          content: Text("Não foi possível obter sua localização"),
-          backgroundColor: Colors.red,);
-          Scaffold.of(context).showSnackBar(snack);
-      }
-    })
-    .catchError((error) {
-      print(error);
-    });
   }
 
   // TODO método denome provisorio!
-  void _goAhead(Location location, Service serviceItem) async {
+  void _fetchProfessionalsAndGoToMapScreen(Service serviceItem) async {
       String sigla = Estado.keyOfState(_placemark.administrativeArea);
 
-      _progressBarHandler.show();
       FirebaseUfCidadesServicosProfissionaisHelper
           .getProfessionalsIdsFromCityAndService( estadoSigla: sigla,
               cidadeNome: _placemark.subAdministratieArea,
@@ -380,7 +400,6 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-
   Future<Null> _showAndroidNativeMapActivity(List<dynamic> dataMapList) async {
     try {
       var result = await platform.invokeMethod(
@@ -392,6 +411,58 @@ class _MainScreenState extends State<MainScreen> {
       _progressBarHandler.dismiss();
     } on PlatformException catch (e) {
       print("ERROR ${e.message} ${e.code}");
+    }
+  }
+
+
+  Future<bool> _handleLocationPermissionForAndroid() async {
+    var hasPermission =  await PermissionUtility.hasLocationPermission();
+
+    if (!hasPermission){
+
+      var shouldShowDialog = await PermissionUtility.shouldShowReasonableDialog();
+      if (shouldShowDialog){ // devemos exibir uma razao?
+        var shouldShowReasonResults = await _showLocationPermissionReasonDialog();
+        if (shouldShowReasonResults)
+          return await PermissionUtility.requestAndroidLocationPermission();
+        //usuario nao concorda com as razoes para conceder a permissao
+        return false;
+      }
+
+      else {
+        // nao devemos exibir uma razao...
+        // else never ask again was marked
+        //necessario dar as permissoes na tela de configurações do OS
+        print("Never ask again marked, user must give a permition in application settings");
+        var goToSettings = await showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (BuildContext context){
+              return GenericAlertDialog(
+                title: "Permissões",
+                positiveButtonContent: Text("Ir para configurações"),
+                negativeButtonContent: Text("Cancelar"),
+                content: Column(
+                  children: <Widget>[
+                    Text("Você precisa conceder a permissão de localização "
+                        "nas configurações do seu dispositivo."),
+                    Text("Deseja ir a tela de configurações?"),
+                  ],
+                ),
+
+              );
+            }
+        );
+        if (goToSettings!= null && goToSettings)
+          await PermissionUtility.openPermissionSettings();
+        return false;
+      }
+    } // end of if(!hasPermission)
+
+    // realizar a operacao!!!
+    else {
+      print("JA tem permissao para realizar operação");
+      return true;
     }
   }
 
