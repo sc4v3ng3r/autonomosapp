@@ -130,4 +130,33 @@ class FirebaseUserHelper {
     return map;
   }
 
+  static void removeUserAccount(User user){
+    if (user == null)
+      return;
+    FirebaseDatabase db = FirebaseDatabase.instance;
+
+    DatabaseReference userRef = db.reference()
+        .child(FirebaseReferences.REFERENCE_USERS);
+
+    DatabaseReference proRef = db.reference()
+        .child(FirebaseReferences.REFERENCE_PROFISSIONAIS);
+
+    DatabaseReference relationshipRef = db.reference()
+        .child(FirebaseReferences.REFERENCE_UF_CIDADES_SERVICOS_PROFISSIONAIS);
+
+    if (user.professionalData != null){
+      // removendo relacionamento com estado, cidades e servicos
+      for (String city in user.professionalData.cidadesAtuantes){
+        for(String serviceId in user.professionalData.servicosAtuantes){
+          relationshipRef.child( user.professionalData.estadoAtuante )
+            .child( city ).child( serviceId ).child( user.uid).remove();
+        }
+      }
+      proRef.child(user.uid).remove();
+    }
+
+    userRef.child(user.uid).remove();
+
+  }
+
 }

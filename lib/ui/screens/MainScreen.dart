@@ -185,6 +185,18 @@ class _MainScreenState extends State<MainScreen> {
     );
     drawerOptions.add(optionLogout);
 
+    final removeAccount = ListTile(
+      leading: Icon(Icons.delete),
+      title: Text("Remover conta"),
+      onTap: (){
+        FirebaseUserHelper.removeUserAccount( UserRepository().currentUser);
+        _logout();
+        
+      },
+    );
+
+    drawerOptions.add( removeAccount);
+
     return new Drawer(
       child: ListView(
         padding: EdgeInsets.all(.0),
@@ -292,7 +304,7 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
-  void _serviceClickedCallback(Service item) async{
+  void _serviceClickedCallback(Service item) async {
     Location location = UserRepository().currentLocation;
     var results = false;
 
