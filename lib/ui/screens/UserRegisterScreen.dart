@@ -144,6 +144,8 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
             color: Colors.black,
           ),
           decoration: InputDecoration(
+              fillColor: Colors.white,
+              filled: true,
               labelText: "Nome",
               labelStyle: TextStyle(
                 fontSize: 18.0,
@@ -182,6 +184,8 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
             color: Colors.black,
           ),
           decoration: InputDecoration(
+              fillColor: Colors.white,
+              filled: true,
               labelText: "E-mail",
               labelStyle: TextStyle(
                 fontSize: 18.0,
@@ -229,6 +233,8 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
             color: Colors.black,
           ),
           decoration: InputDecoration(
+              fillColor: Colors.white,
+              filled: true,
               labelText: "Senha",
               suffixIcon: Padding(
                 padding: EdgeInsetsDirectional.only(end: 12.0),
@@ -276,13 +282,14 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
       ],
     );
     final preTelaLogin = Container(
-
       child: Text("Já possui uma conta?" ,
         style: TextStyle(
             fontSize: 12.0,
             fontStyle: FontStyle.italic,
-            color: Colors.grey[500]),),
+            color: Colors.grey[500]),
+      ),
     );
+
     final telaLogin = Flexible(
         child: FlatButton(
             padding: EdgeInsets.fromLTRB(2.0, .0, 16.0, .0),
@@ -297,6 +304,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
             )
         )
     );
+
     final telaLoginGroup = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -327,6 +335,8 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
             color: Colors.black,
           ),
           decoration: InputDecoration(
+              fillColor: Colors.white,
+              filled: true,
               labelText: "Confirmar Senha",
               labelStyle: TextStyle(
                 fontSize: 18.0,
@@ -413,6 +423,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
     return list;
   }
 
+  //TODO esse método DEVE sair desta classe
   Future<bool> _createUserAccount( var email, var password ) async {
 
     bool returnFlag = false;
@@ -436,6 +447,8 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
     return returnFlag;
   }
 
+
+  //TODO esse método DEVE sair desta classe
   Future<User> _createAccountDBRegister(FirebaseUser recentCreatedUser) async {
 
     try {
@@ -456,7 +469,6 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
     }
 
     catch ( ex ){
-
       print("Erro ao registar conta do Database");
       recentCreatedUser.delete()
           .then( (onValue) => FirebaseAuth.instance.signOut() )
@@ -465,72 +477,4 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
     }
     return null;
   }
-
-
-  /**Funca que foi utilizada p/ pegar dados do IBGE e popular nossa base do firebase*/
-  /*
-  static void _dataMining() async {
-
-    FirebaseDatabase db = FirebaseDatabase.instance;
-    DatabaseReference estadosRef = db.reference().child("estados");
-    DatabaseReference cidadesReference = db.reference().child("estados_cidades");
-
-    String uriEstados = "https://servicodados.ibge.gov.br/api/v1/localidades/estados/";
-    var contentType = "application/json; charset=UTF-8";
-    //List<Estado> estadoLista = new List();
-
-    HttpClient client = new HttpClient();
-
-    print("Making server request...");
-    HttpClientRequest request = await client.getUrl(Uri.parse(uriEstados));
-    print("setting headers");
-    request.headers.set("Content-Type", contentType);
-
-    print("Wating response...");
-    HttpClientResponse response = await request.close();
-
-    await for (var contents in response.transform(Utf8Decoder())) {
-      List<dynamic> stateList = json.decode(contents);
-
-      for (dynamic listItem in stateList) {
-        // ou adiciona no firebase
-        Estado estado = Estado.fromJson(listItem);
-        estado.sigla = listItem["sigla"];
-        String currentStateId = listItem["id"].toString();
-
-        print("=====================================================================");
-        print("$estado  ID: " + currentStateId);
-        // insere estado no firebase
-        await estadosRef.child(estado.sigla).set(estado.toJson());
-
-        print("getting cities of ${estado.nome}");
-        request = await client.getUrl(
-            Uri.parse("$uriEstados $currentStateId/municipios"));
-        request.headers.set("Content-Type", contentType);
-        response = await request.close();
-
-        await for (var content in (response.transform(Utf8Decoder()).transform(
-            json.decoder))) {
-          List<dynamic> jsonList = List.from(content);
-          for (Map<String, dynamic> jsonData in jsonList) {
-            Cidade city = Cidade.fromJson(jsonData); // obtem o nome,
-            city.id = jsonData['id'];
-            city.uf = estado.sigla; // sigla
-
-            await cidadesReference.child( city.uf ).child(  city.id.toString() ).set( city.toJson() );
-            //insere no firebase
-            print(city);
-          }
-          print("=====================================================================\n");
-        }
-      }
-    }
-  }*/
-
-  /*void showProgressBar(bool flag){
-    setState(() {
-      _showProgressBar = flag;
-    });
-  }*/
-
 }

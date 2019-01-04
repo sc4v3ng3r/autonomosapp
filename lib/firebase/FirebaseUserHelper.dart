@@ -130,9 +130,9 @@ class FirebaseUserHelper {
     return map;
   }
 
-  static void removeUserAccount(User user){
-    if (user == null)
-      return;
+  /// Remove os dados do firebase real time database
+  /// relacionados a um usuario específico.
+  static void removeUserDataFromDb(User user){
     FirebaseDatabase db = FirebaseDatabase.instance;
 
     DatabaseReference userRef = db.reference()
@@ -149,7 +149,7 @@ class FirebaseUserHelper {
       for (String city in user.professionalData.cidadesAtuantes){
         for(String serviceId in user.professionalData.servicosAtuantes){
           relationshipRef.child( user.professionalData.estadoAtuante )
-            .child( city ).child( serviceId ).child( user.uid).remove();
+              .child( city ).child( serviceId ).child( user.uid).remove();
         }
       }
       proRef.child(user.uid).remove();
@@ -157,6 +157,12 @@ class FirebaseUserHelper {
 
     userRef.child(user.uid).remove();
 
+  }
+  ///Remove toda a "conta do usuário", tanto seus dados do database
+  ///quando sua autenticação.
+  static void removeUserAccount(User user) {
+    //TODO remover conta do firebase auth system
+    removeUserDataFromDb(user);
   }
 
 }

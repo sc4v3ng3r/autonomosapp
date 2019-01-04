@@ -23,8 +23,8 @@ import 'package:autonos_app/ui/widget/GenericAlertDialog.dart';
 import 'dart:io' show Platform;
 
 class MainScreen extends StatefulWidget {
-  MainScreen({Key key}) : super(key: key);
 
+  MainScreen({Key key}) : super(key: key);
 
   @override
   _MainScreenState createState() => _MainScreenState();
@@ -32,13 +32,14 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   GlobalKey<ScaffoldState> _scaffoldKey;
+
   final bool sair = false;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   static const platform =
       const MethodChannel("autonomos.com.br.jopeb.autonosapp");
 
   //var _perfilFragment;
-  int _drawerCurrentPosition = 1;
+  int _drawerCurrentPosition;
   String appBarName = 'Serviços';
   Color appBarColor = Colors.red[300];
   Color appBarNameColor = Colors.white;
@@ -51,12 +52,15 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void dispose() {
     super.dispose();
+    _progressBarHandler = null;
+
   }
 
   @override
   void initState() {
     super.initState();
     _user = UserRepository().currentUser;
+    _drawerCurrentPosition = 1;
     //_getUserCurrentPosition();
     print("Main initState");
     _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -95,8 +99,6 @@ class _MainScreenState extends State<MainScreen> {
             modal,
           ],
       );
-
-
   }
 
   void _NavegaCadastroAutonomo(BuildContext context) {
@@ -110,6 +112,7 @@ class _MainScreenState extends State<MainScreen> {
   Drawer _drawerMenuBuild(BuildContext context) {
     List<Widget> drawerOptions = List();
 
+    print("drawer menu build");
     final drawerHeader = UserAccountsHackedDrawerHeader(
       accountEmail: Text('${_user.email}'),
       accountName: Text('${_user.name}'),
@@ -123,7 +126,25 @@ class _MainScreenState extends State<MainScreen> {
     );
     drawerOptions.add(drawerHeader);
 
+    /*for(int i=0; i < widget._drawerOptions.length; i++){
+      if (( i == 4) && (_user.professionalData != null) )
+        continue;
+
+      var option = ListTile(
+        selected: i == _drawerCurrentPosition,
+        title: Text( widget._drawerOptions[i].title),
+        leading: Icon(widget._drawerOptions[i].icon),
+        onTap: (){
+          _setCurrentPosition(i);
+          Navigator.pop(context);
+        },
+      );
+
+      drawerOptions.add(option);
+    }*/
+
     final optionPerfil = ListTile(
+      selected: _drawerCurrentPosition == 0,
       leading: Icon(Icons.person),
       title: Text('Perfil'),
       onTap: () => _setCurrentPosition(0),
@@ -131,15 +152,18 @@ class _MainScreenState extends State<MainScreen> {
     drawerOptions.add(optionPerfil);
 
     final optionServices = ListTile(
+      selected: _drawerCurrentPosition == 1,
       leading: Icon(Icons.work),
       title: Text('Serviços'),
       onTap: () {
         _setCurrentPosition(1);
       },
     );
+
     drawerOptions.add(optionServices);
 
     final optionHistory = ListTile(
+      selected: _drawerCurrentPosition == 2,
       leading: Icon(Icons.history),
       title: Text('Histórico'),
       onTap: () => _setCurrentPosition(2),
@@ -147,19 +171,20 @@ class _MainScreenState extends State<MainScreen> {
     drawerOptions.add(optionHistory);
 
     final optionViews = ListTile(
+      selected: _drawerCurrentPosition == 3,
       leading: Icon(Icons.remove_red_eye),
       title: Text('Visualizações'),
       onTap: () => _setCurrentPosition(3),
     );
     drawerOptions.add(optionViews);
 
-    final optionFavorites = ListTile(
+    /*final optionFavorites = ListTile(
       leading: Icon(Icons.favorite),
       title: Text('Favoritos'),
       onTap: () => _setCurrentPosition(4),
     );
     drawerOptions.add(optionFavorites);
-
+    */
     if (_user.professionalData == null) {
       print("MainScreen User is not a professional!!!");
       final optionRegister = ListTile(
@@ -188,10 +213,25 @@ class _MainScreenState extends State<MainScreen> {
     final removeAccount = ListTile(
       leading: Icon(Icons.delete),
       title: Text("Remover conta"),
-      onTap: (){
-        FirebaseUserHelper.removeUserAccount( UserRepository().currentUser);
-        _logout();
-        
+
+      onTap: () async {
+        var response = await showDialog(context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context){
+            return GenericAlertDialog(
+              title: "Remover Conta",
+              content: Text("Deseja remover sua conta?"),
+              positiveButtonContent: Text("Sim"),
+              negativeButtonContent: Text("Não"),
+            );
+          });
+
+        if (response){
+          _progressBarHandler.show();
+          FirebaseUserHelper.removeUserAccount( _user );
+          _progressBarHandler.dismiss();
+          _logout();
+        }
       },
     );
 

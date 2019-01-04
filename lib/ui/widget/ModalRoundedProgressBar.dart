@@ -22,6 +22,7 @@ class ModalRoundedProgressBar extends StatefulWidget {
 
 class _ModalRoundedProgressBarState extends State<ModalRoundedProgressBar> {
   bool _isShowing = false;
+  String _message;
 
   @override
   void initState() {
@@ -29,7 +30,9 @@ class _ModalRoundedProgressBarState extends State<ModalRoundedProgressBar> {
     ProgressBarHandler handler = ProgressBarHandler();
     handler.show = this.show;
     handler.dismiss = this.dismiss;
+    handler.changeMessage = this.message;
     widget._handlerCallback(handler);
+    _message = widget._textMessage;
   }
 
   @override
@@ -54,7 +57,7 @@ class _ModalRoundedProgressBarState extends State<ModalRoundedProgressBar> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 CircularProgressIndicator(),
-                Text(widget._textMessage),
+                Text(_message),
               ],
             ),
           ),
@@ -70,9 +73,14 @@ class _ModalRoundedProgressBarState extends State<ModalRoundedProgressBar> {
   void dismiss() {
     setState(() => _isShowing = false);
   }
+
+  void message(String message){
+    setState(() { _message = message; });
+  }
 }
 
 class ProgressBarHandler {
   Function show;
   Function dismiss;
+  Function changeMessage;
 }
