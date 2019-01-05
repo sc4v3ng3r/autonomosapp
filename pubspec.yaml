@@ -66,6 +66,8 @@ flutter:
     - assets/face_icon.ttf
     - assets/autonomos_logo.jpeg
     - assets/autonomos.png
+    - assets/background.png
+    - assets/splash_logo.png
     - assets/faceicon.png
     - login_logo_name.png
     - login_logo_name2.png
