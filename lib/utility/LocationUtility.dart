@@ -1,13 +1,14 @@
 import 'package:geolocator/geolocator.dart';
-import 'package:autonos_app/utility/PermissionUtiliy.dart';
+import 'package:meta/meta.dart';
 import 'dart:io' show Platform;
+
 
 class LocationUtility {
 
-  static Future<Position> getCurrentPosition() async {
+  static Future<Position> getCurrentPosition({@required LocationAccuracy desiredAccuracy}) async {
     if (Platform.isAndroid) {
       return Geolocator().getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high
+          desiredAccuracy: desiredAccuracy
       );
     }
 

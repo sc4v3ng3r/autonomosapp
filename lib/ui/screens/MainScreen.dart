@@ -53,17 +53,42 @@ class _MainScreenState extends State<MainScreen> {
   void dispose() {
     super.dispose();
     _progressBarHandler = null;
-
   }
 
   @override
   void initState() {
     super.initState();
     _user = UserRepository().currentUser;
+    _initUserPosition();
     _drawerCurrentPosition = 1;
-    //_getUserCurrentPosition();
     print("Main initState");
     _scaffoldKey = new GlobalKey<ScaffoldState>();
+  }
+
+  //TODO esse codigo pode ser executado antes da MainScreen
+  // com algumas adaptacoes para obter o placemark.
+  void _initUserPosition(){
+    PermissionUtility.hasLocationPermission().then( (permission){
+      print("MainScreen::_initUserPosition() $permission");
+      if (permission){
+        LocationUtility.getCurrentPosition( desiredAccuracy:
+        LocationAccuracy.medium ).then( (position) {
+          if (position != null){
+            print("starting geocoding on init");
+            LocationUtility.doGeoCoding(position).then((placeMarkList) {
+              _placemark =placeMarkList[0];
+              print("geocoding done on init");
+            });
+
+            print("Location getting LA: ${position.latitude} LO: ${position.longitude} ");
+            UserRepository().currentLocation = Location(
+                latitude: position.latitude,
+                longitude: position.longitude);
+          }
+        });
+      }
+
+    });
   }
 
   @override
@@ -125,23 +150,6 @@ class _MainScreenState extends State<MainScreen> {
       ),
     );
     drawerOptions.add(drawerHeader);
-
-    /*for(int i=0; i < widget._drawerOptions.length; i++){
-      if (( i == 4) && (_user.professionalData != null) )
-        continue;
-
-      var option = ListTile(
-        selected: i == _drawerCurrentPosition,
-        title: Text( widget._drawerOptions[i].title),
-        leading: Icon(widget._drawerOptions[i].icon),
-        onTap: (){
-          _setCurrentPosition(i);
-          Navigator.pop(context);
-        },
-      );
-
-      drawerOptions.add(option);
-    }*/
 
     final optionPerfil = ListTile(
       selected: _drawerCurrentPosition == 0,
@@ -385,7 +393,8 @@ class _MainScreenState extends State<MainScreen> {
       var permission = await _handleLocationPermissionForAndroid();
 
       if (permission){
-        Position position = await LocationUtility.getCurrentPosition();
+        Position position = await LocationUtility.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.medium );
         if (position != null){
           var placeMarks = await LocationUtility.doGeoCoding( position );
           _placemark = placeMarks[0];
@@ -412,7 +421,6 @@ class _MainScreenState extends State<MainScreen> {
 
   }
 
-  // TODO método denome provisorio!
   void _fetchProfessionalsAndGoToMapScreen(Service serviceItem) async {
       String sigla = Estado.keyOfState(_placemark.administrativeArea);
 
