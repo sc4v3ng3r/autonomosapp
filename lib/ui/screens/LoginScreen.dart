@@ -24,6 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool iconVisibility = false;
   Icon icon = Icon(Icons.visibility_off);
   bool _obscureText = true;
+  bool _rememberMe = false;
   FocusNode _emailFocus;
   FocusNode _passwordFocus;
   TextEditingController _emailController;
@@ -203,6 +204,55 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
 
+
+    final defaultTextStyle = TextStyle(
+      inherit: false,
+      color: Colors.black,
+    );
+
+    final rememberMe = Row(
+      children: <Widget>[
+        Checkbox(
+            value: _rememberMe,
+            tristate: false,
+            onChanged: (status) {
+              setState(() { _rememberMe = status; });
+            }),
+
+        Text("Lembrar de mim", style: defaultTextStyle,),
+      ],
+    );
+
+    final forgotYourPassword = FlatButton(
+      highlightColor: Colors.transparent,
+      //splashColor: Colors.transparent,
+      onPressed: (){},
+      child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Icon(Icons.lock_open),
+          Text("Esqueceu a senha?",
+            style: defaultTextStyle,
+          ),
+        ],
+      ),
+    );
+
+
+    final userSupportLayout = Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          rememberMe,
+          forgotYourPassword,
+
+        ],
+      ),
+    );
+
+
+
     final loginButton = Padding(
 //      borderRadius: BorderRadius.circular(200.0),
       padding: EdgeInsets.symmetric(horizontal: 16.0),
@@ -222,16 +272,19 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
+
     final textPreRegisterButton = Container(
       padding: EdgeInsets.fromLTRB(16.0, .0, 2.0, .0),
       child: Text(
         'Ainda não possui uma conta?',
         style: TextStyle(
-        fontSize: 12.0,
-        fontStyle: FontStyle.italic,
-        color: Colors.grey[500]),
-    ),
+          fontSize: 12.0,
+          fontStyle: FontStyle.italic,
+          color: Colors.grey[500]
+        ),
+      ),
     );
+
     final registerButton = Flexible(
       child: FlatButton(
         onPressed: () {
@@ -248,43 +301,12 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
 
-    final preForgotPassword = Container(
-      padding: EdgeInsets.fromLTRB(16.0, .0, 5.0, .0),
-      child: Text(
-        "Não lembra do login/senha?",
-        style: TextStyle(
-            fontStyle: FontStyle.italic,
-            fontSize: 12.0,
-            color: Colors.grey[500]),
-        overflow: TextOverflow.clip,
-      ),
-    );
-    final forgotPassword = Flexible(
-      child: FlatButton(
-        padding: EdgeInsets.fromLTRB(.0, .0, 16.0, .0),
-        onPressed: () {
-          print("Esqueceu a senha...");
-        },
-        color: Colors.transparent,
-        child: Text(
-          "Recupere seus dados.",
-          style: TextStyle(fontSize: 12.0, fontStyle: FontStyle.italic),
-//          overflow: TextOverflow.fade,
-        ),
-      ),
-    );
-    final forgotGroup = Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[preForgotPassword, forgotPassword],
-    );
+
     final registerTextGroup = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[textPreRegisterButton, registerButton],
     );
-    final buttonsGroupAux = Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[registerButton, forgotPassword],
-    );
+
     final divisor1 = Expanded(
       child:Container(
       color: Colors.grey[300],
@@ -314,6 +336,7 @@ class _LoginScreenState extends State<LoginScreen> {
         divisor3
       ],
     );
+
     final divisiorOuGroup = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -337,7 +360,8 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           color: Colors.blue[500],
           onPressed: () => initiateFacebookLogin(context),
-        ));
+        ),
+    );
 
     var form = Form(
       key: _globalKey,
@@ -350,11 +374,10 @@ class _LoginScreenState extends State<LoginScreen> {
           emailField,
           _VERTICAL_SEPARATOR,
           passwordField,
-          _VERTICAL_SEPARATOR,
+          userSupportLayout,
           _VERTICAL_SEPARATOR,
           loginButton,
           _VERTICAL_SEPARATOR,
-          forgotGroup,
           divisiorOuGroup,
           _VERTICAL_SEPARATOR,
           facebookLoginButton,

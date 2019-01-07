@@ -36,7 +36,7 @@ class _MyAppState extends State<MyApp> {
           case ConnectionState.waiting:
             print("STATE ${snapshot.connectionState.toString()}");
             return Container(
-              color: Colors.black,
+              color: Colors.lightGreenAccent,
             );
 
           case ConnectionState.done:
