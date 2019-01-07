@@ -1,3 +1,4 @@
+import 'package:autonos_app/model/ApplicationState.dart';
 import 'package:autonos_app/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
 import 'package:autonos_app/ui/screens/UserRegisterScreen.dart';
@@ -9,6 +10,7 @@ import 'package:autonos_app/firebase/FirebaseUserHelper.dart';
 import 'package:autonos_app/ui/screens/MainScreen.dart';
 import 'package:autonos_app/model/User.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // TODO REALIZAR BUGFIX dos SNACKBARS
 class LoginScreen extends StatefulWidget {
@@ -24,7 +26,8 @@ class _LoginScreenState extends State<LoginScreen> {
   bool iconVisibility = false;
   Icon icon = Icon(Icons.visibility_off);
   bool _obscureText = true;
-  bool _rememberMe = false;
+  bool _rememberMe;
+  Future<SharedPreferences> _preferences;
   FocusNode _emailFocus;
   FocusNode _passwordFocus;
   TextEditingController _emailController;
@@ -32,7 +35,6 @@ class _LoginScreenState extends State<LoginScreen> {
   GlobalKey<FormState> _globalKey;
   ProgressBarHandler _handler;
   bool _autoValidate;
-  bool _showProgressBar = false;
   var _email, _password;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -52,8 +54,13 @@ class _LoginScreenState extends State<LoginScreen> {
     _autoValidate = false;
     _emailFocus = FocusNode();
     _passwordFocus = FocusNode();
-    _emailController = TextEditingController();
-    _passwordController = TextEditingController();
+      SharedPreferences prefs = UserRepository().preferences;
+
+      _emailController = TextEditingController(
+          text: prefs.getString(ApplicationState.KEY_EMAIL));
+      _passwordController = TextEditingController(text: prefs.getString(ApplicationState.KEY_PASSWORD));
+      _rememberMe = prefs.getBool(ApplicationState.KEY_REMEMBER_ME)?? false;
+
   }
 
   void initiateFacebookLogin(BuildContext context) async {
@@ -66,22 +73,17 @@ class _LoginScreenState extends State<LoginScreen> {
       case FacebookLoginStatus.error:
         print("Error");
         _handler.dismiss();
-        //onLoginStatusChanged(false);
         break;
 
       case FacebookLoginStatus.cancelledByUser:
         print("CancelledByUser");
         _handler.dismiss();
-        //onLoginStatusChanged(false);
         break;
 
       case FacebookLoginStatus.loggedIn:
         print("LoggedIn");
         firebaseAuthWithFacebook(
             facebookLoginResult.accessToken.token, context);
-        
-        //onLoginStatusChanged(true);
-        //print("login status changed!");
         break;
     }
   }
@@ -211,33 +213,44 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     final rememberMe = Row(
-      children: <Widget>[
-        Checkbox(
-            value: _rememberMe,
-            tristate: false,
-            onChanged: (status) {
-              setState(() { _rememberMe = status; });
-            }),
-
-        Text("Lembrar de mim", style: defaultTextStyle,),
-      ],
+        children: <Widget>[
+          Checkbox(
+              value: _rememberMe,
+              tristate: false,
+              onChanged: (status) {
+                if (status == false){
+                  _email ="";
+                  _password ="";
+                  _passwordController.clear();
+                  _emailController.clear();
+                }
+                setState(() {
+                  _rememberMe = status;
+                }
+                );
+              }),
+          Text("Lembre-se de mim", style: defaultTextStyle,),
+        ],
     );
 
-    final forgotYourPassword = FlatButton(
-      highlightColor: Colors.transparent,
-      //splashColor: Colors.transparent,
-      onPressed: (){},
-      child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Icon(Icons.lock_open),
-          Text("Esqueceu a senha?",
-            style: defaultTextStyle,
-          ),
-        ],
+
+    final forgotYourPassword = InkWell(
+      splashColor: Colors.grey,
+      onTap: (){},
+
+      child: Padding(
+        padding: EdgeInsets.all(4.0),
+        child: Row(
+          children: <Widget>[
+            Icon(Icons.lock_open),
+            Padding(padding: EdgeInsets.symmetric( horizontal: 2.0),) ,
+            Text("Esqueceu a senha?",
+              style: defaultTextStyle,
+            ),
+          ],
+        ),
       ),
     );
-
 
     final userSupportLayout = Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.0),
@@ -246,12 +259,9 @@ class _LoginScreenState extends State<LoginScreen> {
         children: <Widget>[
           rememberMe,
           forgotYourPassword,
-
         ],
       ),
     );
-
-
 
     final loginButton = Padding(
 //      borderRadius: BorderRadius.circular(200.0),
@@ -333,7 +343,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
     final divisor = Row(
       children: <Widget>[
-        divisor3
+        divisor3,
       ],
     );
 
@@ -355,7 +365,7 @@ class _LoginScreenState extends State<LoginScreen> {
             style: TextStyle(
                 color: Colors.white,
                 fontSize: 16.0,
-              fontWeight: FontWeight.bold
+                fontWeight: FontWeight.bold,
                 ),
           ),
           color: Colors.blue[500],
@@ -441,6 +451,7 @@ class _LoginScreenState extends State<LoginScreen> {
         rep.currentUser = user;
 
         _goToLoggedScreen(context, user);
+
       }).catchError((onError) {
         print(onError.toString());
         _handler.dismiss();
@@ -452,6 +463,11 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _goToLoggedScreen(BuildContext context, User user) {
+
+    if (_rememberMe)
+      _writerPreferencesData();
+    else
+      _preferencesClear();
 
     Navigator.pushReplacement(
         context,
@@ -475,11 +491,24 @@ class _LoginScreenState extends State<LoginScreen> {
       }));
   }
 
-  /*
-  void showProgressBar(bool flag) {
-    setState(() {
-      _showProgressBar = flag;
+
+  void _preferencesClear() {
+    SharedPreferences.getInstance().then((prefs) {
+      prefs.clear();
     });
-  }*/
+
+  }
+
+  Future<void> _writerPreferencesData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    print("will write email: ${_emailController.text}");
+    print("will write password: ${_passwordController.text}");
+
+    prefs.setBool( ApplicationState.KEY_REMEMBER_ME , _rememberMe);
+    prefs.setString(ApplicationState.KEY_EMAIL, _emailController.text);
+    prefs.setString(ApplicationState.KEY_PASSWORD, _passwordController.text );
+
+
+  }
 
 } //end of class

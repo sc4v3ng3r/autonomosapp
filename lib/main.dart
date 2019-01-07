@@ -1,3 +1,4 @@
+import 'package:autonos_app/model/ApplicationState.dart';
 import 'package:autonos_app/ui/screens/LoginScreen.dart';
 import 'package:autonos_app/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    UserRepository(); // init user repository singleton
   }
 
   @override
@@ -36,7 +38,7 @@ class _MyAppState extends State<MyApp> {
           case ConnectionState.waiting:
             print("STATE ${snapshot.connectionState.toString()}");
             return Container(
-              color: Colors.lightGreenAccent,
+              color: Colors.black,
             );
 
           case ConnectionState.done:
@@ -53,3 +55,4 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
+
