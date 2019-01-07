@@ -69,7 +69,6 @@ class _MainScreenState extends State<MainScreen> {
   // com algumas adaptacoes para obter o placemark.
   void _initUserPosition(){
     PermissionUtility.hasLocationPermission().then( (permission){
-      print("MainScreen::_initUserPosition() $permission");
       if (permission){
         LocationUtility.getCurrentPosition( desiredAccuracy:
         LocationAccuracy.medium ).then( (position) {
@@ -95,7 +94,6 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
 
     var modal = ModalRoundedProgressBar(
-        message: "Buscando Profissionais...",
         handleCallback: (handler){
           _progressBarHandler = handler;
         });
@@ -235,10 +233,17 @@ class _MainScreenState extends State<MainScreen> {
           });
 
         if (response){
-          _progressBarHandler.show();
-          FirebaseUserHelper.removeUserAccount( _user );
-          _progressBarHandler.dismiss();
-          _logout();
+          _progressBarHandler.show(message: "Removendo dados...");
+          FirebaseUserHelper.removeUserAccount( _user ).then(
+              (status){
+                print("on reauth status $status");
+                if (status){
+                  _progressBarHandler.dismiss();
+                  _logout();
+                }
+              });
+
+          //_logout();
         }
       },
     );
@@ -357,7 +362,7 @@ class _MainScreenState extends State<MainScreen> {
     var results = false;
 
     if (location == null) {
-      _progressBarHandler.show();
+      _progressBarHandler.show( message: "Buscando Profissionais");
       results = await _updateUserCurrentPosition();
       if (results)
         _fetchProfessionalsAndGoToMapScreen(item);
@@ -368,7 +373,7 @@ class _MainScreenState extends State<MainScreen> {
       }
     }
     else{
-      _progressBarHandler.show();
+      _progressBarHandler.show(message: "Buscando Profissionais");
       _fetchProfessionalsAndGoToMapScreen(item);
     }
 

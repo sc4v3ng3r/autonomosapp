@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
 
 class ModalRoundedProgressBar extends StatefulWidget {
-  final String _textMessage;
   final double _opacity;
   final Color _color;
   final Function _handlerCallback;
 
   ModalRoundedProgressBar({
     @required Function handleCallback(ProgressBarHandler handler),
-    String message = "",
     double opacity = 0.7,
     Color color = Colors.black54,
-  })  : _textMessage = message,
-        _opacity = opacity,
+  })  : _opacity = opacity,
         _color = color,
         _handlerCallback = handleCallback;
 
@@ -22,7 +19,7 @@ class ModalRoundedProgressBar extends StatefulWidget {
 
 class _ModalRoundedProgressBarState extends State<ModalRoundedProgressBar> {
   bool _isShowing = false;
-  String _message;
+  String _message = "";
 
   @override
   void initState() {
@@ -32,7 +29,6 @@ class _ModalRoundedProgressBarState extends State<ModalRoundedProgressBar> {
     handler.dismiss = this.dismiss;
     handler.changeMessage = this.message;
     widget._handlerCallback(handler);
-    _message = widget._textMessage;
   }
 
   @override
@@ -66,8 +62,12 @@ class _ModalRoundedProgressBarState extends State<ModalRoundedProgressBar> {
     );
   }
 
-  void show() {
-    setState(() => _isShowing = true);
+  void show({String message=""}) {
+    setState(() {
+      _message = message;
+      _isShowing = true;
+    });
+
   }
 
   void dismiss() {

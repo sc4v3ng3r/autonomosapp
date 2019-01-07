@@ -141,7 +141,7 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
 
 
   Future<void> _finishRegister() async {
-    _handler.show();
+    _handler.show("Registrando...");
     FirebaseUserHelper.registerUserProfessionalData(widget._bloc.currentData)
         .then( (_) {
           _handler.dismiss();
@@ -162,8 +162,7 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
   Widget build(BuildContext context) {
 
     var modal = ModalRoundedProgressBar(
-        handleCallback: (handler){ _handler = handler; },
-        message: "Registrando...",);
+        handleCallback: (handler){ _handler = handler; },);
 
     var scaffold = Scaffold(
       appBar: AppBar(

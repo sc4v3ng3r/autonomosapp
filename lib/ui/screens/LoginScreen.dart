@@ -35,7 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
   GlobalKey<FormState> _globalKey;
   ProgressBarHandler _handler;
   bool _autoValidate;
-  var _email, _password;
+  var _email="", _password="";
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   static final logo = Container(
@@ -56,16 +56,22 @@ class _LoginScreenState extends State<LoginScreen> {
     _passwordFocus = FocusNode();
       SharedPreferences prefs = UserRepository().preferences;
 
-      _emailController = TextEditingController(
-          text: prefs.getString(ApplicationState.KEY_EMAIL));
-      _passwordController = TextEditingController(text: prefs.getString(ApplicationState.KEY_PASSWORD));
-      _rememberMe = prefs.getBool(ApplicationState.KEY_REMEMBER_ME)?? false;
+    _rememberMe = prefs.getBool(ApplicationState.KEY_REMEMBER_ME)?? false;
+
+    if (_rememberMe) {
+      _email = prefs.getString(ApplicationState.KEY_EMAIL);
+      _password = prefs.getString(ApplicationState.KEY_PASSWORD);
+    }
+
+    _emailController = TextEditingController(text: _email);
+    _passwordController = TextEditingController(text: _password);
 
   }
 
   void initiateFacebookLogin(BuildContext context) async {
     _handler.show();
     final facebookLogin = new FacebookLogin();
+
     final facebookLoginResult = await facebookLogin
         .logInWithReadPermissions(['email', 'public_profile']);
 
@@ -450,6 +456,9 @@ class _LoginScreenState extends State<LoginScreen> {
         UserRepository rep = new UserRepository();
         rep.currentUser = user;
 
+        if (_rememberMe)
+          _writerPreferencesData();
+
         _goToLoggedScreen(context, user);
 
       }).catchError((onError) {
@@ -463,11 +472,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _goToLoggedScreen(BuildContext context, User user) {
-
-    if (_rememberMe)
-      _writerPreferencesData();
-    else
-      _preferencesClear();
 
     Navigator.pushReplacement(
         context,

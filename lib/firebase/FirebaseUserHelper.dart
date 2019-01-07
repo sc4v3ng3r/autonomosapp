@@ -1,13 +1,17 @@
 import 'package:autonos_app/firebase/FirebaseUfCidadesServicosProfissionaisHelper.dart';
 import 'package:autonos_app/model/ProfessionalData.dart';
+import 'package:autonos_app/utility/UserRepository.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:autonos_app/model/User.dart';
 import 'package:autonos_app/firebase/FirebaseReferences.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 
 class FirebaseUserHelper {
   static final RATING_INIT_VALUE = 5.0;
   static final FirebaseAuth AUTH = FirebaseAuth.instance;
+  static const String _PROVIDER_ID_FACEBOOK = "facebook.com";
+  static const String _PROVIDER_ID_PASSWORD = "password";
   //final FirebaseDatabase m_database = FirebaseDatabase.instance;
 
   static final DatabaseReference USERS_REFERENCE = FirebaseDatabase.instance
@@ -160,9 +164,34 @@ class FirebaseUserHelper {
   }
   ///Remove toda a "conta do usuário", tanto seus dados do database
   ///quando sua autenticação.
-  static void removeUserAccount(User user) {
+  static Future<bool> removeUserAccount(User user) async {
+
     //TODO remover conta do firebase auth system
-    removeUserDataFromDb(user);
+    FirebaseUser fbUser = await FirebaseAuth.instance.currentUser();
+    if (fbUser.providerData[1].providerId.compareTo( _PROVIDER_ID_FACEBOOK ) == 0) {
+       FacebookAccessToken accessToken = await FacebookLogin().currentAccessToken;
+
+       await FirebaseAuth.instance.reauthenticateWithFacebookCredential(
+           accessToken: accessToken.token);
+       fbUser = await FirebaseAuth.instance.currentUser();
+       return fbUser.delete()
+           .then((_){
+             return true;
+           }).catchError((error){ print("Error"); return false;});
+    }
+
+    else{
+      var instance = UserRepository();
+      await FirebaseAuth.instance.reauthenticateWithEmailAndPassword(
+          email: instance.fbLogin, password: instance.fbPassword);
+
+      fbUser = await FirebaseAuth.instance.currentUser();
+      return fbUser.delete().then((_){
+        UserRepository().preferences.clear();
+        return true;
+      }).catchError((error){ print("Error"); return false;});
+    }
+
   }
 
 }
