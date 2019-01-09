@@ -59,7 +59,9 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     super.initState();
     _user = UserRepository().currentUser;
+
     _initUserPosition();
+
     _drawerCurrentPosition = 1;
     print("Main initState");
     _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -74,6 +76,7 @@ class _MainScreenState extends State<MainScreen> {
         LocationAccuracy.medium ).then( (position) {
           if (position != null){
             print("starting geocoding on init");
+
             LocationUtility.doGeoCoding(position).then((placeMarkList) {
               _placemark =placeMarkList[0];
               print("geocoding done on init");
@@ -86,7 +89,6 @@ class _MainScreenState extends State<MainScreen> {
           }
         });
       }
-
     });
   }
 
@@ -234,7 +236,7 @@ class _MainScreenState extends State<MainScreen> {
 
         if (response){
           _progressBarHandler.show(message: "Removendo dados...");
-          FirebaseUserHelper.removeUserAccount( _user ).then(
+          FirebaseUserHelper.removeUser( _user ).then(
               (status){
                 print("on reauth status $status");
                 if (status){
@@ -259,7 +261,9 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   _logout() {
-    _auth.signOut();
+    _auth.signOut().then((_){
+
+    });
     //TODO WORK AROUND USER REPOSITORY
     UserRepository r = new UserRepository();
     r.currentUser = null;
@@ -358,11 +362,11 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _serviceClickedCallback(Service item) async {
+    _progressBarHandler.show( message: "Buscando Profissionais");
     Location location = UserRepository().currentLocation;
     var results = false;
 
     if (location == null) {
-      _progressBarHandler.show( message: "Buscando Profissionais");
       results = await _updateUserCurrentPosition();
       if (results)
         _fetchProfessionalsAndGoToMapScreen(item);
@@ -373,7 +377,6 @@ class _MainScreenState extends State<MainScreen> {
       }
     }
     else{
-      _progressBarHandler.show(message: "Buscando Profissionais");
       _fetchProfessionalsAndGoToMapScreen(item);
     }
 

@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:autonos_app/utility/SharedPreferencesUtility.dart';
 import 'package:autonos_app/utility/UserRepository.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -6,8 +9,12 @@ import 'package:autonos_app/utility/InputValidator.dart';
 import 'package:autonos_app/model/User.dart';
 import 'package:autonos_app/ui/screens/MainScreen.dart';
 import 'package:autonos_app/ui/widget/ModalRoundedProgressBar.dart';
+import 'package:image_picker/image_picker.dart';
 
 // TODO metodos do firebase devem sair daqui
+// TODO refatorar o layout
+// TODO Componentizar os text fields
+
 
 class UserRegisterScreen extends StatefulWidget {
   @override
@@ -25,19 +32,16 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
   FocusNode _passwordConfirmFocus;
   TextEditingController _passwordConfirmController;
   ProgressBarHandler _handler;
+  File _selectedUserImage;
 
   DatabaseReference _userReference;
-  static final RATING_INIT_VALUE = 5.0;
+  static const RATING_INIT_VALUE = 5.0;
 
-  static final SizedBox _verticalSeparator = new SizedBox(
-    height: 16.0,
-  );
+  static final SizedBox _verticalSeparator = new SizedBox(height: 16.0);
   bool iconVisibility = false;
   Icon icon = Icon(Icons.visibility_off);
   bool _obscureText = true;
-  var _email, _password, _name;
-  var _passwordConfirmation;
-  var _showProgressBar = false;
+  var _email, _password;
 
   bool _autoValidate = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -101,11 +105,11 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
   }
 
   bool _inputValidation() {
-    if (_formKey.currentState.validate()) {
-      _name = _nameController.text;
+    if ( _formKey.currentState.validate() ) {
+      //_name = _nameController.text;
       _email = _emailController.text;
       _password = _passwordController.text;
-      _passwordConfirmation = _passwordConfirmController.text;
+      //_passwordConfirmation = _passwordConfirmController.text;
       /*nao vou usaro onsave, vou para uma abordagem manual!*/
       //formKey.currentState.save();
       return true;
@@ -121,7 +125,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
   }
 
   List<Widget> _buildForm() {
-    //TODO nameField ainda estar sem validação de dados!
+
     final nameField = Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.0),
       child: Material(
@@ -156,12 +160,55 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
         ),
       ),
     );
-    final userphoto = Container(
-      padding: EdgeInsets.fromLTRB(.0, 8.0, .0, .0),
-      child: Image.asset(
-        "assets/usuario.png",
-        width: 168.0,height: 168.0,),
+
+
+    final userphoto = Column(
+      children: <Widget>[
+        ClipRRect(
+          borderRadius: BorderRadius.circular(100.0),
+          child: Material(
+            elevation: 8.0,
+            color: Colors.transparent,
+            child: Ink.image(
+              width: 160.0,
+              height: 160.0,
+              image: (_selectedUserImage == null) ?  AssetImage("assets/usuario.png") :
+              // TODO muito lento
+              FileImage( _selectedUserImage),
+              fit: BoxFit.cover,
+              child: InkWell(
+                onTap: (){
+                  print("picture clicked");
+                  _selectPictureFromGallery();
+                },
+                child: null,
+              ),
+            ),
+          ),
+        )
+      ],
     );
+
+    /*final userphoto = GestureDetector(
+      onTap: () {
+        print("picture clicked");
+        _selectPictureFromGallery();
+      },
+      child: Column(
+        children: <Widget>[
+          Container(
+            padding: EdgeInsets.fromLTRB(.0, 8.0, .0, .0),
+            child: (_selectedUserImage == null) ?
+              Image.asset("assets/usuario.png", width: 168.0,height: 168.0,) :
+                Image.file( _selectedUserImage, width: 168.0,height: 168.0,
+                  fit: BoxFit.contain,),
+          ),
+          SizedBox(height: 4.0,),
+          Text("Selecionar foto"),
+        ],
+      ),
+    );*/
+
     final emailField = Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.0),
       child: Material(
@@ -281,37 +328,6 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
         termosDeUso
       ],
     );
-    final preTelaLogin = Container(
-      child: Text("Já possui uma conta?" ,
-        style: TextStyle(
-            fontSize: 12.0,
-            fontStyle: FontStyle.italic,
-            color: Colors.grey[500]),
-      ),
-    );
-
-    final telaLogin = Flexible(
-        child: FlatButton(
-            padding: EdgeInsets.fromLTRB(2.0, .0, 16.0, .0),
-            onPressed: (){
-              Navigator.pop(context);
-              print("voltar a tela de login pressionado");
-            },
-            child: Text("Faça login.",
-              style: TextStyle(
-                  fontSize: 12.0,
-                  fontStyle: FontStyle.italic),
-            )
-        )
-    );
-
-    final telaLoginGroup = Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        preTelaLogin,
-        telaLogin
-      ],
-    );
 
     final passwordConfirm = Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.0),
@@ -358,7 +374,6 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
 
             if ( _inputValidation() == true ) {
               _handler.show();
-
               _createUserAccount( _email,  _password).then(
                       (results) {
                         _handler.dismiss();
@@ -377,7 +392,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
                       });
             }
           },
-          color: Colors.red,
+          color: Colors.green,
           child: Text(
             "Confirmar",
             style: TextStyle(fontSize: 16.0,color: Colors.white),
@@ -391,6 +406,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
       key: _formKey,
       child: Container(
         color: Colors.white,
+        child: Padding(padding: EdgeInsetsDirectional.only(top: 16.0),
         child: ListView(
           shrinkWrap: true,
           children: <Widget>[
@@ -404,11 +420,10 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
             _verticalSeparator,
             passwordConfirm,
             _verticalSeparator,
-//            buttonsGroup
-          registerButton,
             termosGroup,
-            telaLoginGroup,
+            registerButton,
           ],
+        ),
         ),
       ),
     );
@@ -433,10 +448,12 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
       firebaseUser = await auth.createUserWithEmailAndPassword(
           email: email, password: password);
 
-      //print("FIREBASE USER: ${firebaseUser}"  );
-
       User userCreated = await _createAccountDBRegister(firebaseUser);
       UserRepository().currentUser = userCreated;
+
+      SharedPreferencesUtility.writePreferencesData(
+          email: email, password: password, rememberMe: true);
+
       returnFlag = true;
     }
 
@@ -476,5 +493,18 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
           + error.toString()));
     }
     return null;
+  }
+
+  void _selectPictureFromGallery() async {
+    File imageFile = await ImagePicker.pickImage(
+        source: ImageSource.gallery
+    );
+    if (imageFile!=null){
+      setState(() {
+        _selectedUserImage = imageFile;
+      });
+    }
+    print ("returned $imageFile");
+
   }
 }

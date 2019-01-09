@@ -11,6 +11,7 @@ import 'package:autonos_app/ui/screens/MainScreen.dart';
 import 'package:autonos_app/model/User.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:autonos_app/utility/SharedPreferencesUtility.dart';
 
 // TODO REALIZAR BUGFIX dos SNACKBARS
 class LoginScreen extends StatefulWidget {
@@ -54,10 +55,10 @@ class _LoginScreenState extends State<LoginScreen> {
     _autoValidate = false;
     _emailFocus = FocusNode();
     _passwordFocus = FocusNode();
+
       SharedPreferences prefs = UserRepository().preferences;
 
     _rememberMe = prefs.getBool(ApplicationState.KEY_REMEMBER_ME)?? false;
-
     if (_rememberMe) {
       _email = prefs.getString(ApplicationState.KEY_EMAIL);
       _password = prefs.getString(ApplicationState.KEY_PASSWORD);
@@ -102,6 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
         /*Se o usuario ja existe no database*/
         print("LIDO COM FACEBOOK ${user.email} ${user.name}");
         UserRepository().currentUser = user;
+
         _goToLoggedScreen(context, user);
 
       }).catchError((dataBaseError) {
@@ -224,12 +226,12 @@ class _LoginScreenState extends State<LoginScreen> {
               value: _rememberMe,
               tristate: false,
               onChanged: (status) {
-                if (status == false){
+                /*if (status == false){
                   _email ="";
                   _password ="";
                   _passwordController.clear();
                   _emailController.clear();
-                }
+                }*/
                 setState(() {
                   _rememberMe = status;
                 }
@@ -447,26 +449,32 @@ class _LoginScreenState extends State<LoginScreen> {
 
     FirebaseAuth auth = FirebaseAuth.instance;
 
-    auth
-        .signInWithEmailAndPassword(email: _email, password: _password)
-        .then((firebaseUser) {
-      FirebaseUserHelper.readUserAccountData(firebaseUser.uid).then((user) {
-        print("LIDO ${user.name}  ${user.email}");
-        // TODO REPO INIT WORKAROUND
-        UserRepository rep = new UserRepository();
-        rep.currentUser = user;
+    auth.signInWithEmailAndPassword(email: _email, password: _password)
+        .then( (firebaseUser) {
+          FirebaseUserHelper.readUserAccountData(firebaseUser.uid).then( (user) {
+            print("LIDO ${user.name}  ${user.email}");
 
-        if (_rememberMe)
-          _writerPreferencesData();
+            // TODO REPO INIT WORKAROUND
+            UserRepository rep = new UserRepository();
+            rep.currentUser = user;
+            rep.fbPassword =_password;
+            rep.fbLogin = _email;
+
+          // allways write into shared preferences
+          SharedPreferencesUtility.writePreferencesData(
+            email: _email, password: _password, rememberMe: _rememberMe);
 
         _goToLoggedScreen(context, user);
 
       }).catchError((onError) {
-        print(onError.toString());
+        // error de leitura de dados do usuario
+        //tem que fazer o logout
+        print( "Cath error 01 ${onError.toString()}");
         _handler.dismiss();
       });
-    }).catchError((firebaseError) {
-      print(firebaseError.toString());
+    }).catchError( (firebaseError) {
+      // erro de login
+      print("Catch error 02 ${firebaseError.toString()}");
       _handler.dismiss();
     });
   }
@@ -480,7 +488,7 @@ class _LoginScreenState extends State<LoginScreen> {
             builder: (BuildContext context) => MainScreen()));
   }
 
-  void _showSnackBarInfo(BuildContext ctx, String msg) {
+  void _showSnackBarErrorMessage(BuildContext ctx, String msg) {
     Scaffold.of(ctx).showSnackBar(SnackBar(content: Text(msg)));
   }
 
@@ -494,25 +502,4 @@ class _LoginScreenState extends State<LoginScreen> {
         return UserRegisterScreen();
       }));
   }
-
-
-  void _preferencesClear() {
-    SharedPreferences.getInstance().then((prefs) {
-      prefs.clear();
-    });
-
-  }
-
-  Future<void> _writerPreferencesData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    print("will write email: ${_emailController.text}");
-    print("will write password: ${_passwordController.text}");
-
-    prefs.setBool( ApplicationState.KEY_REMEMBER_ME , _rememberMe);
-    prefs.setString(ApplicationState.KEY_EMAIL, _emailController.text);
-    prefs.setString(ApplicationState.KEY_PASSWORD, _passwordController.text );
-
-
-  }
-
 } //end of class

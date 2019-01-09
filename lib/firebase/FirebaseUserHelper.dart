@@ -1,11 +1,14 @@
 import 'package:autonos_app/firebase/FirebaseUfCidadesServicosProfissionaisHelper.dart';
+import 'package:autonos_app/model/ApplicationState.dart';
 import 'package:autonos_app/model/ProfessionalData.dart';
+import 'package:autonos_app/utility/SharedPreferencesUtility.dart';
 import 'package:autonos_app/utility/UserRepository.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:autonos_app/model/User.dart';
 import 'package:autonos_app/firebase/FirebaseReferences.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FirebaseUserHelper {
   static final RATING_INIT_VALUE = 5.0;
@@ -86,7 +89,7 @@ class FirebaseUserHelper {
     }
   }
 
-
+  /*
   //TODO terminar de implementar essa versão de método!
   static Future<User> getCurrentUser() async {
     User user;
@@ -115,7 +118,7 @@ class FirebaseUserHelper {
 
     print("USER RETURNED $user");
     return user;
-  }
+  }*/
 
 
   static Future<Map<String,dynamic>> getProfessionalsData( List<String> ids) async {
@@ -136,7 +139,7 @@ class FirebaseUserHelper {
 
   /// Remove os dados do firebase real time database
   /// relacionados a um usuario específico.
-  static void removeUserDataFromDb(User user){
+  static void removeUserAccountFromDb(User user){
     FirebaseDatabase db = FirebaseDatabase.instance;
 
     DatabaseReference userRef = db.reference()
@@ -164,10 +167,11 @@ class FirebaseUserHelper {
   }
   ///Remove toda a "conta do usuário", tanto seus dados do database
   ///quando sua autenticação.
-  static Future<bool> removeUserAccount(User user) async {
+  static Future<bool> removeUserAccountFromAuthSystem( /*User user*/) async {
 
-    //TODO remover conta do firebase auth system
     FirebaseUser fbUser = await FirebaseAuth.instance.currentUser();
+
+    // Se estar logado com facebook acount
     if (fbUser.providerData[1].providerId.compareTo( _PROVIDER_ID_FACEBOOK ) == 0) {
        FacebookAccessToken accessToken = await FacebookLogin().currentAccessToken;
 
@@ -177,21 +181,32 @@ class FirebaseUserHelper {
        return fbUser.delete()
            .then((_){
              return true;
-           }).catchError((error){ print("Error"); return false;});
+           }).catchError((error){ print("Error $error"); return false;});
     }
 
-    else{
-      var instance = UserRepository();
+    else{ // estar logado com firebase account
+      //var preferences = await SharedPreferences.getInstance();
+      UserRepository repository = UserRepository();
       await FirebaseAuth.instance.reauthenticateWithEmailAndPassword(
-          email: instance.fbLogin, password: instance.fbPassword);
+          email: repository.fbLogin,
+          password: repository.fbPassword);
 
       fbUser = await FirebaseAuth.instance.currentUser();
       return fbUser.delete().then((_){
-        UserRepository().preferences.clear();
+        SharedPreferencesUtility.clear();
         return true;
-      }).catchError((error){ print("Error"); return false;});
+      }).catchError((error){ print("Error $error"); return false;});
     }
 
+  }
+
+  static Future<bool> removeUser(User user) async {
+    var results = await removeUserAccountFromAuthSystem();
+    if (results){
+      removeUserAccountFromDb(user);
+      return results;
+    }
+    return false;
   }
 
 }

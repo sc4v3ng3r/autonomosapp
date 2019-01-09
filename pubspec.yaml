@@ -13,14 +13,13 @@ environment:
   sdk: ">=2.0.0-dev.68.0 <3.0.0"
 
 dependencies:
-  #google_sign_in: ^3.2.2
+  image_picker: ^0.4.10
   shared_preferences: ^0.4.3
   firebase_auth: ^0.6.2+1
   rxdart: ^0.19.0
   flutter:
     sdk: flutter
   flutter_facebook_login: ^1.1.1
-  #splashscreen:
   firebase_database:
   firebase_core: ^0.2.5+1
   flutter_masked_text: ^0.7.0
