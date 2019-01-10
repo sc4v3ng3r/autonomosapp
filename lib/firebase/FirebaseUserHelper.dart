@@ -21,12 +21,15 @@ class FirebaseUserHelper {
       .reference()
       .child(FirebaseReferences.REFERENCE_USERS);
 
+  // TODO melhorar a execução deste método!ls
+
   static Future<User> readUserAccountData(String uid) async {
     DatabaseReference proRef = FirebaseDatabase.instance
         .reference()
         .child(FirebaseReferences.REFERENCE_PROFISSIONAIS);
 
     User user;
+
     try {
       DataSnapshot snapshot = await USERS_REFERENCE.child(uid).once();
       if (snapshot.value != null) {
@@ -81,6 +84,8 @@ class FirebaseUserHelper {
   static Future<User> currentLoggedUser() async {
     try {
       FirebaseUser fbUser = await AUTH.currentUser();
+      if (fbUser == null)
+        return null;
       return await readUserAccountData(fbUser.uid);
       //return user;
     } catch (ex) {
@@ -88,38 +93,6 @@ class FirebaseUserHelper {
       throw ex;
     }
   }
-
-  /*
-  //TODO terminar de implementar essa versão de método!
-  static Future<User> getCurrentUser() async {
-    User user;
-    DatabaseReference ref = FirebaseDatabase.instance
-        .reference()
-        .child(FirebaseReferences.REFERENCE_USERS);
-
-    DatabaseReference proRef = FirebaseDatabase.instance
-        .reference()
-        .child(FirebaseReferences.REFERENCE_PROFISSIONAIS);
-
-    try {
-      //print("getting firebase user");
-      FirebaseUser fbUser = await AUTH.currentUser();
-      //print("FB user got it!");
-      if (fbUser != null) {
-        //print("firebase user NOT NULL,getting snapshot");
-        DataSnapshot snapshot = await ref.child(fbUser.uid).once();
-        if (snapshot.value != null) {
-          print("data snapshot ${snapshot.value.toString()}");
-        }
-      }
-    } catch (error) {
-      print(error);
-    }
-
-    print("USER RETURNED $user");
-    return user;
-  }*/
-
 
   static Future<Map<String,dynamic>> getProfessionalsData( List<String> ids) async {
 
@@ -165,6 +138,7 @@ class FirebaseUserHelper {
     userRef.child(user.uid).remove();
 
   }
+
   ///Remove toda a "conta do usuário", tanto seus dados do database
   ///quando sua autenticação.
   static Future<bool> removeUserAccountFromAuthSystem( /*User user*/) async {
@@ -199,6 +173,7 @@ class FirebaseUserHelper {
     }
 
   }
+
 
   static Future<bool> removeUser(User user) async {
     var results = await removeUserAccountFromAuthSystem();

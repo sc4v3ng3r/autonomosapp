@@ -1,5 +1,6 @@
 import 'dart:io' show Platform;
 import 'package:autonos_app/firebase/FirebaseUserHelper.dart';
+import 'package:autonos_app/model/User.dart';
 import 'package:autonos_app/utility/UserRepository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
@@ -43,34 +44,34 @@ class FirebaseAuthHelper {
 
   static Future<bool> firebaseAuthWithFacebook({@required String token}) async{
     print("FirebaseAuth -> Token:" + token);
-
+    User user;
     FirebaseUser firebaseUser = await _authInstance.signInWithFacebook(accessToken: token);
     if (firebaseUser == null)
       return false;
 
-    return FirebaseUserHelper.readUserAccountData(firebaseUser.uid).then((user) {
-        /*Se o usuario ja existe no database*/
-        print("USER DATA READED WITH FACEBOOK ${user.email} ${user.name}");
+    try {
+      user = await FirebaseUserHelper.readUserAccountData(firebaseUser.uid);
+      print("USER DATA READED WITH FACEBOOK ${user.email} ${user.name}");
+      UserRepository().currentUser = user;
+      print("RETURNING TRUE");
+      return true;
+    }
+    catch (ex) {
+      user = await FirebaseUserHelper.writeUserAccountData(firebaseUser);
+
+      if (user != null){
+        print("USUARIO CRIADO COM SUCESSO!");
+        print("CREATED: ${user.name}  ${user.email}");
         UserRepository().currentUser = user;
-        print("RETURNING TRUE");
         return true;
-        //_goToLoggedScreen(context, user);
+      }
 
-      }).catchError((dataBaseError) {
-        FirebaseUserHelper.writeUserAccountData(firebaseUser)
-            .then((createdUser) {
+      else {
+        _authInstance.signOut();
+        return false;
+      }
 
-          print("USUARIO CRIADO COM SUCESSO!");
-          print("CREATED: ${createdUser.name}  ${createdUser.email}");
-          UserRepository().currentUser = createdUser;
-          return true;
-        }).catchError((error) {
-          print("ERRO AO CRIAR USUARIO NO DB COM FACEBOOK!");
-          print(error.toString());
-          _authInstance.signOut();
-          return false;
-        });
-      });
+    }
   }
 
   static AuthResult _errorHandler(PlatformException e){

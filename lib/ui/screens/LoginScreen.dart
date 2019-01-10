@@ -86,6 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
       case FacebookLoginStatus.loggedIn:
         print("LoggedIn");
         _handler.show(message: "Aguarde...");
+        //TODO BUG o results está vindo nulo!
         var resuls = await FirebaseAuthHelper.firebaseAuthWithFacebook(
             token: facebookLoginResult.accessToken.token);
         if (resuls){
