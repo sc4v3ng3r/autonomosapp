@@ -1,8 +1,6 @@
-import 'package:autonos_app/model/ApplicationState.dart';
 import 'package:autonos_app/ui/screens/LoginScreen.dart';
 import 'package:autonos_app/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
-import 'package:autonos_app/ui/screens/UserRegisterScreen.dart';
 import 'package:autonos_app/firebase/FirebaseUserHelper.dart';
 import 'package:autonos_app/model/User.dart';
 import 'package:autonos_app/ui/screens/MainScreen.dart';
@@ -10,6 +8,7 @@ import 'package:autonos_app/ui/screens/MainScreen.dart';
 // Marcelo
 /*(71)991259223*/
 void main() {
+
   runApp( new MyApp() );
 }
 
@@ -19,7 +18,6 @@ class MyApp extends StatefulWidget{
 }
 
 class _MyAppState extends State<MyApp> {
-
   @override
   void initState() {
     super.initState();
@@ -27,11 +25,18 @@ class _MyAppState extends State<MyApp> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+
     print("Myapp build()");
     return FutureBuilder<User>(
       future: FirebaseUserHelper.currentLoggedUser(),
       builder: (BuildContext context, AsyncSnapshot<User> snapshot){
+
         switch ( snapshot.connectionState ){
           case ConnectionState.none:
           case ConnectionState.active:
@@ -49,10 +54,8 @@ class _MyAppState extends State<MyApp> {
               home: (repo.currentUser == null) ? LoginScreen() : MainScreen(),
             );
             break;
-
         }
       },
     );
   }
 }
-

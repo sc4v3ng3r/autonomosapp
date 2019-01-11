@@ -450,6 +450,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
 
       User userCreated = await _createAccountDBRegister(firebaseUser);
       UserRepository().currentUser = userCreated;
+      UserRepository().imageUrl = firebaseUser.photoUrl;
 
       SharedPreferencesUtility.writePreferencesData(
           email: email, password: password, rememberMe: true);

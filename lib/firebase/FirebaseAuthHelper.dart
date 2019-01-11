@@ -24,7 +24,7 @@ class FirebaseAuthHelper {
       return _errorHandler(ex);
     }
 
-    return FirebaseUserHelper.readUserAccountData(firebaseUser.uid).then( (user) {
+    return FirebaseUserHelper.readUserAccountData(firebaseUser).then( (user) {
         print("LIDO ${user.name}  ${user.email}");
 
         // TODO REPO INIT WORKAROUND
@@ -32,6 +32,7 @@ class FirebaseAuthHelper {
         rep.currentUser = user;
         rep.fbPassword = password;
         rep.fbLogin = email;
+        rep.imageUrl = firebaseUser.photoUrl;
         return AuthResult.OK;
 
       }).catchError((onError) {
@@ -50,9 +51,10 @@ class FirebaseAuthHelper {
       return false;
 
     try {
-      user = await FirebaseUserHelper.readUserAccountData(firebaseUser.uid);
+      user = await FirebaseUserHelper.readUserAccountData(firebaseUser);
       print("USER DATA READED WITH FACEBOOK ${user.email} ${user.name}");
       UserRepository().currentUser = user;
+      UserRepository().imageUrl = firebaseUser.photoUrl;
       print("RETURNING TRUE");
       return true;
     }

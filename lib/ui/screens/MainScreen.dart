@@ -20,6 +20,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:autonos_app/utility/LocationUtility.dart';
 import 'package:flutter/services.dart';
 import 'package:autonos_app/ui/widget/GenericAlertDialog.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'dart:io' show Platform;
 
 class MainScreen extends StatefulWidget {
@@ -48,6 +49,7 @@ class _MainScreenState extends State<MainScreen> {
   User _user;
   Placemark _placemark;
   ProgressBarHandler _progressBarHandler;
+  UserRepository _repository;
 
   @override
   void dispose() {
@@ -58,7 +60,8 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
-    _user = UserRepository().currentUser;
+    _repository = UserRepository();
+    _user = _repository.currentUser;
 
     _initUserPosition();
 
@@ -146,7 +149,8 @@ class _MainScreenState extends State<MainScreen> {
         rating: 4.3,
       ),
       currentAccountPicture: CircleAvatar(
-        backgroundColor: Colors.white,
+        backgroundImage: (_repository.imageUrl == null) ? AssetImage("assets/usuario.png") :
+        CachedNetworkImageProvider(_repository.imageUrl),
       ),
     );
     drawerOptions.add(drawerHeader);

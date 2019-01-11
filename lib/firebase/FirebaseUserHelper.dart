@@ -8,7 +8,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:autonos_app/model/User.dart';
 import 'package:autonos_app/firebase/FirebaseReferences.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class FirebaseUserHelper {
   static final RATING_INIT_VALUE = 5.0;
@@ -23,18 +22,19 @@ class FirebaseUserHelper {
 
   // TODO melhorar a execução deste método!ls
 
-  static Future<User> readUserAccountData(String uid) async {
+  static Future<User> readUserAccountData(FirebaseUser fbUser) async {
     DatabaseReference proRef = FirebaseDatabase.instance
         .reference()
         .child(FirebaseReferences.REFERENCE_PROFISSIONAIS);
 
     User user;
-
+    String uid = fbUser.uid;
     try {
       DataSnapshot snapshot = await USERS_REFERENCE.child(uid).once();
       if (snapshot.value != null) {
         print("FirebaseUserHelper user $uid exist in DB!");
         user = User.fromDataSnapshot(snapshot);
+        UserRepository().imageUrl = fbUser.photoUrl;
       }
 
       DataSnapshot professionalData = await proRef.child(user.uid).once();
@@ -86,9 +86,9 @@ class FirebaseUserHelper {
       FirebaseUser fbUser = await AUTH.currentUser();
       if (fbUser == null)
         return null;
-      return await readUserAccountData(fbUser.uid);
-      //return user;
-    } catch (ex) {
+      return await readUserAccountData(fbUser);
+    }
+    catch (ex) {
       print("FirebaseUserHelper::" + ex.toString());
       throw ex;
     }
@@ -112,7 +112,7 @@ class FirebaseUserHelper {
 
   /// Remove os dados do firebase real time database
   /// relacionados a um usuario específico.
-  static void removeUserAccountFromDb(User user){
+  static void _removeUserAccountFromDb(User user){
     FirebaseDatabase db = FirebaseDatabase.instance;
 
     DatabaseReference userRef = db.reference()
@@ -141,7 +141,7 @@ class FirebaseUserHelper {
 
   ///Remove toda a "conta do usuário", tanto seus dados do database
   ///quando sua autenticação.
-  static Future<bool> removeUserAccountFromAuthSystem( /*User user*/) async {
+  static Future<bool> _removeUserAccountFromAuthSystem( /*User user*/) async {
 
     FirebaseUser fbUser = await FirebaseAuth.instance.currentUser();
 
@@ -176,9 +176,9 @@ class FirebaseUserHelper {
 
 
   static Future<bool> removeUser(User user) async {
-    var results = await removeUserAccountFromAuthSystem();
+    var results = await _removeUserAccountFromAuthSystem();
     if (results){
-      removeUserAccountFromDb(user);
+      _removeUserAccountFromDb(user);
       return results;
     }
     return false;
