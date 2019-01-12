@@ -80,15 +80,15 @@ class _MainScreenState extends State<MainScreen> {
           if (position != null){
             print("starting geocoding on init");
 
-            LocationUtility.doGeoCoding(position).then((placeMarkList) {
-              _placemark =placeMarkList[0];
-              print("geocoding done on init");
-            });
-
             print("Location getting LA: ${position.latitude} LO: ${position.longitude} ");
             UserRepository().currentLocation = Location(
                 latitude: position.latitude,
                 longitude: position.longitude);
+
+            LocationUtility.doGeoCoding(position).then((placeMarkList) {
+              _placemark =placeMarkList[0];
+              print("geocoding done on init");
+            });
           }
         });
       }
@@ -386,6 +386,7 @@ class _MainScreenState extends State<MainScreen> {
 
   }
 
+  /// Exibe dialog de razão para usuário conceder premissão de localização
   Future<bool> _showLocationPermissionReasonDialog() async {
     return await showDialog(context: context,
       barrierDismissible: false,
@@ -400,6 +401,8 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
+  /// faz ua nova consulta à localização do usuário
+  /// e atualiza sua posição no repository
   Future<bool> _updateUserCurrentPosition() async {
     if (Platform.isAndroid){
       var permission = await _handleLocationPermissionForAndroid();
@@ -487,6 +490,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
 
+  /// TODO ESSE método pode sair dessa classe
   Future<bool> _handleLocationPermissionForAndroid() async {
     var hasPermission =  await PermissionUtility.hasLocationPermission();
 

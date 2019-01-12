@@ -141,7 +141,7 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
 
 
   Future<void> _finishRegister() async {
-    _handler.show("Registrando...");
+    _handler.show(message: "Registrando...");
     FirebaseUserHelper.registerUserProfessionalData(widget._bloc.currentData)
         .then( (_) {
           _handler.dismiss();
