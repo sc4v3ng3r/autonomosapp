@@ -207,14 +207,13 @@ class PerfilUsuarioProfissionalScreenState extends State<PerfilUsuarioProfission
     return list;
   }
 
-  Scaffold _showScreen(){
+  Widget _showScreen(){
 //    _progressBarHandler.show();
-    return Scaffold(
-        body: Center(
+    return Center(
           child: Stack(
             children: _buildForm(),
           ),
-        ));
+        );
   }
 
 

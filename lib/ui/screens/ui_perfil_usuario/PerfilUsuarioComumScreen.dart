@@ -202,10 +202,8 @@ class PerfilUsuarioComumScreenState extends State<PerfilUsuarioComumScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
+    return Center(
         child: Stack(children: _buildForm()),
-      ),
     );
   }
 }

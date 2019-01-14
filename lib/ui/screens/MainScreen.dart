@@ -33,13 +33,13 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   GlobalKey<ScaffoldState> _scaffoldKey;
+  GlobalKey _drawerKey = GlobalKey();
 
   final bool sair = false;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   static const platform =
       const MethodChannel("autonomos.com.br.jopeb.autonosapp");
-
-  //var _perfilFragment;
+  
   int _drawerCurrentPosition;
   String appBarName = 'Serviços';
   Color appBarColor = Colors.red[300];
@@ -50,6 +50,7 @@ class _MainScreenState extends State<MainScreen> {
   Placemark _placemark;
   ProgressBarHandler _progressBarHandler;
   UserRepository _repository;
+
 
   @override
   void dispose() {
@@ -63,9 +64,9 @@ class _MainScreenState extends State<MainScreen> {
     _repository = UserRepository();
     _user = _repository.currentUser;
 
+    _drawerCurrentPosition = 1;
     _initUserPosition();
 
-    _drawerCurrentPosition = 1;
     print("Main initState");
     _scaffoldKey = new GlobalKey<ScaffoldState>();
   }
@@ -86,7 +87,7 @@ class _MainScreenState extends State<MainScreen> {
                 longitude: position.longitude);
 
             LocationUtility.doGeoCoding(position).then((placeMarkList) {
-              _placemark =placeMarkList[0];
+              _placemark = placeMarkList[0];
               print("geocoding done on init");
             });
           }
@@ -112,21 +113,39 @@ class _MainScreenState extends State<MainScreen> {
           },
           icon: Icon(Icons.menu,color: appBarIconMenuColor,),
         ),
+
         title: Text(appBarName, style: TextStyle(color: appBarNameColor),),
         automaticallyImplyLeading: false,
         backgroundColor: appBarColor,
         elevation: _elevation,
       ),
+
       drawer: _drawerMenuBuild(context),
       body: _getFragment( _drawerCurrentPosition ),
       );
 
-      return Stack(
-          children: <Widget>[
-            scaffold,
-            modal,
-          ],
+      return WillPopScope(
+          onWillPop: _onWillPop,
+          child: Stack(
+            children: <Widget>[
+              scaffold,
+              modal,
+            ],
+          ),
       );
+  }
+
+  Future<bool> _onWillPop() async {
+    print("on will pop callback");
+    if (drawerIsOpen()){
+      return true;
+    }
+
+    if (_drawerCurrentPosition == 1)
+      return true;
+
+    _setCurrentPosition(1);
+    return false;
   }
 
   void _NavegaCadastroAutonomo(BuildContext context) {
@@ -257,6 +276,7 @@ class _MainScreenState extends State<MainScreen> {
     drawerOptions.add( removeAccount);
 
     return new Drawer(
+      key: _drawerKey,
       child: ListView(
         padding: EdgeInsets.all(.0),
         children: drawerOptions,
@@ -266,17 +286,16 @@ class _MainScreenState extends State<MainScreen> {
 
   _logout() {
     _auth.signOut().then((_){
+      //TODO WORK AROUND USER REPOSITORY
+      UserRepository r = new UserRepository();
+      r.currentUser = null;
 
+      Navigator.pop(context);
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (BuildContext context) => LoginScreen()),
+              (Route<dynamic> route) => false);
     });
-    //TODO WORK AROUND USER REPOSITORY
-    UserRepository r = new UserRepository();
-    r.currentUser = null;
-
-    Navigator.pop(context);
-    Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (BuildContext context) => LoginScreen()),
-        (Route<dynamic> route) => false);
   }
 
   void _changeAppBarName(int position) {
@@ -319,11 +338,22 @@ class _MainScreenState extends State<MainScreen> {
   void _setCurrentPosition(int position) {
     setState(() => _changeAppBarName(position));
 
-    if (position != _drawerCurrentPosition)
+    if (position != _drawerCurrentPosition){
       setState(() => _drawerCurrentPosition = position);
+    }
 
-    // coloca o drawer p/ traz??
-    Navigator.of(context).pop();
+    if (drawerIsOpen())
+      Navigator.of(context).pop();
+  }
+
+  bool drawerIsOpen(){
+    final RenderBox box = _drawerKey.currentContext?.findRenderObject();
+
+    if (box != null)
+      return true;
+
+    return false;
+
   }
 
   Widget _getFragment(int position) {
@@ -386,21 +416,6 @@ class _MainScreenState extends State<MainScreen> {
 
   }
 
-  /// Exibe dialog de razão para usuário conceder premissão de localização
-  Future<bool> _showLocationPermissionReasonDialog() async {
-    return await showDialog(context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context){
-        return GenericAlertDialog(
-          title: "Permissão de Localização",
-          content: Text("Autônomos precisa acessar a localização do dispositivo"),
-          positiveButtonContent: Text("Conceder Permissão"),
-          negativeButtonContent: Text("Cancelar"),
-        );
-      }
-    );
-  }
-
   /// faz ua nova consulta à localização do usuário
   /// e atualiza sua posição no repository
   Future<bool> _updateUserCurrentPosition() async {
@@ -450,8 +465,8 @@ class _MainScreenState extends State<MainScreen> {
                   FirebaseUserHelper.getProfessionalsData(
                       idsMap.keys.toList() ).then((dataMap) {
                         dataMap.forEach( (key, value) => dataList.add(value) );
-                        _showAndroidNativeMapActivity(dataList);
 
+                        _showAndroidNativeMapActivity(dataList);
                       });
                 }
 
@@ -489,8 +504,6 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
-
-  /// TODO ESSE método pode sair dessa classe
   Future<bool> _handleLocationPermissionForAndroid() async {
     var hasPermission =  await PermissionUtility.hasLocationPermission();
 
@@ -542,7 +555,23 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
-  /**
+  /// Exibe dialog de razão para usuário conceder premissão de localização
+  Future<bool> _showLocationPermissionReasonDialog() async {
+    return await showDialog(context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context){
+          return GenericAlertDialog(
+            title: "Permissão de Localização",
+            content: Text("Autônomos precisa acessar a localização do dispositivo"),
+            positiveButtonContent: Text("Conceder Permissão"),
+            negativeButtonContent: Text("Cancelar"),
+          );
+        }
+    );
+  }
+
+
+/**
   *Esse MÉTODO SERÁ RESPONSÁVEL POR RECEBER AS CHAMADAS DO LADO
    * ANDROID NATIVO PARA O FLUTTER.*/
   //metodo que trata as chamadas do nativo ao flutter

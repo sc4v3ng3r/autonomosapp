@@ -47,5 +47,9 @@ class PermissionUtility {
   static Future<bool> openPermissionSettings() async {
     return await _handler.openAppSettings();
   }
+
+
+
+
 }
 

@@ -36,7 +36,6 @@ class PerfilUsuarioScreen extends StatelessWidget {
             print("STATE ${snapshot.connectionState.toString()}");
             return Stack();
 
-          //TODO MELHORAR ESSA VERIFICACAO!
           case ConnectionState.done:
             print("STATE ${snapshot.connectionState.toString()}");
             print("Snapshot:  ${snapshot.data} ");

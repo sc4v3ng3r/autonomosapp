@@ -230,7 +230,8 @@ class ProfessionalRegisterLocationAndServiceScreenState
   }
 
   //TODO tem que validar os dados!
-  void _gettingInputData(){
+  void
+  _gettingInputData(){
     widget._bloc.insertLocationsAndServices(
         state: _selectedState,
         yourCities: _cidadesSelecionadas,
