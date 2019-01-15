@@ -1,4 +1,6 @@
 
+import 'package:firebase_database/firebase_database.dart';
+
 class Service implements Comparable<Service> {
 
   String id;
@@ -12,6 +14,10 @@ class Service implements Comparable<Service> {
   Service.fromJson(Map<String, dynamic> json) :
       id = json[ID],
       name = json[NAME];
+
+  Service.fromSnapshot(DataSnapshot snapshot) :
+      id = snapshot.value[ID],
+      name = snapshot.value[NAME];
 
   Map<String, dynamic> toJson () => {
     ID : id,

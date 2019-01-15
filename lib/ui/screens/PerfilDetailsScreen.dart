@@ -1,17 +1,16 @@
-import 'dart:collection';
-
-import 'package:autonos_app/firebase/FirebaseServicesHelper.dart';
-import 'package:autonos_app/model/Cidade.dart';
+import 'package:autonos_app/model/Service.dart';
 import 'package:autonos_app/model/User.dart';
-import 'package:autonos_app/ui/widget/CityChipContainer.dart';
 import 'package:autonos_app/ui/widget/RatingBar.dart';
 import 'package:flutter/material.dart';
+import 'package:autonos_app/ui/widget/ChipPanelWidget.dart';
+import 'package:autonos_app/bloc/PerfilScreenBloc.dart';
 
 class PerfilDetailsWidget extends StatefulWidget {
   final User _user;
   final SizedBox _SEPARATOR = SizedBox(height: 8.0,);
 
   PerfilDetailsWidget({@required User user}): _user = user;
+
   @override
   _PerfilDetailsWidgetState createState() => _PerfilDetailsWidgetState();
 }
@@ -74,13 +73,24 @@ class _PerfilDetailsWidgetState extends State<PerfilDetailsWidget> {
 
       //insere a descricao la em cima na lista...
       widgetList.insert(1, userDescription);
-      var cityChipContainer = ChipPanelWidget(
+      var cityChipContainer = ChipPanelWidget<String>(
         title: "Cidades Atuantes",
         data: user.professionalData.cidadesAtuantes,
       );
 
       widgetList.add( cityChipContainer );
       widgetList.add( widget._SEPARATOR );
+
+
+      PerfilScreenBloc bloc = PerfilScreenBloc(user.professionalData.servicosAtuantes);
+      var servicesChipContainer = ChipPanelWidget<Service>(
+        title: "Serviços Atuantes",
+        dataStream: bloc.userServices,
+      );
+
+      widgetList.add( servicesChipContainer );
+      widgetList.add( widget._SEPARATOR );
+
     }
 
     else {
@@ -106,7 +116,6 @@ class _PerfilDetailsWidgetState extends State<PerfilDetailsWidget> {
     widgetList.add(deleteAccountButton);
 
     var infoGroup= Card(
-
       child: Padding(
         padding: EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
         child: Column(
@@ -172,83 +181,4 @@ class _PerfilDetailsWidgetState extends State<PerfilDetailsWidget> {
       ),
     );
   }
-
 }
-
-class ChipPanelWidget extends StatefulWidget {
-
-  final Function _onEditClicked;
-  final String _title;
-  final List<String> _data;
-
-  ChipPanelWidget( { @required String title, Function onEditCallback(List<String> data),
-      List<String> data } )
-    : _title = title,
-      _onEditClicked = onEditCallback,
-      _data = data;
-
-  @override
-  _ChipPanelWidgetState createState() => _ChipPanelWidgetState();
-}
-
-class _ChipPanelWidgetState extends State<ChipPanelWidget> {
-  List<Widget> chipList = List();
-  @override
-  void initState() {
-    super.initState();
-    for (String data in widget._data)
-      chipList.add( Chip(label: Text(data),) );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    var divisor = _createDivisor(widget._title);
-
-    return Column(
-      children: <Widget>[
-        divisor,
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
-            InkWell(
-              child: Icon(Icons.edit, color: Colors.blue,),
-              onTap: (){
-                print("chip panel callback");
-                if (widget._onEditClicked != null)
-                  widget._onEditClicked(widget._data);
-              },
-            ),
-          ],
-        ),
-        Wrap( children: chipList, spacing: 2.0, ),
-      ],
-    );
-  }
-
-  Widget _createDivisor(String text){
-    final leftLine = Expanded(
-      child:Container(
-        color: Colors.grey[300],
-        height: 1.0,
-        margin: EdgeInsets.only(right: 8.0),
-      ),
-    );
-
-    final rightLine = Expanded(
-      child: Container(
-        color: Colors.grey[300],
-        height: 1.0,
-        margin: EdgeInsets.only(left: 8.0),
-      ),
-    );
-
-    return Row(
-      children: <Widget>[
-        leftLine,
-        Text(text),
-        rightLine,
-      ],
-    );
-  }
-}
-
