@@ -21,6 +21,7 @@ import 'package:autonos_app/utility/LocationUtility.dart';
 import 'package:flutter/services.dart';
 import 'package:autonos_app/ui/widget/GenericAlertDialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:autonos_app/ui/widget/PerfilDetailsWidget.dart';
 import 'dart:io' show Platform;
 
 class MainScreen extends StatefulWidget {
@@ -39,7 +40,7 @@ class _MainScreenState extends State<MainScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   static const platform =
       const MethodChannel("autonomos.com.br.jopeb.autonosapp");
-  
+
   int _drawerCurrentPosition;
   String appBarName = 'Serviços';
   Color appBarColor = Colors.red[300];
@@ -359,7 +360,7 @@ class _MainScreenState extends State<MainScreen> {
   Widget _getFragment(int position) {
     switch (position) {
       case 0:
-        return Center(child: PerfilUsuarioScreen());
+        return PerfilDetailsWidget(user: _user); /*PerfilUsuarioScreen()*/
 
       case 1:
         return ServiceListWidgetBlocProvider(

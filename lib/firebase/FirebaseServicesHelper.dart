@@ -43,6 +43,14 @@ class FirebaseServicesHelper {
     return services;
   }
 
+
+  static Stream<Event> getServiceById(String id) {
+    DatabaseReference servicesReference = FirebaseDatabase.instance
+        .reference().child(FirebaseReferences.REFERENCE_SERVICOS);
+    return servicesReference.child( id ).onValue;
+
+  }
+
   static List<Service> _parseData(DataSnapshot dataSnapshot) {
     List<Service> services =new List();
     Map<String, dynamic> mapOfMaps = Map.from( dataSnapshot.value);
@@ -56,7 +64,7 @@ class FirebaseServicesHelper {
 
   }
 
-  //Método utilizado para inseriri servicos no db.
+  /// Método utilizado para inseriri servicos no db.
   static Future<bool> insertServices(List<String> stringServices) async {
     DatabaseReference reference = FirebaseDatabase.instance.reference();
     DatabaseReference servicesRef = reference.child( FirebaseReferences.REFERENCE_SERVICOS);
