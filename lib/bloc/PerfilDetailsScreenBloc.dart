@@ -5,11 +5,14 @@ import 'package:autonos_app/firebase/FirebaseServicesHelper.dart';
 /// Apesar do nome essa classe é utilizada como bloc para o CHipPanelWidget
 /// para efeturar a cargados serviços pretados pelo usuário & auxiliar
 /// na renderização do PerfilDetailsScreen.
-class PerfilScreenBloc {
+class PerfilDetailsScreenBloc {
   final _servicesFetcher = PublishSubject< List<Service> >();
+
+  ///obtem a stream com a lista de servicos do usuario
   Observable< List<Service> > get userServices => _servicesFetcher.stream;
 
-  PerfilScreenBloc(List<String> servicesId){
+
+  PerfilDetailsScreenBloc(List<String> servicesId){
     var localList = List<Service>();
 
     for(String id in servicesId){

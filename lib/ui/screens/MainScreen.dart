@@ -21,7 +21,7 @@ import 'package:autonos_app/utility/LocationUtility.dart';
 import 'package:flutter/services.dart';
 import 'package:autonos_app/ui/widget/GenericAlertDialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:autonos_app/ui/widget/PerfilDetailsWidget.dart';
+import 'package:autonos_app/ui/screens/PerfilDetailsScreen.dart';
 import 'dart:io' show Platform;
 
 class MainScreen extends StatefulWidget {
@@ -166,7 +166,7 @@ class _MainScreenState extends State<MainScreen> {
       accountName: Text('${_user.name}'),
       ratingBar: RatingBar(
         starCount: 5,
-        rating: 4.3,
+        rating: _user.rating,
       ),
       currentAccountPicture: CircleAvatar(
         backgroundImage: (_repository.imageUrl == null) ? AssetImage("assets/usuario.png") :
@@ -360,7 +360,7 @@ class _MainScreenState extends State<MainScreen> {
   Widget _getFragment(int position) {
     switch (position) {
       case 0:
-        return PerfilDetailsWidget(user: _user); /*PerfilUsuarioScreen()*/
+        return PerfilDetailsScreen(user: _user); /*PerfilUsuarioScreen()*/
 
       case 1:
         return ServiceListWidgetBlocProvider(

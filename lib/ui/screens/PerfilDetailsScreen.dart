@@ -3,19 +3,27 @@ import 'package:autonos_app/model/User.dart';
 import 'package:autonos_app/ui/widget/RatingBar.dart';
 import 'package:flutter/material.dart';
 import 'package:autonos_app/ui/widget/ChipPanelWidget.dart';
-import 'package:autonos_app/bloc/PerfilScreenBloc.dart';
+import 'package:autonos_app/bloc/PerfilDetailsScreenBloc.dart';
 
-class PerfilDetailsWidget extends StatefulWidget {
+class PerfilDetailsScreen extends StatefulWidget {
   final User _user;
   final SizedBox _SEPARATOR = SizedBox(height: 8.0,);
 
-  PerfilDetailsWidget({@required User user}): _user = user;
+  PerfilDetailsScreen({@required User user}): _user = user;
 
   @override
-  _PerfilDetailsWidgetState createState() => _PerfilDetailsWidgetState();
+  _PerfilDetailsScreenState createState() => _PerfilDetailsScreenState();
 }
 
-class _PerfilDetailsWidgetState extends State<PerfilDetailsWidget> {
+class _PerfilDetailsScreenState extends State<PerfilDetailsScreen> {
+  PerfilDetailsScreenBloc _bloc;
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _bloc.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,14 +43,14 @@ class _PerfilDetailsWidgetState extends State<PerfilDetailsWidget> {
       ],
     );
 
-    widgetList.add( userName);
-    widgetList.add(widget._SEPARATOR);
+    widgetList.add( userName);//0
+    //widgetList.add(widget._SEPARATOR);//1
 
-    widgetList.add( userRatingBar );
-    widgetList.add(widget._SEPARATOR);
+    widgetList.add( userRatingBar );//1
+    widgetList.add(widget._SEPARATOR);//2
 
-    widgetList.add( userEmail);
-    widgetList.add(widget._SEPARATOR);
+    widgetList.add( userEmail);//3
+    //widgetList.add(widget._SEPARATOR);//4
 
 
     var changePassword = GestureDetector(
@@ -53,12 +61,9 @@ class _PerfilDetailsWidgetState extends State<PerfilDetailsWidget> {
     );
 
     if (user.professionalData!=null){
+      _bloc = PerfilDetailsScreenBloc(user.professionalData.servicosAtuantes);
       var userPhone = createSimpleTextRow(
-          widget._user.professionalData.telefone, fontSize: 18.0);
-      widgetList.add(userPhone);
-      widgetList.add(widget._SEPARATOR);
-      widgetList.add(changePassword);
-      widgetList.add(widget._SEPARATOR);
+          widget._user.professionalData.telefone, fontSize: 20.0, preIcon: Icon(Icons.phone));
 
       var userDescription = Row(
         children: <Widget>[
@@ -73,24 +78,43 @@ class _PerfilDetailsWidgetState extends State<PerfilDetailsWidget> {
 
       //insere a descricao la em cima na lista...
       widgetList.insert(1, userDescription);
+
+      var emissor = user.professionalData.emissorNotaFiscal;
+      var userNote = createSimpleTextRow("Emite nota fiscal:",
+          afterIcon: (emissor == true) ? Icon(Icons.done, color: Colors.green ) :
+
+      Icon( Icons.clear, color: Colors.red,));
+      widgetList.insert(3, userNote);
+      widgetList.insert(4, widget._SEPARATOR);
+      widgetList.insert(5, userPhone);
+      widgetList.add(changePassword);
+      widgetList.add(widget._SEPARATOR);
+
       var cityChipContainer = ChipPanelWidget<String>(
         title: "Cidades Atuantes",
+        editable: true,
         data: user.professionalData.cidadesAtuantes,
       );
 
       widgetList.add( cityChipContainer );
       widgetList.add( widget._SEPARATOR );
 
-
-      PerfilScreenBloc bloc = PerfilScreenBloc(user.professionalData.servicosAtuantes);
       var servicesChipContainer = ChipPanelWidget<Service>(
         title: "Serviços Atuantes",
-        dataStream: bloc.userServices,
+        editable: true,
+        dataStream: _bloc.userServices,
       );
 
       widgetList.add( servicesChipContainer );
       widgetList.add( widget._SEPARATOR );
 
+      var paymentPanel = ChipPanelWidget<String>(
+        title: "Formas de pagamento",
+        editable: true,
+        data: user.professionalData.formasPagamento,
+      );
+
+      widgetList.add( paymentPanel);
     }
 
     else {
@@ -134,21 +158,33 @@ class _PerfilDetailsWidgetState extends State<PerfilDetailsWidget> {
   }
 
   Widget createSimpleTextRow(String text, { double fontSize = 16.0,
-    Color color = Colors.black} ){
+    Color color = Colors.black, Icon preIcon, Icon afterIcon } ){
+    List<Widget> widgets = List();
 
-    return Row(
-      children: <Widget>[
-        Text(
-          text,
-          overflow: TextOverflow.ellipsis,
-          maxLines: 1,
-          style: TextStyle(
-              color: color,
-              fontSize: fontSize
-          ),
-        ),
-      ],
+    var textWidget = Text(
+      text,
+      overflow: TextOverflow.ellipsis,
+      maxLines: 1,
+      style: TextStyle(
+          color: color,
+          fontSize: fontSize
+      ),
     );
+
+    if (preIcon !=null){
+      widgets.add( preIcon );
+      widgets.add( SizedBox(width: 5.0,) );
+    }
+
+    widgets.add( textWidget );
+
+    if (afterIcon!= null){
+      //widgets.add( textWidget );
+      widgets.add(SizedBox(width: 5.0,));
+      widgets.add( afterIcon );
+    }
+
+    return Row( children: widgets);
   }
 
   Widget _createHeader(){
