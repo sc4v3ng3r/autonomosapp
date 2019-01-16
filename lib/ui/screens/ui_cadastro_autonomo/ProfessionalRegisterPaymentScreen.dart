@@ -20,12 +20,8 @@ class ProfessionalRegisterPaymentScreen extends StatefulWidget {
 class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterPaymentScreen> {
 
   List<String> _formasDePagamento = <String>[
-    "Cartão de Crédito",
-    "Cartão de Débito",
-    "Cheque",
-    "Dinheiro",
-    "Paypal",
-    "Pickpay"
+    "Cartão de Crédito", "Cartão de Débito",
+    "Cheque", "Dinheiro", "Paypal", "Pickpay"
   ];
 
   ProgressBarHandler _handler;
@@ -100,6 +96,7 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
 
           ),
           Text('Não'),
+
           new Radio(
             value: 1,
             groupValue: _radioValue,

@@ -1,5 +1,6 @@
 import 'package:autonos_app/model/Service.dart';
 import 'package:autonos_app/model/User.dart';
+import 'package:autonos_app/ui/screens/PaymentDataEditorScreen.dart';
 import 'package:autonos_app/ui/widget/RatingBar.dart';
 import 'package:flutter/material.dart';
 import 'package:autonos_app/ui/widget/ChipPanelWidget.dart';
@@ -31,8 +32,8 @@ class _PerfilDetailsScreenState extends State<PerfilDetailsScreen> {
     final User user = widget._user;
 
     var header = _createHeader();
-    var userName = createSimpleTextRow(user.name, fontSize: 22.0);
-    var userEmail =  createSimpleTextRow(user.email);
+    var userName = createTextRow(user.name, fontSize: 22.0);
+    var userEmail =  createTextRow(user.email);
 
     var userRatingBar = Row(
       children: <Widget>[
@@ -45,16 +46,12 @@ class _PerfilDetailsScreenState extends State<PerfilDetailsScreen> {
 
     widgetList.add( userName);//0
     //widgetList.add(widget._SEPARATOR);//1
-
     widgetList.add( userRatingBar );//1
     widgetList.add(widget._SEPARATOR);//2
-
     widgetList.add( userEmail);//3
-    //widgetList.add(widget._SEPARATOR);//4
-
 
     var changePassword = GestureDetector(
-      child: createSimpleTextRow("Alterar Senha", fontSize: 20, color: Colors.blue),
+      child: createTextRow("Alterar Senha", fontSize: 20, color: Colors.blue),
       onTap: (){
         print("Change password screen");
       },
@@ -62,25 +59,17 @@ class _PerfilDetailsScreenState extends State<PerfilDetailsScreen> {
 
     if (user.professionalData!=null){
       _bloc = PerfilDetailsScreenBloc(user.professionalData.servicosAtuantes);
-      var userPhone = createSimpleTextRow(
+      var userPhone = createTextRow(
           widget._user.professionalData.telefone, fontSize: 20.0, preIcon: Icon(Icons.phone));
 
-      var userDescription = Row(
-        children: <Widget>[
-          Text(user.professionalData.descricao,
-            style: TextStyle(
-                fontSize: 14.0,
-                color: Colors.black
-            ),
-          )
-        ],
-      );
+      var userDescription = createTextRow(user.professionalData.descricao,
+        fontSize: 14.0, color: Colors.black);
 
       //insere a descricao la em cima na lista...
       widgetList.insert(1, userDescription);
 
       var emissor = user.professionalData.emissorNotaFiscal;
-      var userNote = createSimpleTextRow("Emite nota fiscal:",
+      var userNote = createTextRow("Emite nota fiscal:",
           afterIcon: (emissor == true) ? Icon(Icons.done, color: Colors.green ) :
 
       Icon( Icons.clear, color: Colors.red,));
@@ -110,8 +99,16 @@ class _PerfilDetailsScreenState extends State<PerfilDetailsScreen> {
 
       var paymentPanel = ChipPanelWidget<String>(
         title: "Formas de pagamento",
-        editable: true,
         data: user.professionalData.formasPagamento,
+        editable: true,
+        onEditCallback: (dataList){
+          Navigator.push(context, MaterialPageRoute(builder: (context){
+            return PaymentDataEditorScreen(
+              payments: dataList,
+              emissorData: user.professionalData.emissorNotaFiscal,
+            );
+          }) );
+        },
       );
 
       widgetList.add( paymentPanel);
@@ -122,7 +119,7 @@ class _PerfilDetailsScreenState extends State<PerfilDetailsScreen> {
       widgetList.add( widget._SEPARATOR );
     }
 
-    var deleteAccountButton = Align(
+    /*var deleteAccountButton = Align(
           alignment: FractionalOffset.bottomCenter,
           child: RaisedButton(
             color: Colors.red,
@@ -137,7 +134,7 @@ class _PerfilDetailsScreenState extends State<PerfilDetailsScreen> {
           ),
         );
 
-    widgetList.add(deleteAccountButton);
+    widgetList.add(deleteAccountButton);*/
 
     var infoGroup= Card(
       child: Padding(
@@ -154,21 +151,28 @@ class _PerfilDetailsScreenState extends State<PerfilDetailsScreen> {
         infoGroup,
       ],
     );
-    
+
   }
 
-  Widget createSimpleTextRow(String text, { double fontSize = 16.0,
+  /// Método para criação de linhas que podem conter, um Icone inicial,
+  /// um texto, e um icone final.
+  Widget createTextRow(String text, { double fontSize = 16.0,
     Color color = Colors.black, Icon preIcon, Icon afterIcon } ){
     List<Widget> widgets = List();
 
-    var textWidget = Text(
-      text,
-      overflow: TextOverflow.ellipsis,
-      maxLines: 1,
-      style: TextStyle(
-          color: color,
-          fontSize: fontSize
-      ),
+    var textWidget =  Flexible(
+        child: Text(
+          text,
+          overflow: TextOverflow.clip,
+          maxLines: 1,
+          softWrap: false,
+          style: TextStyle(
+              color: color,
+              fontSize: fontSize
+          ),
+        ),
+      flex: 1,
+      fit: FlexFit.loose,
     );
 
     if (preIcon !=null){

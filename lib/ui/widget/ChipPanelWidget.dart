@@ -1,6 +1,7 @@
 import 'package:autonos_app/model/Service.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:autonos_app/ui/widget/NiftyRowDivisorWidget.dart';
 
 class ChipPanelWidget<T> extends StatefulWidget {
 
@@ -43,7 +44,6 @@ class _ChipPanelWidgetState extends State<ChipPanelWidget> {
 
   @override
   Widget build(BuildContext context) {
-    //var divisor = _createDivisor(widget._title);
 
     if (widget._dataStream!=null){
 
@@ -84,37 +84,10 @@ class _ChipPanelWidgetState extends State<ChipPanelWidget> {
     return _getChipContainer(chipList);
   }
 
-  Widget _createDivisor(String text){
-    final leftLine = Expanded(
-      child:Container(
-        color: Colors.grey[300],
-        height: 1.0,
-        margin: EdgeInsets.only(right: 8.0),
-      ),
-    );
-
-    final rightLine = Expanded(
-      child: Container(
-        color: Colors.grey[300],
-        height: 1.0,
-        margin: EdgeInsets.only(left: 8.0),
-      ),
-    );
-
-    return Row(
-      children: <Widget>[
-        leftLine,
-        Text(text),
-        rightLine,
-      ],
-    );
-  }
-
-
   Widget _getChipContainer(List<Widget> chipList){
     List<Widget> widgets = List();
 
-    widgets.add(_createDivisor(widget._title) );
+    widgets.add( NiftyRowDivisorWidget(title: widget._title) );
 
     if (widget._editable){
       final editButton = Row(
