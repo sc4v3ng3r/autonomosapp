@@ -10,7 +10,7 @@ class PerfilDetailsScreenBloc {
 
   ///obtem a stream com a lista de servicos do usuario
   Observable< List<Service> > get userServices => _servicesFetcher.stream;
-
+  List<Service> currentList;
 
   PerfilDetailsScreenBloc(List<String> servicesId){
     var localList = List<Service>();
@@ -29,5 +29,6 @@ class PerfilDetailsScreenBloc {
   void _addToSink(List<Service> list){
     //print("Bloc::_addToSink  ${s.name}");
     _servicesFetcher.sink.add(list);
+    currentList = list;
   }
 }

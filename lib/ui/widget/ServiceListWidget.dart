@@ -18,7 +18,7 @@ class ServiceListWidget extends StatefulWidget {
   ServiceListWidget( {
 
     void itemsSelectedCallback(List<Service> selectedItems),
-    void singleClickCallback(Service item),
+    void singleClickCallback(Service item), // TAP mode
     List<Service> initialSelectedItems, ClickMode clickMode = ClickMode.SELECTION  } ) :
         _itemSelectedCallback = itemsSelectedCallback,
         _clickMode = clickMode,
@@ -40,10 +40,9 @@ class _ServiceListWidgetState extends State<ServiceListWidget> {
 
   @override
   void dispose() {
+    super.dispose();
     if (_bloc != null)
       _bloc.dispose();
-
-    super.dispose();
   }
 
   @override

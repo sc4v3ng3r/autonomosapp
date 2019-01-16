@@ -18,6 +18,7 @@ class ServiceListWidgetBloc {
   ServiceListWidgetBloc() {
     _searchInput.stream.listen((searchPattern) {
       if (searchPattern.isEmpty) {
+        print("search pattern is empty");
         _onData(_mainDataList); // reenvia a lista local
       } else {
         _searchList.clear();

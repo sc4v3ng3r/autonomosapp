@@ -95,16 +95,7 @@ class _ChipPanelWidgetState extends State<ChipPanelWidget> {
         children: <Widget>[
           InkWell(
             child: Icon(Icons.edit, color: widget._iconColor,),
-            onTap: (){
-              print("chip panel callback");
-              if (widget._onEditClicked != null){
-                var emits;
-                if (widget._data == null)
-                  emits =_dataList;
-                else emits = widget._data;
-                widget._onEditClicked( emits );
-              }
-            },
+            onTap: _onEditCallbackCall,
           ),
         ],
       );
@@ -115,5 +106,15 @@ class _ChipPanelWidgetState extends State<ChipPanelWidget> {
     widgets.add( wrapWidget);
 
     return Column( children: widgets, );
+  }
+
+  void _onEditCallbackCall(){
+    if (widget._onEditClicked != null){
+      var emits;
+      if (widget._data == null)
+        emits =_dataList;
+      else emits = widget._data;
+      widget._onEditClicked( emits );
+    }
   }
 }

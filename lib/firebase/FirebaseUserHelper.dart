@@ -124,8 +124,9 @@ class FirebaseUserHelper {
     DatabaseReference relationshipRef = db.reference()
         .child(FirebaseReferences.REFERENCE_UF_CIDADES_SERVICOS_PROFISSIONAIS);
 
+    //esse pequeno trecho de codigo se repete na classe helper do relacionamento
+    // estado -> cidade -> servico -> usuario
     if (user.professionalData != null){
-      // removendo relacionamento com estado, cidades e servicos
       for (String city in user.professionalData.cidadesAtuantes){
         for(String serviceId in user.professionalData.servicosAtuantes){
           relationshipRef.child( user.professionalData.estadoAtuante )

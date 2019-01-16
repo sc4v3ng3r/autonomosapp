@@ -1,3 +1,4 @@
+import 'package:autonos_app/model/Service.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:autonos_app/firebase/FirebaseReferences.dart';
 import 'package:autonos_app/model/ProfessionalData.dart';
@@ -29,6 +30,16 @@ class FirebaseUfCidadesServicosProfissionaisHelper {
         .child( estadoSigla ).child( cidadeNome ).child( serviceId );
 
     return ref.once();
+  }
+
+  static void removeServicesFromProfessionalUser(List< Service > toRemove, ProfessionalData proData){
+    DatabaseReference ref = FirebaseDatabase.instance.reference()
+        .child(FirebaseReferences.REFERENCE_UF_CIDADES_SERVICOS_PROFISSIONAIS)
+        .child(proData.estadoAtuante);
+
+    for (String city in proData.cidadesAtuantes)
+      for(Service service in toRemove)
+        ref.child( city).child( service.id ).child(proData.uid).remove();
   }
 
 }

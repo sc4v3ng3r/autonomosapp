@@ -1,6 +1,7 @@
 import 'package:autonos_app/model/Service.dart';
 import 'package:autonos_app/model/User.dart';
 import 'package:autonos_app/ui/screens/PaymentDataEditorScreen.dart';
+import 'package:autonos_app/ui/screens/ServiceEditorScreen.dart';
 import 'package:autonos_app/ui/widget/RatingBar.dart';
 import 'package:flutter/material.dart';
 import 'package:autonos_app/ui/widget/ChipPanelWidget.dart';
@@ -92,6 +93,14 @@ class _PerfilDetailsScreenState extends State<PerfilDetailsScreen> {
         title: "Serviços Atuantes",
         editable: true,
         dataStream: _bloc.userServices,
+        onEditCallback: (serviceList){
+          Navigator.push(context, MaterialPageRoute(builder: (buildContext){
+              return ServiceEditorScreen(
+                  currentServicesList: serviceList,
+              );
+            }),
+          );
+        },
       );
 
       widgetList.add( servicesChipContainer );
@@ -118,24 +127,6 @@ class _PerfilDetailsScreenState extends State<PerfilDetailsScreen> {
       widgetList.add( changePassword );
       widgetList.add( widget._SEPARATOR );
     }
-
-    /*var deleteAccountButton = Align(
-          alignment: FractionalOffset.bottomCenter,
-          child: RaisedButton(
-            color: Colors.red,
-            splashColor: Colors.pink,
-            onPressed: (){},
-            child: Text("Apagar Conta",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16.0
-              ),
-            ),
-          ),
-        );
-
-    widgetList.add(deleteAccountButton);*/
-
     var infoGroup= Card(
       child: Padding(
         padding: EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
