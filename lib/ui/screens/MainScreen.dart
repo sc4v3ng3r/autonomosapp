@@ -24,6 +24,20 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:autonos_app/ui/screens/PerfilDetailsScreen.dart';
 import 'dart:io' show Platform;
 
+//FIXME BUG build method é sempre chamado até mesmo quando clicamos Ok no teclado
+// somente quando a MainScreen vem após a LoginScreen. Quando a aplicação já abre diretamente
+// na tela de login esse bug não se manifesta e eu não sei a razão. Isso é ruim porque toda vez
+// que isso acontece os wigets que atuam como fragments, por exemplo, ServiceListWidget são recriados
+// e isso causa uma terrível experiencia ao usuário a exemplo quando o usuário está filtrando
+// os serviços utilizando a barra de pesquisa ao pressionar OK no teclado virtual a tela é reconstruida
+// e a busca é perdida pois o ServiceListWidget mostra uma nova lista.
+//O armengue temporário foi segurar o ServiceListWidget como membro da classe para que quado a tela
+//for redesenhada o mesmo ainda estar instanciado. Entretando é necessário anular o mesmo quando um novo
+// widget toma seu lugar e criar um novo ServiceListWidget quando for necessário mostrar-lo. Isso é
+//necessário para evitar problemas internos no ServiceListWidget e suas Streams.
+
+
+//TODO transformar essa tela em stateless
 class MainScreen extends StatefulWidget {
 
   MainScreen({Key key}) : super(key: key);
@@ -51,12 +65,14 @@ class _MainScreenState extends State<MainScreen> {
   Placemark _placemark;
   ProgressBarHandler _progressBarHandler;
   UserRepository _repository;
-
+  var _serviceListFragment;
 
   @override
   void dispose() {
     super.dispose();
+    print("MainScreenWidget dispose()");
     _progressBarHandler = null;
+    _serviceListFragment = null;
   }
 
   @override
@@ -67,9 +83,21 @@ class _MainScreenState extends State<MainScreen> {
 
     _drawerCurrentPosition = 1;
     _initUserPosition();
-
+    _initServicesListFragment();
     print("Main initState");
     _scaffoldKey = new GlobalKey<ScaffoldState>();
+  }
+
+  _initServicesListFragment(){
+    _serviceListFragment = ServiceListWidgetBlocProvider(
+      child: ServiceListWidget(
+        itemsSelectedCallback: null,
+        clickMode: ClickMode.TAP,
+        singleClickCallback: (item) {
+          _serviceClickedCallback(item);
+        },
+      ), //ClientChooseServicesFragment(),
+    );
   }
 
   //TODO esse codigo pode ser executado antes da MainScreen
@@ -336,10 +364,12 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _setCurrentPosition(int position) {
-    //setState(() => );
 
     if (position != _drawerCurrentPosition){
       setState(() {
+        if (_serviceListFragment == null)
+          _initServicesListFragment();
+
         _changeAppBarName(position);
         _drawerCurrentPosition = position;
       });
@@ -357,35 +387,32 @@ class _MainScreenState extends State<MainScreen> {
   Widget _getFragment(int position) {
     switch (position) {
       case 0:
+        _serviceListFragment = null;
         return PerfilDetailsScreen(user: _user); /*PerfilUsuarioScreen()*/
 
       case 1:
-        return ServiceListWidgetBlocProvider(
-            child: ServiceListWidget(
-              itemsSelectedCallback: null,
-              clickMode: ClickMode.TAP,
-              singleClickCallback: (item) {
-                _serviceClickedCallback(item);
-              },
-            ), //ClientChooseServicesFragment(),
-        );
+        return _serviceListFragment;
 
       case 2:
+        _serviceListFragment = null;
         return Center(
           child: Text("Histórico"),
         );
 
       case 3:
+        _serviceListFragment = null;
         return Center(
           child: Text("Visualizações"),
         );
 
       case 4:
+        _serviceListFragment = null;
         return Center(
           child: Text("Favoritos"),
         );
 
       default:
+        _serviceListFragment = null;
         return Center(
           child: Text("Outras Telas!"),
         );
