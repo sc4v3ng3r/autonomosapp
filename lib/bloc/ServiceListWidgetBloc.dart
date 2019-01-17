@@ -16,11 +16,12 @@ class ServiceListWidgetBloc {
   List<Service> _mainDataList;
 
   ServiceListWidgetBloc() {
-    _searchInput.stream.listen((searchPattern) {
+    _searchInput.stream.listen( (searchPattern) {
       if (searchPattern.isEmpty) {
         print("search pattern is empty");
         _onData(_mainDataList); // reenvia a lista local
-      } else {
+      }
+      else {
         _searchList.clear();
         _mainDataList.forEach((service) {
           if (service.name.toLowerCase().contains(searchPattern.toLowerCase())) {

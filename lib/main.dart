@@ -12,11 +12,40 @@ void main() {
   runApp( new MyApp() );
 }
 
-class MyApp extends StatefulWidget{
+class MyApp extends StatelessWidget{
+  //@override
+  //_MyAppState createState() => _MyAppState();
   @override
-  _MyAppState createState() => _MyAppState();
-}
+  Widget build(BuildContext context) {
+    UserRepository();
+    print("Myapp build()");
+    return FutureBuilder<User>(
+      future: FirebaseUserHelper.currentLoggedUser(),
+      builder: (BuildContext context, AsyncSnapshot<User> snapshot){
 
+        switch ( snapshot.connectionState ){
+          case ConnectionState.none:
+          case ConnectionState.active:
+          case ConnectionState.waiting:
+            print("STATE ${snapshot.connectionState.toString()}");
+            return Container(
+              color: Colors.black,
+            );
+
+          case ConnectionState.done:
+            UserRepository repo = UserRepository();
+            repo.currentUser = snapshot.data;
+            return MaterialApp(
+              debugShowCheckedModeBanner: false,
+              home: (repo.currentUser == null) ? LoginScreen() : MainScreen(),
+            );
+            break;
+        }
+      },
+    );
+  }
+}
+/*
 class _MyAppState extends State<MyApp> {
   @override
   void initState() {
@@ -58,4 +87,4 @@ class _MyAppState extends State<MyApp> {
       },
     );
   }
-}
+}*/

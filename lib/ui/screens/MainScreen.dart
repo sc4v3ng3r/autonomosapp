@@ -268,7 +268,6 @@ class _MainScreenState extends State<MainScreen> {
                   _logout();
                 }
               });
-
           //_logout();
         }
       },
@@ -337,10 +336,13 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _setCurrentPosition(int position) {
-    setState(() => _changeAppBarName(position));
+    //setState(() => );
 
     if (position != _drawerCurrentPosition){
-      setState(() => _drawerCurrentPosition = position);
+      setState(() {
+        _changeAppBarName(position);
+        _drawerCurrentPosition = position;
+      });
     }
 
     if (drawerIsOpen())
@@ -349,12 +351,7 @@ class _MainScreenState extends State<MainScreen> {
 
   bool drawerIsOpen(){
     final RenderBox box = _drawerKey.currentContext?.findRenderObject();
-
-    if (box != null)
-      return true;
-
-    return false;
-
+    return (box != null) ? true : false;
   }
 
   Widget _getFragment(int position) {
@@ -364,14 +361,13 @@ class _MainScreenState extends State<MainScreen> {
 
       case 1:
         return ServiceListWidgetBlocProvider(
-          child: ServiceListWidget(
-            itemsSelectedCallback: null,
-            clickMode: ClickMode.TAP,
-            singleClickCallback: (item) {
-              _serviceClickedCallback(item);
-              //_serviceListItemClickHandle(item);
-            },
-          ), //ClientChooseServicesFragment(),
+            child: ServiceListWidget(
+              itemsSelectedCallback: null,
+              clickMode: ClickMode.TAP,
+              singleClickCallback: (item) {
+                _serviceClickedCallback(item);
+              },
+            ), //ClientChooseServicesFragment(),
         );
 
       case 2:

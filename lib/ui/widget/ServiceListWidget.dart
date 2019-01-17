@@ -47,7 +47,7 @@ class _ServiceListWidgetState extends State<ServiceListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    //print("_CityListWidgetState build()");
+    print("ServiceListWidgetState build()");
 
     _bloc = ServiceListWidgetBlocProvider.of(context);
     _bloc.loadServicesFromWeb();
