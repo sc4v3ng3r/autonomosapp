@@ -8,6 +8,7 @@ class CityListWidget extends StatefulWidget {
   final String _queryKey;
   final _itemSelectedCallback;
   final List<Cidade>_initialSelectedItems;
+  //final
 
   CityListWidget( {@required String sigla,
     @required void itemsSelectedCallback(List<Cidade> selectedItems), List<Cidade> initialSelectedItems  } ) :

@@ -6,7 +6,9 @@ import 'package:autonos_app/ui/widget/RatingBar.dart';
 import 'package:flutter/material.dart';
 import 'package:autonos_app/ui/widget/ChipPanelWidget.dart';
 import 'package:autonos_app/bloc/PerfilDetailsScreenBloc.dart';
+import 'package:autonos_app/ui/screens/LocationEditorScreen.dart';
 
+// TODO renomear para Widget ou Fragment, pq essa widget NÃO É UMA TELA!
 class PerfilDetailsScreen extends StatefulWidget {
   final User _user;
   final SizedBox _SEPARATOR = SizedBox(height: 8.0,);
@@ -22,9 +24,8 @@ class _PerfilDetailsScreenState extends State<PerfilDetailsScreen> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
-    super.dispose();
     _bloc.dispose();
+    super.dispose();
   }
 
   @override
@@ -84,6 +85,16 @@ class _PerfilDetailsScreenState extends State<PerfilDetailsScreen> {
         title: "Cidades Atuantes",
         editable: true,
         data: user.professionalData.cidadesAtuantes,
+        onEditCallback: (userCityNamesList){
+          Navigator.push(context, MaterialPageRoute(
+              builder: (buildContext){
+                return LocationEditorScreen(
+                  initialState: user.professionalData.estadoAtuante,
+                  userCities: user.professionalData.cidadesAtuantes,
+                );
+              })
+          );
+        } ,
       );
 
       widgetList.add( cityChipContainer );

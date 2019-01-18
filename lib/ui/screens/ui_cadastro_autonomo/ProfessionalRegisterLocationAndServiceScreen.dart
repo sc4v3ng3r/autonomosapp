@@ -34,6 +34,7 @@ class ProfessionalRegisterLocationAndServiceScreenState
   ChipContainerController _serviceChipController;
   ChipContainerController _cityChipController;
   EditableButtonController _buttonController;
+
   //
   // TODO: IMPLEMENTAR BLOC PARA ESTA TELA. OS DADOS DEVEM FICAR NO MESMO.
 

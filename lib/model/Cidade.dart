@@ -28,7 +28,7 @@ class Cidade implements Comparable<Cidade> {
 
   @override
   bool operator ==(other) {
-    return other is Cidade && ( (id.toString().compareTo(other.id.toString() )) == 0);
+    return other is Cidade && ( (nome.compareTo(other.nome )) == 0);
   }
 
   @override
