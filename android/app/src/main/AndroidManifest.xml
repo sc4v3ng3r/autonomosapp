@@ -55,6 +55,11 @@
         <activity android:name=".NativeMapActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
 
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+
         <!--
                  This keeps the window background of the activity showing
                  until Flutter renders its first frame. It can be removed if

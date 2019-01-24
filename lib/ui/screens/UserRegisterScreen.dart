@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:autonos_app/ui/widget/ChoosePictureBottomSheetWidget.dart';
 import 'package:autonos_app/utility/SharedPreferencesUtility.dart';
 import 'package:autonos_app/utility/UserRepository.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -9,8 +9,6 @@ import 'package:autonos_app/utility/InputValidator.dart';
 import 'package:autonos_app/model/User.dart';
 import 'package:autonos_app/ui/screens/MainScreen.dart';
 import 'package:autonos_app/ui/widget/ModalRoundedProgressBar.dart';
-import 'package:image_picker/image_picker.dart';
-
 // TODO metodos do firebase devem sair daqui
 // TODO refatorar o layout
 // TODO Componentizar os text fields
@@ -32,7 +30,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
   FocusNode _passwordConfirmFocus;
   TextEditingController _passwordConfirmController;
   ProgressBarHandler _handler;
-  File _selectedUserImage;
+  File _selectedUserImageFile;
 
   DatabaseReference _userReference;
   static const RATING_INIT_VALUE = 5.0;
@@ -143,10 +141,12 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
               FocusScope.of(context).requestFocus(_emailFocus);
             });
           },
+
           style: TextStyle(
             fontSize: 20.0,
             color: Colors.black,
           ),
+
           decoration: InputDecoration(
               fillColor: Colors.white,
               filled: true,
@@ -161,7 +161,6 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
       ),
     );
 
-
     final userphoto = Column(
       children: <Widget>[
         ClipRRect(
@@ -172,42 +171,22 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
             child: Ink.image(
               width: 160.0,
               height: 160.0,
-              image: (_selectedUserImage == null) ?  AssetImage("assets/usuario.png") :
+              image: (_selectedUserImageFile == null) ?  AssetImage("assets/usuario.png") :
               // TODO muito lento
-              FileImage( _selectedUserImage),
+              FileImage( _selectedUserImageFile),
               fit: BoxFit.cover,
               child: InkWell(
                 onTap: (){
                   print("picture clicked");
-                  _selectPictureFromGallery();
+                  //_selectPictureFromGallery();
+                  _displayBottomSheet();
                 },
-                child: null,
               ),
             ),
           ),
         )
       ],
     );
-
-    /*final userphoto = GestureDetector(
-      onTap: () {
-        print("picture clicked");
-        _selectPictureFromGallery();
-      },
-      child: Column(
-        children: <Widget>[
-          Container(
-            padding: EdgeInsets.fromLTRB(.0, 8.0, .0, .0),
-            child: (_selectedUserImage == null) ?
-              Image.asset("assets/usuario.png", width: 168.0,height: 168.0,) :
-                Image.file( _selectedUserImage, width: 168.0,height: 168.0,
-                  fit: BoxFit.contain,),
-          ),
-          SizedBox(height: 4.0,),
-          Text("Selecionar foto"),
-        ],
-      ),
-    );*/
 
     final emailField = Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.0),
@@ -257,6 +236,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
 
       });
     }
+
     final passwordField = Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.0),
       child: Material(
@@ -489,7 +469,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
     catch ( ex ){
       print("Erro ao registar conta do Database");
       recentCreatedUser.delete()
-          .then( (onValue) => FirebaseAuth.instance.signOut() )
+          .then( (_) => FirebaseAuth.instance.signOut() )
           .catchError( (error) => print("UserRegisterScreen:: _createAccountDBRegister "
           + error.toString()));
     }
@@ -497,6 +477,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
   }
 
   void _selectPictureFromGallery() async {
+/*
     File imageFile = await ImagePicker.pickImage(
         source: ImageSource.gallery
     );
@@ -505,7 +486,23 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
         _selectedUserImage = imageFile;
       });
     }
-    print ("returned $imageFile");
+    print ("returned $imageFile");*/
 
   }
+
+  void _displayBottomSheet(){
+    showModalBottomSheet(context: context, builder: (buildContext) {
+      return ChoosePictureBottomSheetWidget(
+        onSelected: (path){
+          if (path != null) {
+            Navigator.pop(buildContext);
+            setState(() {
+              _selectedUserImageFile = path;
+            });
+          } else Navigator.pop( buildContext );
+        },
+      );
+    });
+  }
+
 }
