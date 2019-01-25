@@ -17,7 +17,7 @@ class PerfilDetailsScreenBloc {
 
     for(String id in servicesId){
       FirebaseServicesHelper.getServiceById(id).listen((event){
-        localList.add(Service.fromSnapshot( event.snapshot));
+        localList.add(Service.fromSnapshot( event.snapshot) );
         _addToSink( localList );
       });
 

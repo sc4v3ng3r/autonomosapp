@@ -62,7 +62,7 @@ class ChoosePictureBottomSheetWidget extends StatelessWidget {
     );
   }
 
-  Future<File> _cropImage(File imageFile) async{
+  Future<File> _cropImage(File imageFile) async {
     File croppedImage = await ImageCropper.cropImage(
         sourcePath: imageFile.path,
         ratioX: 1.0,

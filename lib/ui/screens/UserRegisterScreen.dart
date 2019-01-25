@@ -9,6 +9,8 @@ import 'package:autonos_app/utility/InputValidator.dart';
 import 'package:autonos_app/model/User.dart';
 import 'package:autonos_app/ui/screens/MainScreen.dart';
 import 'package:autonos_app/ui/widget/ModalRoundedProgressBar.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+
 // TODO metodos do firebase devem sair daqui
 // TODO refatorar o layout
 // TODO Componentizar os text fields
@@ -55,6 +57,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
     _emailController = new TextEditingController();
     _passwordController = new TextEditingController();
     _passwordConfirmController = TextEditingController();
+    //TODO vai sair!!
     _userReference = _userReference = FirebaseDatabase.instance.reference().child('usuarios');
   }
 
@@ -286,8 +289,8 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
             fontStyle: FontStyle.italic,
             color: Colors.grey[500]),),
     );
-    final termosDeUso = Flexible(
 
+    final termosDeUso = Flexible(
       child: FlatButton(
           padding: EdgeInsets.fromLTRB(2.0, .0, 16.0, .0),
           onPressed: (){
@@ -418,6 +421,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
     return list;
   }
 
+
   //TODO esse método DEVE sair desta classe
   Future<bool> _createUserAccount( var email, var password ) async {
 
@@ -427,15 +431,28 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
     try {
       firebaseUser = await auth.createUserWithEmailAndPassword(
           email: email, password: password);
+      String pictureDownloadUrl;
 
-      User userCreated = await _createAccountDBRegister(firebaseUser);
+      // aqui a gente faz o upload da foto de usuario caso exista!
+      if (_selectedUserImageFile?.path != null){
+        final StorageReference ref = FirebaseStorage.instance
+            .ref().child("${firebaseUser.uid}/${firebaseUser.email}_profilePicture.jpg");
+        final StorageUploadTask uploadTask = ref.putFile(_selectedUserImageFile);
+        final StorageTaskSnapshot snapshotTask = (await uploadTask.onComplete);
+        pictureDownloadUrl = await snapshotTask.ref.getDownloadURL();
+      }
+
+      User userCreated = await _createAccountDBRegister(firebaseUser, pictureDownloadUrl );
       UserRepository().currentUser = userCreated;
-      UserRepository().imageUrl = firebaseUser.photoUrl;
+
+      //TODO isso aqui eh desnecessario!
+      UserRepository().imageUrl =  userCreated.picturePath;
 
       SharedPreferencesUtility.writePreferencesData(
           email: email, password: password, rememberMe: true);
 
       returnFlag = true;
+
     }
 
     catch ( ex ){
@@ -447,7 +464,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
 
 
   //TODO esse método DEVE sair desta classe
-  Future<User> _createAccountDBRegister(FirebaseUser recentCreatedUser) async {
+  Future<User> _createAccountDBRegister(FirebaseUser recentCreatedUser, String pictureUrl) async {
 
     try {
       var name = recentCreatedUser.displayName;
@@ -458,6 +475,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
           uid: recentCreatedUser.uid,
           email: recentCreatedUser.email,
           name: name,
+          picturePath: pictureUrl,
           rating: RATING_INIT_VALUE);
 
       await _userReference.child(recentCreatedUser.uid)

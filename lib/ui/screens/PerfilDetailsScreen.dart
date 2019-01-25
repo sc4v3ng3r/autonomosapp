@@ -197,7 +197,8 @@ class _PerfilDetailsScreenState extends State<PerfilDetailsScreen> {
     return Card(
       child: ListTile(
         leading: CircleAvatar(
-          backgroundImage: AssetImage("assets/usuario.png"),
+          backgroundImage: (widget._user.picturePath == null) 
+              ? AssetImage("assets/usuario.png") : NetworkImage(widget._user.picturePath),
         ),
 
         title: Text(widget._user.name,
