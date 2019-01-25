@@ -2,9 +2,11 @@ import 'package:autonos_app/bloc/ProfessionalRegisterFlowBloc.dart';
 import 'package:autonos_app/ui/screens/ui_cadastro_autonomo/ProfessionalRegisterLocationAndServiceScreen.dart';
 import 'package:autonos_app/ui/widget/NextButton.dart';
 import 'package:autonos_app/utility/InputValidator.dart';
+import 'package:autonos_app/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:autonos_app/model/ProfessionalData.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class ProfessionalRegisterBasicInfoScreen extends StatefulWidget {
   @override
@@ -36,7 +38,7 @@ class ProfessionalRegisterBasicInfoScreenState extends State<ProfessionalRegiste
   static const SizedBox _FIELD_SEPARATOR = SizedBox(height: 10.0);
   static const String _CPF = 'CPF';
   static const String _CNPJ = 'CNPJ';
-
+  final UserRepository _repository = UserRepository();
   void _handleRadioValueChange(int i) {
     _radioValue = i;
     print("handling radio value: $i");
@@ -57,6 +59,7 @@ class ProfessionalRegisterBasicInfoScreenState extends State<ProfessionalRegiste
 
   @override
   void initState() {
+    super.initState();
     _radioValue = 0;
     _tipoPessoa = _CPF;
 
@@ -70,7 +73,7 @@ class ProfessionalRegisterBasicInfoScreenState extends State<ProfessionalRegiste
     _telefoneFocus = new FocusNode();
     _bloc = new ProfessionalRegisterFlowBloc();
 
-    super.initState();
+
   }
 
   @override
@@ -106,12 +109,12 @@ class ProfessionalRegisterBasicInfoScreenState extends State<ProfessionalRegiste
   }
 
   Widget _buildLayout(){
-
     var userPicture = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         CircleAvatar(
-          backgroundImage: AssetImage("assets/usuario_drawer.png"),
+          backgroundImage: (_repository.imageUrl == null) ? AssetImage("assets/usuario.png") :
+              CachedNetworkImageProvider(_repository.imageUrl ),
           backgroundColor: Colors.blueGrey,
           maxRadius: 48.0,
         ),

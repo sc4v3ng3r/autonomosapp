@@ -5,7 +5,6 @@ import 'package:autonos_app/model/Estado.dart';
 import 'package:autonos_app/model/Location.dart';
 import 'package:autonos_app/model/Service.dart';
 import 'package:autonos_app/ui/screens/LoginScreen.dart';
-import 'package:autonos_app/ui/screens/ui_perfil_usuario/PerfilUsuarioScreen.dart';
 import 'package:autonos_app/ui/screens/ui_cadastro_autonomo/ProfessionalRegisterBasicInfoScreen.dart';
 import 'package:autonos_app/ui/widget/ModalRoundedProgressBar.dart';
 import 'package:autonos_app/ui/widget/RatingBar.dart';
@@ -22,6 +21,7 @@ import 'package:flutter/services.dart';
 import 'package:autonos_app/ui/widget/GenericAlertDialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:autonos_app/ui/screens/PerfilDetailsScreen.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'dart:io' show Platform;
 
 //FIXME BUG build method é sempre chamado até mesmo quando clicamos Ok no teclado

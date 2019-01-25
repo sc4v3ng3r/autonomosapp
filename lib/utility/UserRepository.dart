@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:autonos_app/model/ApplicationState.dart';
 import 'package:autonos_app/model/Location.dart';
 import 'package:autonos_app/model/User.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/material.dart';
 
 class UserRepository {
 

@@ -1,8 +1,8 @@
 import 'package:autonos_app/firebase/FirebaseUfCidadesServicosProfissionaisHelper.dart';
-import 'package:autonos_app/model/ApplicationState.dart';
 import 'package:autonos_app/model/ProfessionalData.dart';
 import 'package:autonos_app/utility/SharedPreferencesUtility.dart';
 import 'package:autonos_app/utility/UserRepository.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:autonos_app/model/User.dart';
@@ -14,6 +14,8 @@ class FirebaseUserHelper {
   static final FirebaseAuth AUTH = FirebaseAuth.instance;
   static const String _PROVIDER_ID_FACEBOOK = "facebook.com";
   static const String _PROVIDER_ID_PASSWORD = "password";
+  static const String PROFILE_PICTURE = "_profilePicture";
+
   //final FirebaseDatabase m_database = FirebaseDatabase.instance;
 
   static final DatabaseReference USERS_REFERENCE = FirebaseDatabase.instance
@@ -34,7 +36,18 @@ class FirebaseUserHelper {
       if (snapshot.value != null) {
         print("FirebaseUserHelper user $uid exist in DB!");
         user = User.fromDataSnapshot(snapshot);
-        UserRepository().imageUrl = fbUser.photoUrl;
+
+        String url;
+        if (user.picturePath !=null)
+          url = user.picturePath;
+
+        else
+          url = fbUser.photoUrl;
+
+        if (url != null)
+          CachedNetworkImageProvider( url );
+
+        UserRepository().imageUrl = url;
       }
 
       DataSnapshot professionalData = await proRef.child(user.uid).once();

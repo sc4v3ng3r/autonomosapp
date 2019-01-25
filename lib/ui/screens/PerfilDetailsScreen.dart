@@ -3,6 +3,7 @@ import 'package:autonos_app/model/User.dart';
 import 'package:autonos_app/ui/screens/PaymentDataEditorScreen.dart';
 import 'package:autonos_app/ui/screens/ServiceEditorScreen.dart';
 import 'package:autonos_app/ui/widget/RatingBar.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:autonos_app/ui/widget/ChipPanelWidget.dart';
 import 'package:autonos_app/bloc/PerfilDetailsScreenBloc.dart';
@@ -24,7 +25,7 @@ class _PerfilDetailsScreenState extends State<PerfilDetailsScreen> {
 
   @override
   void dispose() {
-    _bloc.dispose();
+    _bloc?.dispose();
     super.dispose();
   }
 
@@ -61,6 +62,7 @@ class _PerfilDetailsScreenState extends State<PerfilDetailsScreen> {
 
     if (user.professionalData!=null){
       _bloc = PerfilDetailsScreenBloc(user.professionalData.servicosAtuantes);
+
       var userPhone = createTextRow(
           widget._user.professionalData.telefone, fontSize: 20.0, preIcon: Icon(Icons.phone));
 
@@ -197,8 +199,8 @@ class _PerfilDetailsScreenState extends State<PerfilDetailsScreen> {
     return Card(
       child: ListTile(
         leading: CircleAvatar(
-          backgroundImage: (widget._user.picturePath == null) 
-              ? AssetImage("assets/usuario.png") : NetworkImage(widget._user.picturePath),
+          backgroundImage: (widget._user.picturePath == null)
+              ? AssetImage("assets/usuario.png") : CachedNetworkImageProvider(widget._user.picturePath),
         ),
 
         title: Text(widget._user.name,
