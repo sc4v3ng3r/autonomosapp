@@ -60,6 +60,7 @@ class FirebaseAuthHelper {
       print("RETURNING TRUE");
       return true;
     }
+
     catch (ex) {
       user = await FirebaseUserHelper.writeUserAccountData(firebaseUser);
 

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:autonos_app/firebase/FirebaseUfCidadesServicosProfissionaisHelper.dart';
 import 'package:autonos_app/model/ProfessionalData.dart';
 import 'package:autonos_app/utility/SharedPreferencesUtility.dart';
@@ -7,6 +9,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:autonos_app/model/User.dart';
 import 'package:autonos_app/firebase/FirebaseReferences.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 
 class FirebaseUserHelper {
@@ -14,7 +17,7 @@ class FirebaseUserHelper {
   static final FirebaseAuth AUTH = FirebaseAuth.instance;
   static const String _PROVIDER_ID_FACEBOOK = "facebook.com";
   static const String _PROVIDER_ID_PASSWORD = "password";
-  static const String PROFILE_PICTURE = "_profilePicture";
+  static const String PROFILE_PICTURE = "_profilePicture.jpg";
 
   //final FirebaseDatabase m_database = FirebaseDatabase.instance;
 
@@ -31,6 +34,7 @@ class FirebaseUserHelper {
 
     User user;
     String uid = fbUser.uid;
+
     try {
       DataSnapshot snapshot = await USERS_REFERENCE.child(uid).once();
       if (snapshot.value != null) {
@@ -72,6 +76,7 @@ class FirebaseUserHelper {
         uid: recentCreatedUser.uid,
         email: recentCreatedUser.email,
         name: recentCreatedUser.displayName,
+        picturePath: recentCreatedUser.photoUrl,
         rating: RATING_INIT_VALUE,
       );
 
@@ -125,7 +130,7 @@ class FirebaseUserHelper {
 
   /// Remove os dados do firebase real time database
   /// relacionados a um usuario específico.
-  static void _removeUserAccountFromDb(User user){
+  static void _removeUserAccountFromDb(User user) async {
     FirebaseDatabase db = FirebaseDatabase.instance;
 
     DatabaseReference userRef = db.reference()
@@ -156,16 +161,19 @@ class FirebaseUserHelper {
   ///Remove toda a "conta do usuário", tanto seus dados do database
   ///quando sua autenticação.
   static Future<bool> _removeUserAccountFromAuthSystem( /*User user*/) async {
-
+    UserRepository repository = UserRepository();
     FirebaseUser fbUser = await FirebaseAuth.instance.currentUser();
 
-    // Se estar logado com facebook acount
+    // Se estar logado com facebook account
     if (fbUser.providerData[1].providerId.compareTo( _PROVIDER_ID_FACEBOOK ) == 0) {
        FacebookAccessToken accessToken = await FacebookLogin().currentAccessToken;
 
        await FirebaseAuth.instance.reauthenticateWithFacebookCredential(
            accessToken: accessToken.token);
        fbUser = await FirebaseAuth.instance.currentUser();
+
+       await _deleteProfilePictureData(repository.currentUser);
+
        return fbUser.delete()
            .then((_){
              return true;
@@ -174,12 +182,15 @@ class FirebaseUserHelper {
 
     else{ // estar logado com firebase account
       //var preferences = await SharedPreferences.getInstance();
-      UserRepository repository = UserRepository();
+
       await FirebaseAuth.instance.reauthenticateWithEmailAndPassword(
           email: repository.fbLogin,
           password: repository.fbPassword);
 
       fbUser = await FirebaseAuth.instance.currentUser();
+
+      await _deleteProfilePictureData(repository.currentUser);
+
       return fbUser.delete().then((_){
         SharedPreferencesUtility.clear();
         return true;
@@ -188,8 +199,28 @@ class FirebaseUserHelper {
 
   }
 
+  static Future<void> _deleteProfilePictureData(User user) async {
+    var result = await _userProviderIsFacebook();
+    if ( !result ){
+      try{
+        print("REMOVING PICTURE ${user.uid}/${user.email}$PROFILE_PICTURE");
+        await FirebaseStorage.instance.ref()
+            .child("${user.uid}/${user.email}$PROFILE_PICTURE").delete();
+
+      } catch (ex){
+        print(ex);
+      }
+    }
+
+  }
+
+  static Future<bool> _userProviderIsFacebook() async {
+    FirebaseUser fbUser = await FirebaseAuth.instance.currentUser();
+    return (fbUser.providerData[1].providerId.compareTo( _PROVIDER_ID_FACEBOOK ) == 0);
+  }
 
   static Future<bool> removeUser(User user) async {
+    //TODO tem que ser ordem inversa!
     var results = await _removeUserAccountFromAuthSystem();
     if (results){
       _removeUserAccountFromDb(user);
@@ -198,4 +229,10 @@ class FirebaseUserHelper {
     return false;
   }
 
+/*
+  static Future<bool> updateUserProfilePicture(File picture, User user) async{
+    var isFacebookUser = await _userProviderIsFacebook();
+     FirebaseUser fbUser = await FirebaseAuth.instance.currentUser();
+     return true;
+  }*/
 }

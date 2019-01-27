@@ -11,6 +11,7 @@ class LocationUtility {
           desiredAccuracy: desiredAccuracy
       );
     }
+
     //TODO iOS
     return null;
   }

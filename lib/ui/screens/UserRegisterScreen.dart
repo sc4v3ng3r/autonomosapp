@@ -443,10 +443,12 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
       }
 
       User userCreated = await _createAccountDBRegister(firebaseUser, pictureDownloadUrl );
-      UserRepository().currentUser = userCreated;
-
+      var repository = UserRepository();
+      repository.currentUser = userCreated;
+      repository.fbPassword = password;
+      repository.fbLogin = email;
       //TODO isso aqui eh desnecessario!
-      UserRepository().imageUrl =  userCreated.picturePath;
+      repository.imageUrl =  userCreated.picturePath;
 
       SharedPreferencesUtility.writePreferencesData(
           email: email, password: password, rememberMe: true);

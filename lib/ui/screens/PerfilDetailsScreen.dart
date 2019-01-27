@@ -1,8 +1,10 @@
 import 'package:autonos_app/model/Service.dart';
 import 'package:autonos_app/model/User.dart';
 import 'package:autonos_app/ui/screens/PaymentDataEditorScreen.dart';
+import 'package:autonos_app/ui/screens/PerfilDetailsEditorScreen.dart';
 import 'package:autonos_app/ui/screens/ServiceEditorScreen.dart';
 import 'package:autonos_app/ui/widget/RatingBar.dart';
+import 'package:autonos_app/utility/UserRepository.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:autonos_app/ui/widget/ChipPanelWidget.dart';
@@ -132,14 +134,15 @@ class _PerfilDetailsScreenState extends State<PerfilDetailsScreen> {
           }) );
         },
       );
-
       widgetList.add( paymentPanel);
     }
 
+    // o usuario não é um profissional
     else {
       widgetList.add( changePassword );
       widgetList.add( widget._SEPARATOR );
     }
+
     var infoGroup= Card(
       child: Padding(
         padding: EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
@@ -199,8 +202,9 @@ class _PerfilDetailsScreenState extends State<PerfilDetailsScreen> {
     return Card(
       child: ListTile(
         leading: CircleAvatar(
-          backgroundImage: (widget._user.picturePath == null)
-              ? AssetImage("assets/usuario.png") : CachedNetworkImageProvider(widget._user.picturePath),
+          backgroundImage: (UserRepository().imageUrl == null)
+              ? AssetImage("assets/usuario.png") :
+          CachedNetworkImageProvider(UserRepository().imageUrl),
         ),
 
         title: Text(widget._user.name,
@@ -220,6 +224,11 @@ class _PerfilDetailsScreenState extends State<PerfilDetailsScreen> {
             ),
           ),
           onTap: (){
+            Navigator.push(context, MaterialPageRoute(builder: (buildContext) {
+              return PerfilDetailsEditorScreen();
+            })
+
+            );
             print("EDIT user name tapped");
           },
         ),
