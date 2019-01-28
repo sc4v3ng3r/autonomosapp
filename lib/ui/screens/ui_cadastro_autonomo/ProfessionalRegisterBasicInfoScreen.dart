@@ -113,8 +113,8 @@ class ProfessionalRegisterBasicInfoScreenState extends State<ProfessionalRegiste
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         CircleAvatar(
-          backgroundImage: (_repository.imageUrl == null) ? AssetImage("assets/usuario.png") :
-              CachedNetworkImageProvider(_repository.imageUrl ),
+          backgroundImage: (_repository.currentUser.picturePath== null) ? AssetImage("assets/usuario.png") :
+              CachedNetworkImageProvider(_repository.currentUser.picturePath ),
           backgroundColor: Colors.blueGrey,
           maxRadius: 48.0,
         ),

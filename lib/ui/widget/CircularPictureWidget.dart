@@ -24,13 +24,12 @@ class _CircularEditablePictureWidgetState extends State<CircularEditablePictureW
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: widget._bloc.currentImage,
+      stream: widget._bloc.currentImageProvider,
       builder: (context, snapshot){
         if (snapshot.hasData){
           print("HAS IMAGE PROVIDER DATA");
           return createWidget( snapshot.data );
         }
-
 
         else{
           print("HAS NOT IMAGE PROVIDER DATA");
@@ -71,7 +70,7 @@ class _CircularEditablePictureWidgetState extends State<CircularEditablePictureW
 
 class CircularPictureWidgetBloc {
   ReplaySubject<ImageProvider<dynamic>> _publishSubject = ReplaySubject(maxSize: 1);
-  ReplaySubject<ImageProvider<dynamic>> get currentImage => _publishSubject.stream;
+  ReplaySubject<ImageProvider<dynamic>> get currentImageProvider => _publishSubject.stream;
 
   CircularPictureWidgetBloc({@required ImageProvider<dynamic> initialImageProvider}){
     addToSink(initialImageProvider);

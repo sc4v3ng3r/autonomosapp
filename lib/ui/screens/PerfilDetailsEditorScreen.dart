@@ -1,7 +1,13 @@
+import 'dart:io';
+import 'package:autonos_app/firebase/FirebaseAuthHelper.dart';
+import 'package:autonos_app/firebase/FirebaseStorageHelper.dart';
+import 'package:autonos_app/firebase/FirebaseUserHelper.dart';
 import 'package:autonos_app/ui/widget/ChoosePictureBottomSheetWidget.dart';
+import 'package:autonos_app/ui/widget/ModalRoundedProgressBar.dart';
 import 'package:autonos_app/utility/Constants.dart';
 import 'package:autonos_app/utility/UserRepository.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:autonos_app/ui/widget/TextInputWidget.dart';
 import 'package:autonos_app/ui/widget/CircularPictureWidget.dart';
@@ -9,9 +15,12 @@ import 'package:autonos_app/utility/InputValidator.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:autonos_app/ui/widget/FormLayoutWidget.dart';
 
+// TODO construir um bloc para esta tela!
 class PerfilDetailsEditorScreen extends StatefulWidget {
   final UserRepository _repository = UserRepository();
-  final _verticalSeparator = SizedBox(height: 16.0,);
+  final _verticalSeparator = SizedBox(
+    height: 16.0,
+  );
 
   @override
   _PerfilDetailsEditorScreenState createState() =>
@@ -26,7 +35,10 @@ class _PerfilDetailsEditorScreenState extends State<PerfilDetailsEditorScreen> {
   FocusNode _phoneFieldFocus;
   TextEditingController _descriptionFieldController;
   FocusNode _descriptionFieldFocus;
+  ProgressBarHandler _handler;
   final GlobalKey<FormState> _formKey = GlobalKey();
+  //TODO esse membro & demais regras devem ficar no Bloc desta tela!
+  File _currentImageFile;
 
   @override
   void initState() {
@@ -34,17 +46,20 @@ class _PerfilDetailsEditorScreenState extends State<PerfilDetailsEditorScreen> {
     _initTextFieldsSettings();
 
     _circularWidgetBloc = CircularPictureWidgetBloc(
-      initialImageProvider: (widget._repository.imageUrl == null)
-        ? AssetImage("assets/usuario.png")
-        : CachedNetworkImageProvider(widget._repository.imageUrl),
+      initialImageProvider: (widget._repository.currentUser.picturePath == null)
+          ? AssetImage("assets/usuario.png")
+          : CachedNetworkImageProvider(
+              widget._repository.currentUser.picturePath),
     );
   }
 
-  void _initTextFieldsSettings(){
-    _nameInputController = TextEditingController( text: widget._repository.currentUser.name );
+  void _initTextFieldsSettings() {
+    _nameInputController =
+        TextEditingController(text: widget._repository.currentUser.name);
     _nameInputFocus = FocusNode();
 
-    _phoneFieldController = new MaskedTextController(mask: Constants.MASK_PHONE,
+    _phoneFieldController = new MaskedTextController(
+        mask: Constants.MASK_PHONE,
         text: widget._repository.currentUser.professionalData?.telefone);
     _phoneFieldFocus = FocusNode();
 
@@ -56,44 +71,53 @@ class _PerfilDetailsEditorScreenState extends State<PerfilDetailsEditorScreen> {
   @override
   Widget build(BuildContext context) {
     print("perfilDetailsEditorScreen build");
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 4.0,
-        title: Text("Editar Perfil"),
-      ),
-
-      body: Container(
-        padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 22.0),
-        child: _createBody(),
-      ),
-
-      bottomNavigationBar: RaisedButton(
-        child: Text("Confirmar",
-          style: TextStyle(
-              color: Colors.white
+    return Stack(
+      children: <Widget>[
+        Scaffold(
+          appBar: AppBar(
+            elevation: 4.0,
+            title: Text("Editar Perfil"),
           ),
+          body: Container(
+            padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 22.0),
+            child: _createBody(),
+          ),
+          bottomNavigationBar: RaisedButton(
+              child: Text(
+                "Confirmar",
+                style: TextStyle(color: Colors.white),
+              ),
+              color: Colors.green,
+              onPressed: () async {
+                if (_validation()) {
+                  await _updateUserData();
+                  Navigator.pop(context);
+                }
+              }),
         ),
-        color: Colors.green,
-        onPressed: (){
-          _validation();
-        }),
+        ModalRoundedProgressBar(
+          handleCallback: (handler) {
+            _handler = handler;
+          },
+        ),
+      ],
     );
   }
 
-  Widget _createBody(){
+  Widget _createBody() {
     List<Widget> widgetList = List();
 
     var userPicture = Column(
       children: <Widget>[
         Container(
-            width: 140,
-            height: 140,
-            child: CircularEditablePictureWidget(
-              bloc: _circularWidgetBloc,
-              onClickCallback: (){
-                _showModalBottomSheet();
-              },
-            ),
+          width: 140,
+          height: 140,
+          child: CircularEditablePictureWidget(
+            bloc: _circularWidgetBloc,
+            onClickCallback: () {
+              _showModalBottomSheet();
+            },
+          ),
         ),
         Text("Clique para editar"),
       ],
@@ -106,15 +130,14 @@ class _PerfilDetailsEditorScreenState extends State<PerfilDetailsEditorScreen> {
       controller: _nameInputController,
       textInputType: TextInputType.text,
       inputAction: TextInputAction.next,
-      onFieldSubmitCallback: (dataTyped){
+      onFieldSubmitCallback: (dataTyped) {
         _changeFieldFocus(_nameInputFocus, _phoneFieldFocus);
       },
     );
 
-    widgetList.add( nameEditField );
+    widgetList.add(nameEditField);
 
-    if (widget._repository.currentUser.professionalData != null){
-
+    if (widget._repository.currentUser.professionalData != null) {
       var phoneField = TextInputWidget(
         hint: "Telefone",
         focusNode: _phoneFieldFocus,
@@ -122,7 +145,7 @@ class _PerfilDetailsEditorScreenState extends State<PerfilDetailsEditorScreen> {
         textInputType: TextInputType.number,
         controller: _phoneFieldController,
         inputAction: TextInputAction.next,
-        onFieldSubmitCallback: (dataTyped){
+        onFieldSubmitCallback: (dataTyped) {
           _changeFieldFocus(_phoneFieldFocus, _descriptionFieldFocus);
         },
       );
@@ -139,32 +162,30 @@ class _PerfilDetailsEditorScreenState extends State<PerfilDetailsEditorScreen> {
         controller: _descriptionFieldController,
         textInputType: TextInputType.text,
         inputAction: TextInputAction.done,
-        onFieldSubmitCallback: (dataTyped) { _descriptionFieldFocus.unfocus(); },
+        onFieldSubmitCallback: (dataTyped) {
+          _descriptionFieldFocus.unfocus();
+        },
         decoration: InputDecoration(
           labelText: 'Decrição',
           labelStyle: TextStyle(
             fontSize: 16.0,
           ),
-
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.0),
           ),
         ),
       );
 
-      widgetList.add( descriptionField );
+      widgetList.add(descriptionField);
     }
 
     return ListView(
-        children: <Widget>[
-          userPicture,
-          widget._verticalSeparator,
-          FormLayoutWidget(
-              formKey: _formKey,
-              widgets: widgetList
-          ),
-        ],
-        shrinkWrap: true,
+      children: <Widget>[
+        userPicture,
+        widget._verticalSeparator,
+        FormLayoutWidget(formKey: _formKey, widgets: widgetList),
+      ],
+      shrinkWrap: true,
     );
   }
 
@@ -180,7 +201,7 @@ class _PerfilDetailsEditorScreenState extends State<PerfilDetailsEditorScreen> {
     super.dispose();
   }
 
-  void _changeFieldFocus(FocusNode currentFocus, FocusNode newFocused ){
+  void _changeFieldFocus(FocusNode currentFocus, FocusNode newFocused) {
     currentFocus.unfocus();
     FocusScope.of(context).requestFocus(newFocused);
   }
@@ -188,14 +209,66 @@ class _PerfilDetailsEditorScreenState extends State<PerfilDetailsEditorScreen> {
   bool _validation() => _formKey.currentState.validate();
 
   void _showModalBottomSheet() {
-    showModalBottomSheet(context: context, builder: (BuildContext context) {
-      return ChoosePictureBottomSheetWidget(
-        onSelected: (pictureFile){
-          Navigator.pop(context);
-          if (pictureFile!=null)
-            _circularWidgetBloc.addToSink( FileImage(pictureFile ) );
-        },
-      );
-    });
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return ChoosePictureBottomSheetWidget(
+            onSelected: (pictureFile) {
+              Navigator.pop(context);
+              if (pictureFile != null) {
+                _circularWidgetBloc.addToSink(
+                  FileImage(pictureFile),
+                );
+                _currentImageFile = pictureFile;
+              }
+            },
+          );
+        });
+  }
+
+  //TEST metdo de testes!
+  Future<void> _updateUserData() async {
+
+    String url;
+    var results;
+    FirebaseUser fbUser;
+
+    _handler.show(message: "Atualizando dados...");
+
+    if (_currentImageFile != null) {
+      url = await FirebaseStorageHelper.saveUserProfilePicture(
+          picture: _currentImageFile,
+          userUid: UserRepository().currentUser.uid);
+
+      if (url != null)
+        CachedNetworkImageProvider(url);
+    }
+
+    fbUser = await FirebaseAuth.instance.currentUser();
+    results = await FirebaseUserHelper.updateFirebaseUserInfo(
+        currentUser: fbUser,
+        photoUrl: url,
+        displayName: _nameInputController.text);
+
+     if (results)
+       fbUser = await FirebaseAuthHelper.reAuthCurrentUser();
+
+     var user = UserRepository().currentUser;
+     user.picturePath = fbUser.photoUrl;
+     user.name = fbUser.displayName;
+
+    if (user.professionalData != null) {
+      user.professionalData.descricao =
+          _descriptionFieldController.text;
+      user.professionalData.telefone =
+          _phoneFieldController.text;
+      user.professionalData.nome = fbUser.displayName;
+
+      FirebaseUserHelper.registerUserProfessionalData(
+          user.professionalData );
+    }
+
+    FirebaseUserHelper.writeUserAccountData(fbUser);
+    _handler.dismiss();
   }
 }

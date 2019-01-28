@@ -11,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:autonos_app/utility/SharedPreferencesUtility.dart';
 import 'package:autonos_app/firebase/FirebaseAuthHelper.dart';
+import 'package:autonos_app/utility/Constants.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -18,9 +19,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final SizedBox _VERTICAL_SEPARATOR = SizedBox(
-    height: 16.0,
-  );
 
   bool iconVisibility = false;
   Icon icon = Icon(Icons.visibility_off);
@@ -39,7 +37,9 @@ class _LoginScreenState extends State<LoginScreen> {
     height: 140.0,
     child: DecoratedBox(
       decoration: BoxDecoration(
-        image: DecorationImage(image: AssetImage("assets/login_logo_name.png"), fit: BoxFit.scaleDown),
+        image: DecorationImage(
+            image: AssetImage(Constants.LOGO_PICTURE_FILE_NAME),
+            fit: BoxFit.scaleDown),
       ),
     ),
   );
@@ -86,7 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
       case FacebookLoginStatus.loggedIn:
         print("LoggedIn");
         _handler.show(message: "Aguarde...");
-        //TODO BUG o results está vindo nulo!
+
         var resuls = await FirebaseAuthHelper.firebaseAuthWithFacebook(
             token: facebookLoginResult.accessToken.token);
         if (resuls){
@@ -437,20 +437,20 @@ class _LoginScreenState extends State<LoginScreen> {
       autovalidate: _autoValidate,
       child: ListView(
         children: <Widget>[
-          _VERTICAL_SEPARATOR,
+          Constants.VERTICAL_SEPARATOR_16,
           logo,
-          _VERTICAL_SEPARATOR,
+          Constants.VERTICAL_SEPARATOR_16,
           emailField,
-          _VERTICAL_SEPARATOR,
+          Constants.VERTICAL_SEPARATOR_16,
           passwordField,
           userSupportLayout,
-          _VERTICAL_SEPARATOR,
+          Constants.VERTICAL_SEPARATOR_16,
           loginButton,
-          _VERTICAL_SEPARATOR,
+          Constants.VERTICAL_SEPARATOR_16,
           divisiorOuGroup,
-          _VERTICAL_SEPARATOR,
+          Constants.VERTICAL_SEPARATOR_16,
           facebookLoginButton,
-          _VERTICAL_SEPARATOR,
+          Constants.VERTICAL_SEPARATOR_16,
           divisor,
           registerTextGroup,
         ],

@@ -14,7 +14,6 @@ class UserRepository {
   SharedPreferences preferences;
   String fbPassword="";/// password se a conta for de algum provider do firebase
   String fbLogin=""; /// login se a conta for de algum provier do firebase
-  String imageUrl;
 
   factory UserRepository(){
     return _instance;

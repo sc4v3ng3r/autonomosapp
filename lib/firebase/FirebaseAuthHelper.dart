@@ -1,9 +1,11 @@
 import 'dart:io' show Platform;
 import 'package:autonos_app/firebase/FirebaseUserHelper.dart';
 import 'package:autonos_app/model/User.dart';
+import 'package:autonos_app/utility/Constants.dart';
 import 'package:autonos_app/utility/UserRepository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:meta/meta.dart';
 
 enum AuthResult {
@@ -32,7 +34,6 @@ class FirebaseAuthHelper {
         rep.currentUser = user;
         rep.fbPassword = password;
         rep.fbLogin = email;
-        rep.imageUrl = user.picturePath;
         return AuthResult.OK;
 
       }).catchError((onError) {
@@ -47,21 +48,21 @@ class FirebaseAuthHelper {
     print("FirebaseAuth -> Token:" + token);
     User user;
     FirebaseUser firebaseUser = await _authInstance.signInWithFacebook(accessToken: token);
+
     if (firebaseUser == null)
       return false;
 
     try {
       user = await FirebaseUserHelper.readUserAccountData(firebaseUser);
       user.picturePath = firebaseUser.photoUrl;
+
       print("USER DATA READED WITH FACEBOOK ${user.email} ${user.name}");
       UserRepository().currentUser = user;
-      //todo desnecessaro
-      UserRepository().imageUrl = user.picturePath;
-      print("RETURNING TRUE");
       return true;
     }
-
+    // se eh a primeira vez de login com o facebook, entra nessa parte!
     catch (ex) {
+
       user = await FirebaseUserHelper.writeUserAccountData(firebaseUser);
 
       if (user != null){
@@ -77,6 +78,51 @@ class FirebaseAuthHelper {
       }
 
     }
+  }
+
+
+  static Future<FirebaseUser> createUserAccountWithEmailPassword(
+      {@required String email, @required password}) async{
+    FirebaseUser createdUser;
+    try{
+      createdUser = await _authInstance.createUserWithEmailAndPassword(
+          email: email, password: password);
+    }
+
+    catch ( ex ){
+      print(ex.toString() );
+    }
+
+    return createdUser;
+  }
+
+  static Future<FirebaseUser> reAuthCurrentUser() async {
+    UserRepository repository = UserRepository();
+    FirebaseUser fbUser = await FirebaseAuth.instance.currentUser();
+    var isFacebook = await _userProviderIsFacebook();
+
+    if (isFacebook) {
+      FacebookAccessToken accessToken = await FacebookLogin().currentAccessToken;
+
+      await FirebaseAuth.instance.reauthenticateWithFacebookCredential(
+          accessToken: accessToken.token);
+      fbUser = await FirebaseAuth.instance.currentUser();
+
+      return fbUser;
+    }
+
+    await FirebaseAuth.instance.reauthenticateWithEmailAndPassword(
+        email: repository.fbLogin,
+        password: repository.fbPassword);
+
+    fbUser = await FirebaseAuth.instance.currentUser();
+    return fbUser;
+
+  }
+
+  static Future<bool> _userProviderIsFacebook() async {
+    FirebaseUser fbUser = await FirebaseAuth.instance.currentUser();
+    return (fbUser.providerData[1].providerId.compareTo( Constants.PROVIDER_ID_FACEBOOK ) == 0);
   }
 
   static AuthResult _errorHandler(PlatformException e){

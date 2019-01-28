@@ -33,6 +33,7 @@ class _PerfilDetailsScreenState extends State<PerfilDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print("Perfil Details FRAGMENT build!");
     List<Widget> widgetList = List();
     final User user = widget._user;
 
@@ -202,9 +203,9 @@ class _PerfilDetailsScreenState extends State<PerfilDetailsScreen> {
     return Card(
       child: ListTile(
         leading: CircleAvatar(
-          backgroundImage: (UserRepository().imageUrl == null)
+          backgroundImage: (UserRepository().currentUser.picturePath == null)
               ? AssetImage("assets/usuario.png") :
-          CachedNetworkImageProvider(UserRepository().imageUrl),
+          CachedNetworkImageProvider(UserRepository().currentUser.picturePath),
         ),
 
         title: Text(widget._user.name,

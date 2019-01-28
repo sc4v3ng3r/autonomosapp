@@ -1,7 +1,8 @@
-import 'dart:io';
 
+import 'package:autonos_app/firebase/FirebaseStorageHelper.dart';
 import 'package:autonos_app/firebase/FirebaseUfCidadesServicosProfissionaisHelper.dart';
 import 'package:autonos_app/model/ProfessionalData.dart';
+import 'package:autonos_app/utility/Constants.dart';
 import 'package:autonos_app/utility/SharedPreferencesUtility.dart';
 import 'package:autonos_app/utility/UserRepository.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -9,14 +10,12 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:autonos_app/model/User.dart';
 import 'package:autonos_app/firebase/FirebaseReferences.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import 'package:meta/meta.dart';
 
 class FirebaseUserHelper {
   static final RATING_INIT_VALUE = 5.0;
   static final FirebaseAuth AUTH = FirebaseAuth.instance;
-  static const String _PROVIDER_ID_FACEBOOK = "facebook.com";
-  static const String _PROVIDER_ID_PASSWORD = "password";
   static const String PROFILE_PICTURE = "_profilePicture.jpg";
 
   //final FirebaseDatabase m_database = FirebaseDatabase.instance;
@@ -41,17 +40,10 @@ class FirebaseUserHelper {
         print("FirebaseUserHelper user $uid exist in DB!");
         user = User.fromDataSnapshot(snapshot);
 
-        String url;
-        if (user.picturePath !=null)
-          url = user.picturePath;
-
-        else
-          url = fbUser.photoUrl;
+        var url = fbUser.photoUrl;
 
         if (url != null)
           CachedNetworkImageProvider( url );
-
-        UserRepository().imageUrl = url;
       }
 
       DataSnapshot professionalData = await proRef.child(user.uid).once();
@@ -60,7 +52,10 @@ class FirebaseUserHelper {
             "FirebaseUserHelper user $uid has pro data ${professionalData.value.toString()}");
         user.professionalData = ProfessionalData.fromSnapshot(professionalData);
       }
-    } catch (ex) {
+
+    }
+
+    catch (ex) {
       print("FirebaseUserHelper ${ex.toString()}");
       throw ex;
     }
@@ -70,8 +65,9 @@ class FirebaseUserHelper {
 
   static Future<User> writeUserAccountData(
       FirebaseUser recentCreatedUser) async {
+
     try {
-      print("Registrando conta no DB!");
+      //print("Registrando conta no DB!");
       User user = new User(
         uid: recentCreatedUser.uid,
         email: recentCreatedUser.email,
@@ -81,11 +77,9 @@ class FirebaseUserHelper {
       );
 
       await USERS_REFERENCE.child(recentCreatedUser.uid).set(user.toJson());
-
       return user;
-    } catch (ex) {
-      throw ex;
-    }
+
+    } catch (ex) { throw ex; }
   }
 
   static Future<void> registerUserProfessionalData(
@@ -160,19 +154,22 @@ class FirebaseUserHelper {
 
   ///Remove toda a "conta do usuário", tanto seus dados do database
   ///quando sua autenticação.
+
+  //TODO nao precisa mais de reauth aqui!! basta chamar reauh de AuthHelper e remover os dados!
   static Future<bool> _removeUserAccountFromAuthSystem( /*User user*/) async {
     UserRepository repository = UserRepository();
     FirebaseUser fbUser = await FirebaseAuth.instance.currentUser();
 
     // Se estar logado com facebook account
-    if (fbUser.providerData[1].providerId.compareTo( _PROVIDER_ID_FACEBOOK ) == 0) {
+    if (fbUser.providerData[1].providerId.compareTo( Constants.PROVIDER_ID_FACEBOOK ) == 0) {
        FacebookAccessToken accessToken = await FacebookLogin().currentAccessToken;
 
        await FirebaseAuth.instance.reauthenticateWithFacebookCredential(
            accessToken: accessToken.token);
        fbUser = await FirebaseAuth.instance.currentUser();
 
-       await _deleteProfilePictureData(repository.currentUser);
+       await FirebaseStorageHelper.removeUserProfilePicture(
+           userUid: repository.currentUser.uid);
 
        return fbUser.delete()
            .then((_){
@@ -189,7 +186,8 @@ class FirebaseUserHelper {
 
       fbUser = await FirebaseAuth.instance.currentUser();
 
-      await _deleteProfilePictureData(repository.currentUser);
+      await FirebaseStorageHelper.removeUserProfilePicture(
+        userUid: repository.currentUser.uid );
 
       return fbUser.delete().then((_){
         SharedPreferencesUtility.clear();
@@ -199,28 +197,8 @@ class FirebaseUserHelper {
 
   }
 
-  static Future<void> _deleteProfilePictureData(User user) async {
-    var result = await _userProviderIsFacebook();
-    if ( !result ){
-      try{
-        print("REMOVING PICTURE ${user.uid}/${user.email}$PROFILE_PICTURE");
-        await FirebaseStorage.instance.ref()
-            .child("${user.uid}/${user.email}$PROFILE_PICTURE").delete();
-
-      } catch (ex){
-        print(ex);
-      }
-    }
-
-  }
-
-  static Future<bool> _userProviderIsFacebook() async {
-    FirebaseUser fbUser = await FirebaseAuth.instance.currentUser();
-    return (fbUser.providerData[1].providerId.compareTo( _PROVIDER_ID_FACEBOOK ) == 0);
-  }
 
   static Future<bool> removeUser(User user) async {
-    //TODO tem que ser ordem inversa!
     var results = await _removeUserAccountFromAuthSystem();
     if (results){
       _removeUserAccountFromDb(user);
@@ -229,10 +207,24 @@ class FirebaseUserHelper {
     return false;
   }
 
-/*
-  static Future<bool> updateUserProfilePicture(File picture, User user) async{
-    var isFacebookUser = await _userProviderIsFacebook();
-     FirebaseUser fbUser = await FirebaseAuth.instance.currentUser();
-     return true;
-  }*/
+  static Future<bool> updateFirebaseUserInfo({
+    @required FirebaseUser currentUser, String displayName = "", String photoUrl }) async {
+
+    UserUpdateInfo info = UserUpdateInfo();
+
+    info.displayName = displayName;
+
+    if (photoUrl!=null)
+      info.photoUrl = photoUrl;
+
+    try{
+      await currentUser.updateProfile( info );
+      return true;
+    }
+
+    catch (ex){
+      print("FirebaseUserHelper::updateFirebaseUserInfo() $ex");
+      return false;
+    }
+  }
 }

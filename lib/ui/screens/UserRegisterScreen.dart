@@ -1,5 +1,8 @@
 import 'dart:io';
+import 'package:autonos_app/firebase/FirebaseAuthHelper.dart';
+import 'package:autonos_app/firebase/FirebaseUserHelper.dart';
 import 'package:autonos_app/ui/widget/ChoosePictureBottomSheetWidget.dart';
+import 'package:autonos_app/utility/Constants.dart';
 import 'package:autonos_app/utility/SharedPreferencesUtility.dart';
 import 'package:autonos_app/utility/UserRepository.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -421,49 +424,46 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
     return list;
   }
 
-
   //TODO esse método DEVE sair desta classe
   Future<bool> _createUserAccount( var email, var password ) async {
 
-    bool returnFlag = false;
-    FirebaseAuth auth = FirebaseAuth.instance;
-    FirebaseUser firebaseUser;
-    try {
-      firebaseUser = await auth.createUserWithEmailAndPassword(
+    FirebaseUser firebaseUser = await FirebaseAuthHelper.createUserAccountWithEmailPassword(
           email: email, password: password);
-      String pictureDownloadUrl;
+    bool returnFlag = false;
 
-      // aqui a gente faz o upload da foto de usuario caso exista!
-      if (_selectedUserImageFile?.path != null){
-        final StorageReference ref = FirebaseStorage.instance
-            .ref().child("${firebaseUser.uid}/${firebaseUser.email}_profilePicture.jpg");
-        final StorageUploadTask uploadTask = ref.putFile(_selectedUserImageFile);
-        final StorageTaskSnapshot snapshotTask = (await uploadTask.onComplete);
-        pictureDownloadUrl = await snapshotTask.ref.getDownloadURL();
-      }
+    if (firebaseUser == null)
+      return returnFlag;
 
+    String pictureDownloadUrl;
+
+    if ( _selectedUserImageFile?.path != null ){
+      final StorageReference ref = FirebaseStorage.instance.ref()
+          .child("${firebaseUser.uid}/${firebaseUser.email}${Constants.PROFILE_PICTURE_FILE_NAME}");
+
+      final StorageUploadTask uploadTask = ref.putFile(_selectedUserImageFile);
+      final StorageTaskSnapshot snapshotTask = (await uploadTask.onComplete);
+      pictureDownloadUrl = await snapshotTask.ref.getDownloadURL();
+
+    }
+
+    try{
       User userCreated = await _createAccountDBRegister(firebaseUser, pictureDownloadUrl );
       var repository = UserRepository();
       repository.currentUser = userCreated;
       repository.fbPassword = password;
       repository.fbLogin = email;
-      //TODO isso aqui eh desnecessario!
-      repository.imageUrl =  userCreated.picturePath;
 
       SharedPreferencesUtility.writePreferencesData(
           email: email, password: password, rememberMe: true);
 
       returnFlag = true;
-
     }
 
     catch ( ex ){
-      // NEsse caso aqui o usuario nao foi criado!
       print(ex.toString()  + " ${firebaseUser} " );
     }
     return returnFlag;
   }
-
 
   //TODO esse método DEVE sair desta classe
   Future<User> _createAccountDBRegister(FirebaseUser recentCreatedUser, String pictureUrl) async {
@@ -473,6 +473,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
       print("Registrando conta no DB!");
       if (name == null)
         name = _nameController.text;
+
       User user = new User(
           uid: recentCreatedUser.uid,
           email: recentCreatedUser.email,
@@ -483,6 +484,8 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
       await _userReference.child(recentCreatedUser.uid)
           .set(user.toJson());
 
+      await FirebaseUserHelper.updateFirebaseUserInfo( currentUser: recentCreatedUser,
+        displayName: name, photoUrl: pictureUrl, );
       return user;
     }
 
@@ -494,20 +497,6 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
           + error.toString()));
     }
     return null;
-  }
-
-  void _selectPictureFromGallery() async {
-/*
-    File imageFile = await ImagePicker.pickImage(
-        source: ImageSource.gallery
-    );
-    if (imageFile!=null){
-      setState(() {
-        _selectedUserImage = imageFile;
-      });
-    }
-    print ("returned $imageFile");*/
-
   }
 
   void _displayBottomSheet(){

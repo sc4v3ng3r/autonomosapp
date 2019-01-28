@@ -197,8 +197,8 @@ class _MainScreenState extends State<MainScreen> {
         rating: _user.rating,
       ),
       currentAccountPicture: CircleAvatar(
-        backgroundImage: (_repository.imageUrl == null) ? AssetImage("assets/usuario.png") :
-        CachedNetworkImageProvider(_repository.imageUrl),
+        backgroundImage: (_repository.currentUser.picturePath == null) ? AssetImage("assets/usuario.png") :
+        CachedNetworkImageProvider(_repository.currentUser.picturePath ),
       ),
     );
     drawerOptions.add(drawerHeader);
