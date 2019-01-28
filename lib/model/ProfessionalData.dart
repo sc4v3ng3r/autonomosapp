@@ -17,6 +17,7 @@ class ProfessionalData {
   double latitude =0.0;
   double longitude = 0.0;
   String uid;
+  String photoUrl;
 
   static final String UID = "uid";
   static final String _NOME = "nome";
@@ -31,6 +32,7 @@ class ProfessionalData {
   static final String _LONGITUDE = "longitude";
   static final String _FORMAS_PAGAMENTO = "formasPagamento"; // array
   static final String _ESTADO_ATUANTE = "estadoAtuante";
+  static final String _PHOTO_URL = "photoUrl";
 
   ProfessionalData();
 
@@ -46,6 +48,7 @@ class ProfessionalData {
     _SERVICOS : servicosAtuantes,
     _NOTA_FISCAL : emissorNotaFiscal,
     _FORMAS_PAGAMENTO : formasPagamento,
+    _PHOTO_URL :photoUrl,
     //TODO ambos podem virar um objeto especifico LOCALIZACAO, facilitara o rastreio!
     _LATITUDE : latitude,
     _LONGITUDE : longitude,
@@ -60,6 +63,7 @@ class ProfessionalData {
       descricao = json[_DESCRICAO],
       latitude = json[_LATITUDE],
       longitude = json[_LONGITUDE],
+      photoUrl = json[_PHOTO_URL],
       estadoAtuante = json[_ESTADO_ATUANTE],
       emissorNotaFiscal = json[_NOTA_FISCAL],
       servicosAtuantes = List.from( json[_SERVICOS] ),
@@ -70,6 +74,7 @@ class ProfessionalData {
       uid = snapshot.value[UID],
       nome= snapshot.value[_NOME],
       documento = snapshot.value[_DOCUMENTO],
+      photoUrl = snapshot.value[_PHOTO_URL],
       tipoPessoa = snapshot.value[_TIPO_PESSOA],
       telefone = snapshot.value[_TELEFONE],
       descricao = snapshot.value[_DESCRICAO],
@@ -89,6 +94,6 @@ class ProfessionalData {
         "$_TELEFONE: $telefone\n"
         "$_ESTADO_ATUANTE $estadoAtuante\n"
         "$_LATITUDE: $latitude\n"
-        "$_LONGITUDE: $longitude" ;
+        "$_LONGITUDE: $longitude";
   }
 }

@@ -34,6 +34,7 @@ public class NativeMapActivity extends AppCompatActivity implements OnMapReadyCa
   public static final String KEY_UID = "uid";
   public static final String KEY_NOME = "nome";
   public static final String KEY_TELEFONE ="telefone";
+  public static final String KEY_PHOTO_URL = "photoUrl";
 
   private ArrayList<HashMap<String,Object>> m_dataList;
   private LatLng m_myPlace;
@@ -59,7 +60,8 @@ public class NativeMapActivity extends AppCompatActivity implements OnMapReadyCa
   public void onMapReady( GoogleMap googleMap ) {
     m_map = googleMap;
 
-    m_map.setInfoWindowAdapter( new ProfessionalMarkInfoAdapter(NativeMapActivity.this));
+    m_map.setInfoWindowAdapter( new ProfessionalMarkInfoAdapter(NativeMapActivity.this) );
+
     Iterator<HashMap<String,Object>> listIterator = m_dataList.iterator();
     while (listIterator.hasNext()){
       HashMap<String, Object> json = listIterator.next();
@@ -84,6 +86,8 @@ public class NativeMapActivity extends AppCompatActivity implements OnMapReadyCa
     public boolean onMarkerClick(Marker marker) {
       HashMap<String,Object> data = (HashMap<String, Object>) marker.getTag();
       Log.i("DBG", "usuario: " + data.get( KEY_UID ));
+
+
       //avisar ao flutter qual item foi clicado!!!
       return false;
     }

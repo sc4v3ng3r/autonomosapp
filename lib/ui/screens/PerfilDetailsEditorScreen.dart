@@ -258,6 +258,8 @@ class _PerfilDetailsEditorScreenState extends State<PerfilDetailsEditorScreen> {
      user.name = fbUser.displayName;
 
     if (user.professionalData != null) {
+      if (url != null)
+        user.professionalData.photoUrl = url;
       user.professionalData.descricao =
           _descriptionFieldController.text;
       user.professionalData.telefone =

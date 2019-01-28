@@ -11,18 +11,18 @@ import 'package:autonos_app/ui/widget/ChipPanelWidget.dart';
 import 'package:autonos_app/bloc/PerfilDetailsScreenBloc.dart';
 import 'package:autonos_app/ui/screens/LocationEditorScreen.dart';
 
-// TODO renomear para Widget ou Fragment, pq essa widget NÃO É UMA TELA!
-class PerfilDetailsScreen extends StatefulWidget {
+
+class PerfilDetailsWidget extends StatefulWidget {
   final User _user;
   final SizedBox _SEPARATOR = SizedBox(height: 8.0,);
 
-  PerfilDetailsScreen({@required User user}): _user = user;
+  PerfilDetailsWidget( {@required User user} ): _user = user;
 
   @override
-  _PerfilDetailsScreenState createState() => _PerfilDetailsScreenState();
+  _PerfilDetailsWidgetState createState() => _PerfilDetailsWidgetState();
 }
 
-class _PerfilDetailsScreenState extends State<PerfilDetailsScreen> {
+class _PerfilDetailsWidgetState extends State<PerfilDetailsWidget> {
   PerfilDetailsScreenBloc _bloc;
 
   @override

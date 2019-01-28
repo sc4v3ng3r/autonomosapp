@@ -139,6 +139,7 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
 
   Future<void> _finishRegister() async {
     _handler.show(message: "Registrando...");
+    widget._bloc.currentData.photoUrl = UserRepository().currentUser.picturePath;
     FirebaseUserHelper.registerUserProfessionalData(widget._bloc.currentData)
         .then( (_) {
           _handler.dismiss();

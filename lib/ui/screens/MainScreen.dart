@@ -20,8 +20,7 @@ import 'package:autonos_app/utility/LocationUtility.dart';
 import 'package:flutter/services.dart';
 import 'package:autonos_app/ui/widget/GenericAlertDialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:autonos_app/ui/screens/PerfilDetailsScreen.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:autonos_app/ui/widget/PerfilDetailsWidget.dart';
 import 'dart:io' show Platform;
 
 //FIXME BUG build method é sempre chamado até mesmo quando clicamos Ok no teclado
@@ -197,7 +196,8 @@ class _MainScreenState extends State<MainScreen> {
         rating: _user.rating,
       ),
       currentAccountPicture: CircleAvatar(
-        backgroundImage: (_repository.currentUser.picturePath == null) ? AssetImage("assets/usuario.png") :
+        backgroundImage: (_repository.currentUser.picturePath == null) ?
+        AssetImage("assets/usuario.png") :
         CachedNetworkImageProvider(_repository.currentUser.picturePath ),
       ),
     );
@@ -388,7 +388,7 @@ class _MainScreenState extends State<MainScreen> {
     switch (position) {
       case 0:
         _serviceListFragment = null;
-        return PerfilDetailsScreen(user: _user); /*PerfilUsuarioScreen()*/
+        return PerfilDetailsWidget(user: _user); /*PerfilUsuarioScreen()*/
 
       case 1:
         return _serviceListFragment;
@@ -484,12 +484,16 @@ class _MainScreenState extends State<MainScreen> {
               serviceId: serviceItem.id).then(
               (snapshotProfIds) {
                 if (snapshotProfIds.value != null) {
+
                   Map<String, dynamic> idsMap = Map.from(snapshotProfIds.value);
+                  //removo usuario atual da lista caso o mesmo exerca o servico procurado
+                  //idsMap.remove(_user.uid);
+
                   List<dynamic> dataList = new List();
+
                   FirebaseUserHelper.getProfessionalsData(
                       idsMap.keys.toList() ).then((dataMap) {
                         dataMap.forEach( (key, value) => dataList.add(value) );
-
                         _showAndroidNativeMapActivity(dataList);
                       });
                 }

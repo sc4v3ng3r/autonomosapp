@@ -1,25 +1,18 @@
-
+import 'package:autonos_app/firebase/FirebaseAuthHelper.dart';
 import 'package:autonos_app/firebase/FirebaseStorageHelper.dart';
 import 'package:autonos_app/firebase/FirebaseUfCidadesServicosProfissionaisHelper.dart';
 import 'package:autonos_app/model/ProfessionalData.dart';
-import 'package:autonos_app/utility/Constants.dart';
-import 'package:autonos_app/utility/SharedPreferencesUtility.dart';
 import 'package:autonos_app/utility/UserRepository.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:autonos_app/model/User.dart';
 import 'package:autonos_app/firebase/FirebaseReferences.dart';
-import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:meta/meta.dart';
 
 class FirebaseUserHelper {
   static final RATING_INIT_VALUE = 5.0;
   static final FirebaseAuth AUTH = FirebaseAuth.instance;
-  static const String PROFILE_PICTURE = "_profilePicture.jpg";
-
-  //final FirebaseDatabase m_database = FirebaseDatabase.instance;
-
   static final DatabaseReference USERS_REFERENCE = FirebaseDatabase.instance
       .reference()
       .child(FirebaseReferences.REFERENCE_USERS);
@@ -156,47 +149,18 @@ class FirebaseUserHelper {
   ///quando sua autenticação.
 
   //TODO nao precisa mais de reauth aqui!! basta chamar reauh de AuthHelper e remover os dados!
-  static Future<bool> _removeUserAccountFromAuthSystem( /*User user*/) async {
+  static Future<bool> _removeUserAccountFromAuthSystem() async {
     UserRepository repository = UserRepository();
-    FirebaseUser fbUser = await FirebaseAuth.instance.currentUser();
+    FirebaseUser fbUser =  await FirebaseAuthHelper.reAuthCurrentUser();
 
-    // Se estar logado com facebook account
-    if (fbUser.providerData[1].providerId.compareTo( Constants.PROVIDER_ID_FACEBOOK ) == 0) {
-       FacebookAccessToken accessToken = await FacebookLogin().currentAccessToken;
+    await FirebaseStorageHelper.removeUserProfilePicture(
+        userUid: repository.currentUser.uid);
 
-       await FirebaseAuth.instance.reauthenticateWithFacebookCredential(
-           accessToken: accessToken.token);
-       fbUser = await FirebaseAuth.instance.currentUser();
-
-       await FirebaseStorageHelper.removeUserProfilePicture(
-           userUid: repository.currentUser.uid);
-
-       return fbUser.delete()
-           .then((_){
-             return true;
-           }).catchError((error){ print("Error $error"); return false;});
-    }
-
-    else{ // estar logado com firebase account
-      //var preferences = await SharedPreferences.getInstance();
-
-      await FirebaseAuth.instance.reauthenticateWithEmailAndPassword(
-          email: repository.fbLogin,
-          password: repository.fbPassword);
-
-      fbUser = await FirebaseAuth.instance.currentUser();
-
-      await FirebaseStorageHelper.removeUserProfilePicture(
-        userUid: repository.currentUser.uid );
-
-      return fbUser.delete().then((_){
-        SharedPreferencesUtility.clear();
-        return true;
-      }).catchError((error){ print("Error $error"); return false;});
-    }
-
+    return fbUser.delete()
+        .then((_){
+          return true;
+        }).catchError((error){ print("Error $error"); return false;});
   }
-
 
   static Future<bool> removeUser(User user) async {
     var results = await _removeUserAccountFromAuthSystem();
