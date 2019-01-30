@@ -38,6 +38,7 @@ public class NativeMapActivity extends AppCompatActivity implements OnMapReadyCa
 
   private ArrayList<HashMap<String,Object>> m_dataList;
   private LatLng m_myPlace;
+  private MethodChannelHolder m_channelHolder = MethodChannelHolder.getInstance();
 
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -64,31 +65,36 @@ public class NativeMapActivity extends AppCompatActivity implements OnMapReadyCa
 
     Iterator<HashMap<String,Object>> listIterator = m_dataList.iterator();
     while (listIterator.hasNext()){
-      HashMap<String, Object> json = listIterator.next();
+      HashMap<String, Object> professionalJsonData = listIterator.next();
 
       MarkerOptions markerOptions = new MarkerOptions();
-      Double lat = (Double)json.get(KEY_LATITUDE);
-      Double lng = (Double)json.get(KEY_LONGITUDE);
+      Double lat = (Double)professionalJsonData.get(KEY_LATITUDE);
+      Double lng = (Double)professionalJsonData.get(KEY_LONGITUDE);
 
       markerOptions.position(new LatLng( lat, lng) );
       markerOptions.draggable(false);
 
-      m_map.addMarker( markerOptions ).setTag( json );
+      m_map.addMarker( markerOptions ).setTag( professionalJsonData );
       m_map.setOnMarkerClickListener( this );
     }
 
-    m_map.moveCamera(CameraUpdateFactory.newLatLng(m_myPlace) );
-    m_map.animateCamera(CameraUpdateFactory.newLatLngZoom(m_myPlace, 12.0f), 1500, null );
+      m_map.moveCamera(CameraUpdateFactory.newLatLng(m_myPlace) );
+      m_map.animateCamera(CameraUpdateFactory.newLatLngZoom(m_myPlace, 12.0f), 1500, null );
+      m_map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
 
+      @Override
+      public void onInfoWindowClick(Marker marker) {
+        HashMap<String, Object> professionalJsonData  = (HashMap<String, Object>) marker.getTag();
+        Log.i("DBG", "User selected " + professionalJsonData.get(KEY_UID) );
+        //m_channelHolder.getChannel().invokeMethod("message", professionalJsonData);
+      }
+    });
   }
 
     @Override
     public boolean onMarkerClick(Marker marker) {
       HashMap<String,Object> data = (HashMap<String, Object>) marker.getTag();
       Log.i("DBG", "usuario: " + data.get( KEY_UID ));
-
-
-      //avisar ao flutter qual item foi clicado!!!
       return false;
     }
 }

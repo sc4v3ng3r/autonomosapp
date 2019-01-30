@@ -191,4 +191,7 @@ class FirebaseUserHelper {
       return false;
     }
   }
+
+  static Future<DataSnapshot> readUserNode({@required String uid}) async
+     => USERS_REFERENCE.child(uid).once();
 }

@@ -3,8 +3,10 @@ import 'package:autonos_app/firebase/FirebaseUfCidadesServicosProfissionaisHelpe
 import 'package:autonos_app/firebase/FirebaseUserHelper.dart';
 import 'package:autonos_app/model/Estado.dart';
 import 'package:autonos_app/model/Location.dart';
+import 'package:autonos_app/model/ProfessionalData.dart';
 import 'package:autonos_app/model/Service.dart';
 import 'package:autonos_app/ui/screens/LoginScreen.dart';
+import 'package:autonos_app/ui/screens/ProfessionalPerfilScreen.dart';
 import 'package:autonos_app/ui/screens/ui_cadastro_autonomo/ProfessionalRegisterBasicInfoScreen.dart';
 import 'package:autonos_app/ui/widget/ModalRoundedProgressBar.dart';
 import 'package:autonos_app/ui/widget/RatingBar.dart';
@@ -51,7 +53,7 @@ class _MainScreenState extends State<MainScreen> {
 
   final bool sair = false;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  static const platform =
+  static const _platform =
       const MethodChannel("autonomos.com.br.jopeb.autonosapp");
 
   int _drawerCurrentPosition;
@@ -77,6 +79,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
+    _platform.setMethodCallHandler( _handleMethod );
     _repository = UserRepository();
     _user = _repository.currentUser;
 
@@ -519,13 +522,15 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Future<Null> _showAndroidNativeMapActivity(List<dynamic> dataMapList) async {
+
     try {
-      var result = await platform.invokeMethod(
+      var result = await _platform.invokeMethod(
           'show_maps_activity', {
             "dataList": dataMapList,
             "localLat": UserRepository().currentLocation.latitude,
             "localLong":UserRepository().currentLocation.longitude,
       });
+
       _progressBarHandler.dismiss();
     } on PlatformException catch (e) {
       print("ERROR ${e.message} ${e.code}");
@@ -604,12 +609,19 @@ class _MainScreenState extends State<MainScreen> {
    * ANDROID NATIVO PARA O FLUTTER.*/
   //metodo que trata as chamadas do nativo ao flutter
 
-  /*Future<dynamic> _handleMethod(MethodCall call) async {
+  Future<dynamic> _handleMethod(MethodCall call) async {
+    print("handle_method flutter side");
     switch (call.method) {
       case "message":
-        debugPrint(call.arguments);
-        return new Future.value("");
+        ProfessionalData data = ProfessionalData.fromJson( Map.from( call.arguments));
+        return Navigator.push(context, MaterialPageRoute( builder: (builContext){
+          return ProfessionalPerfilScreen(
+            userProData: data,
+          );
+        } ) );
+        //print(call.arguments);
+        //return new Future.value("");
     }
-  }*/
+  }
 
 } // end of class

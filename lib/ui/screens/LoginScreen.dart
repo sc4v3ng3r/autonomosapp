@@ -38,7 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
     child: DecoratedBox(
       decoration: BoxDecoration(
         image: DecorationImage(
-            image: AssetImage(Constants.LOGO_PICTURE_FILE_NAME),
+            image: AssetImage(Constants.ASSETS_LOGIN_LOGO_FILE_NAME),
             fit: BoxFit.scaleDown),
       ),
     ),

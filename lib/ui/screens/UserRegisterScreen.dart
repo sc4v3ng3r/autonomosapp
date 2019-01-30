@@ -438,7 +438,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
 
     if ( _selectedUserImageFile?.path != null ){
       final StorageReference ref = FirebaseStorage.instance.ref()
-          .child("${firebaseUser.uid}/${firebaseUser.email}${Constants.PROFILE_PICTURE_FILE_NAME}");
+          .child("${firebaseUser.uid}/${firebaseUser.email}${Constants.STORAGE_USER_PICTURE_FILE_NAME}");
 
       final StorageUploadTask uploadTask = ref.putFile(_selectedUserImageFile);
       final StorageTaskSnapshot snapshotTask = (await uploadTask.onComplete);

@@ -12,7 +12,7 @@ class FirebaseStorageHelper {
     String pictureDownloadUrl;
 
     final StorageReference ref = FirebaseStorage.instance.ref()
-        .child("$userUid/${Constants.PROFILE_PICTURE_FILE_NAME}");
+        .child("$userUid/${Constants.STORAGE_USER_PICTURE_FILE_NAME}");
 
     try {
       final StorageUploadTask uploadTask = ref.putFile(picture);
@@ -30,9 +30,9 @@ class FirebaseStorageHelper {
   static Future<void> removeUserProfilePicture({@required String userUid }) async {
     try{
 
-      print("REMOVING PICTURE $userUid/${Constants.PROFILE_PICTURE_FILE_NAME}");
+      print("REMOVING PICTURE $userUid/${Constants.STORAGE_USER_PICTURE_FILE_NAME}");
       await FirebaseStorage.instance.ref()
-          .child("$userUid/${Constants.PROFILE_PICTURE_FILE_NAME}").delete();
+          .child("$userUid/${Constants.STORAGE_USER_PICTURE_FILE_NAME}").delete();
     }
     catch (ex){ print(ex); }
   }

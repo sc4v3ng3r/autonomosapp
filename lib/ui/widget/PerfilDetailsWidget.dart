@@ -4,19 +4,21 @@ import 'package:autonos_app/ui/screens/PaymentDataEditorScreen.dart';
 import 'package:autonos_app/ui/screens/PerfilDetailsEditorScreen.dart';
 import 'package:autonos_app/ui/screens/ServiceEditorScreen.dart';
 import 'package:autonos_app/ui/widget/RatingBar.dart';
-import 'package:autonos_app/utility/UserRepository.dart';
+import 'package:autonos_app/utility/Constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:autonos_app/ui/widget/ChipPanelWidget.dart';
 import 'package:autonos_app/bloc/PerfilDetailsScreenBloc.dart';
 import 'package:autonos_app/ui/screens/LocationEditorScreen.dart';
 
-
 class PerfilDetailsWidget extends StatefulWidget {
   final User _user;
   final SizedBox _SEPARATOR = SizedBox(height: 8.0,);
+  final bool _editable;
 
-  PerfilDetailsWidget( {@required User user} ): _user = user;
+  PerfilDetailsWidget( {@required User user, bool editable = true} ):
+      _editable = editable,
+      _user = user;
 
   @override
   _PerfilDetailsWidgetState createState() => _PerfilDetailsWidgetState();
@@ -33,35 +35,28 @@ class _PerfilDetailsWidgetState extends State<PerfilDetailsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    print("Perfil Details FRAGMENT build!");
+
     List<Widget> widgetList = List();
     final User user = widget._user;
 
     var header = _createHeader();
     var userName = createTextRow(user.name, fontSize: 22.0);
-    var userEmail =  createTextRow(user.email);
+    var userEmail =  createTextRow(user.email, preIcon: Icon(Icons.email) );
 
     var userRatingBar = Row(
       children: <Widget>[
         RatingBar( rating: user.rating, ),
-        Text("(${user.rating})", style: TextStyle(
-          fontSize: 16.0,
-        ),),
+        Text("(${user.rating})",
+          style: TextStyle(
+          fontSize: 16.0,),
+        ),
       ],
     );
 
     widgetList.add( userName);//0
-    //widgetList.add(widget._SEPARATOR);//1
     widgetList.add( userRatingBar );//1
-    widgetList.add(widget._SEPARATOR);//2
+    widgetList.add( widget._SEPARATOR );//2
     widgetList.add( userEmail);//3
-
-    var changePassword = GestureDetector(
-      child: createTextRow("Alterar Senha", fontSize: 20, color: Colors.blue),
-      onTap: (){
-        print("Change password screen");
-      },
-    );
 
     if (user.professionalData!=null){
       _bloc = PerfilDetailsScreenBloc(user.professionalData.servicosAtuantes);
@@ -78,17 +73,20 @@ class _PerfilDetailsWidgetState extends State<PerfilDetailsWidget> {
       var emissor = user.professionalData.emissorNotaFiscal;
       var userNote = createTextRow("Emite nota fiscal:",
           afterIcon: (emissor == true) ? Icon(Icons.done, color: Colors.green ) :
+          Icon( Icons.clear, color: Colors.red,));
 
-      Icon( Icons.clear, color: Colors.red,));
       widgetList.insert(3, userNote);
       widgetList.insert(4, widget._SEPARATOR);
       widgetList.insert(5, userPhone);
-      widgetList.add(changePassword);
+
+      if (widget._editable)
+        widgetList.add( _getChangePasswordField() );
+
       widgetList.add(widget._SEPARATOR);
 
       var cityChipContainer = ChipPanelWidget<String>(
         title: "Cidades Atuantes",
-        editable: true,
+        editable: widget._editable,
         data: user.professionalData.cidadesAtuantes,
         onEditCallback: (userCityNamesList){
           Navigator.push(context, MaterialPageRoute(
@@ -107,13 +105,11 @@ class _PerfilDetailsWidgetState extends State<PerfilDetailsWidget> {
 
       var servicesChipContainer = ChipPanelWidget<Service>(
         title: "Serviços Atuantes",
-        editable: true,
+        editable: widget._editable,
         dataStream: _bloc.userServices,
         onEditCallback: (serviceList){
           Navigator.push(context, MaterialPageRoute(builder: (buildContext){
-              return ServiceEditorScreen(
-                  currentServicesList: serviceList,
-              );
+              return ServiceEditorScreen( currentServicesList: serviceList, );
             }),
           );
         },
@@ -125,22 +121,22 @@ class _PerfilDetailsWidgetState extends State<PerfilDetailsWidget> {
       var paymentPanel = ChipPanelWidget<String>(
         title: "Formas de pagamento",
         data: user.professionalData.formasPagamento,
-        editable: true,
+        editable: widget._editable,
         onEditCallback: (dataList){
           Navigator.push(context, MaterialPageRoute(builder: (context){
             return PaymentDataEditorScreen(
               payments: dataList,
               emissorData: user.professionalData.emissorNotaFiscal,
             );
-          }) );
+          }));
         },
       );
-      widgetList.add( paymentPanel);
+      widgetList.add( paymentPanel );
     }
 
-    // o usuario não é um profissional
     else {
-      widgetList.add( changePassword );
+      if (widget._editable)
+        widgetList.add( _getChangePasswordField() );
       widgetList.add( widget._SEPARATOR );
     }
 
@@ -159,7 +155,6 @@ class _PerfilDetailsWidgetState extends State<PerfilDetailsWidget> {
         infoGroup,
       ],
     );
-
   }
 
   /// Método para criação de linhas que podem conter, um Icone inicial,
@@ -203,9 +198,9 @@ class _PerfilDetailsWidgetState extends State<PerfilDetailsWidget> {
     return Card(
       child: ListTile(
         leading: CircleAvatar(
-          backgroundImage: (UserRepository().currentUser.picturePath == null)
-              ? AssetImage("assets/usuario.png") :
-          CachedNetworkImageProvider(UserRepository().currentUser.picturePath),
+          backgroundImage: (widget._user.picturePath == null)
+              ? AssetImage(Constants.ASSETS_LOGO_USER_PROFILE_FILE_NAME) :
+          CachedNetworkImageProvider(widget._user.picturePath),
         ),
 
         title: Text(widget._user.name,
@@ -217,7 +212,7 @@ class _PerfilDetailsWidgetState extends State<PerfilDetailsWidget> {
           ),
         ),
 
-        trailing: GestureDetector(
+        trailing: (widget._editable == true) ? GestureDetector(
           child: Text("Editar",
             style: TextStyle(
                 color: Colors.blue,
@@ -230,10 +225,18 @@ class _PerfilDetailsWidgetState extends State<PerfilDetailsWidget> {
             })
 
             );
-            print("EDIT user name tapped");
           },
-        ),
+        ) : null
       ),
+    );
+  }
+
+  Widget _getChangePasswordField(){
+    return GestureDetector(
+      child: createTextRow("Alterar Senha", fontSize: 20, color: Colors.blue),
+      onTap: (){
+        print("Change password screen");
+      },
     );
   }
 }

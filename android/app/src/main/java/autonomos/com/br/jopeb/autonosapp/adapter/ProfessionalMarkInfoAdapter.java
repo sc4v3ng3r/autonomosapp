@@ -2,9 +2,6 @@ package autonomos.com.br.jopeb.autonosapp.adapter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
-import android.support.v4.content.res.ResourcesCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -20,7 +17,7 @@ import autonomos.com.br.jopeb.autonosapp.R;
 public class ProfessionalMarkInfoAdapter implements GoogleMap.InfoWindowAdapter {
 
    // private Context m_ctx;
-    private HashMap<String, Object> m_data;
+    private HashMap<String, Object> m_professionalJsonData;
     private View m_contentView;
 
     public ProfessionalMarkInfoAdapter(Context context){
@@ -35,9 +32,8 @@ public class ProfessionalMarkInfoAdapter implements GoogleMap.InfoWindowAdapter 
 
     @Override
     public View getInfoContents(Marker marker) {
-        m_data = (HashMap<String, Object>) marker.getTag();
-        String url = (String)m_data.get(NativeMapActivity.KEY_PHOTO_URL);
-
+        m_professionalJsonData = (HashMap<String, Object>) marker.getTag();
+        String url = (String) m_professionalJsonData.get(NativeMapActivity.KEY_PHOTO_URL);
         ImageView pictureView = m_contentView.findViewById(R.id.MarkInfoProfessionalPicture);
 
         if ( (url!=null) && (!url.isEmpty())) {
@@ -49,11 +45,9 @@ public class ProfessionalMarkInfoAdapter implements GoogleMap.InfoWindowAdapter 
         Log.i("DBG", "URL " + url);
 
         ((TextView)m_contentView.findViewById(R.id.MarkInfoProfessionalName))
-                .setText( (String) m_data.get(NativeMapActivity.KEY_NOME ));
-
+                .setText( (String) m_professionalJsonData.get(NativeMapActivity.KEY_NOME ));
         ((TextView)m_contentView.findViewById(R.id.MarkInfoProfessionalPhone))
-                .setText((String) m_data.get(NativeMapActivity.KEY_TELEFONE));
-
+                .setText((String) m_professionalJsonData.get(NativeMapActivity.KEY_TELEFONE));
 
         return m_contentView;
     }

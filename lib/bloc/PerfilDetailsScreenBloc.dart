@@ -27,7 +27,6 @@ class PerfilDetailsScreenBloc {
   void dispose(){ _servicesFetcher.close(); }
 
   void _addToSink(List<Service> list){
-    //print("Bloc::_addToSink  ${s.name}");
     _servicesFetcher.sink.add(list);
     currentList = list;
   }

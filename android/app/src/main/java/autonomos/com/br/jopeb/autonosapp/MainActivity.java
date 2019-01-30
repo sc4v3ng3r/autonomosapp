@@ -7,7 +7,7 @@ import io.flutter.app.FlutterActivity;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugins.GeneratedPluginRegistrant;
-
+import autonomos.com.br.jopeb.autonosapp.MethodChannelHolder;
 
 public class MainActivity extends FlutterActivity {
 
@@ -18,33 +18,35 @@ public class MainActivity extends FlutterActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
+    MethodChannelHolder holder = MethodChannelHolder.getInstance();
+
     GeneratedPluginRegistrant.registerWith( this );
+      MethodChannel methodChannel = new MethodChannel(
+              getFlutterView(), CHANNEL);
+      holder.setChannel( methodChannel );
 
-    new MethodChannel(getFlutterView(), CHANNEL).setMethodCallHandler(
-            new MethodChannel.MethodCallHandler() {
+      methodChannel.setMethodCallHandler(new MethodChannel.MethodCallHandler() {
+        @Override
+        public void onMethodCall(MethodCall methodCall, MethodChannel.Result result) {
+          switch (methodCall.method){
+            case METHOD_SHOW_MAPS_ACTIVITY:
+              ArrayList< HashMap<String,Object> > dataList = methodCall.argument("dataList");
+              Double latitude = methodCall.argument("localLat");
+              Double longitude = methodCall.argument("localLong");
 
-              @Override
-              public void onMethodCall(MethodCall methodCall, MethodChannel.Result result) {
-                switch (methodCall.method){
-                  case METHOD_SHOW_MAPS_ACTIVITY:
-                    ArrayList< HashMap<String,Object> > dataList = methodCall.argument("dataList");
-                    Double latitude = methodCall.argument("localLat");
-                    Double longitude = methodCall.argument("localLong");
+              Intent it = new Intent(MainActivity.this, NativeMapActivity.class);
+              it.putExtra(NativeMapActivity.KEY_DATA_LIST, dataList );
+              it.putExtra(NativeMapActivity.KEY_LATITUDE, latitude);
+              it.putExtra(NativeMapActivity.KEY_LONGITUDE, longitude);
+              startActivity(it);
+              result.success(true);
+              break;
 
-                    Intent it = new Intent(MainActivity.this, NativeMapActivity.class);
-                    it.putExtra(NativeMapActivity.KEY_DATA_LIST, dataList );
-                    it.putExtra(NativeMapActivity.KEY_LATITUDE, latitude);
-                    it.putExtra(NativeMapActivity.KEY_LONGITUDE, longitude);
-                    startActivity(it);
-                    result.success(true);
-                    break;
-
-                    default:
-                      break;
-                }
-              }
-            }
-    );
+            default:
+              break;
+          }
+        }
+      });
   }
 
   @Override
@@ -53,5 +55,4 @@ public class MainActivity extends FlutterActivity {
   }
 
 }
-
 

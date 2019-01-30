@@ -8,13 +8,11 @@ import 'package:autonos_app/ui/screens/MainScreen.dart';
 // Marcelo
 /*(71)991259223*/
 void main() {
-
   runApp( new MyApp() );
 }
 
 class MyApp extends StatelessWidget{
-  //@override
-  //_MyAppState createState() => _MyAppState();
+
   @override
   Widget build(BuildContext context) {
     UserRepository();
@@ -44,8 +42,6 @@ class MyApp extends StatelessWidget{
       },
     );
   }
-
-
 }
 /*
 class _MyAppState extends State<MyApp> {
