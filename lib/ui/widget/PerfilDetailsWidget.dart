@@ -1,15 +1,15 @@
-import 'package:autonos_app/model/Service.dart';
-import 'package:autonos_app/model/User.dart';
-import 'package:autonos_app/ui/screens/PaymentDataEditorScreen.dart';
-import 'package:autonos_app/ui/screens/PerfilDetailsEditorScreen.dart';
-import 'package:autonos_app/ui/screens/ServiceEditorScreen.dart';
-import 'package:autonos_app/ui/widget/RatingBar.dart';
-import 'package:autonos_app/utility/Constants.dart';
+import 'package:autonomosapp/model/Service.dart';
+import 'package:autonomosapp/model/User.dart';
+import 'package:autonomosapp/ui/screens/PaymentDataEditorScreen.dart';
+import 'package:autonomosapp/ui/screens/PerfilDetailsEditorScreen.dart';
+import 'package:autonomosapp/ui/screens/ServiceEditorScreen.dart';
+import 'package:autonomosapp/ui/widget/RatingBar.dart';
+import 'package:autonomosapp/utility/Constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:autonos_app/ui/widget/ChipPanelWidget.dart';
-import 'package:autonos_app/bloc/PerfilDetailsScreenBloc.dart';
-import 'package:autonos_app/ui/screens/LocationEditorScreen.dart';
+import 'package:autonomosapp/ui/widget/ChipPanelWidget.dart';
+import 'package:autonomosapp/bloc/PerfilDetailsScreenBloc.dart';
+import 'package:autonomosapp/ui/screens/LocationEditorScreen.dart';
 
 class PerfilDetailsWidget extends StatefulWidget {
   final User _user;

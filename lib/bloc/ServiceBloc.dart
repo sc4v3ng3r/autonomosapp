@@ -1,6 +1,6 @@
-import 'package:autonos_app/model/Service.dart';
+import 'package:autonomosapp/model/Service.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:autonos_app/firebase/FirebaseServicesHelper.dart';
+import 'package:autonomosapp/firebase/FirebaseServicesHelper.dart';
 
 class ServiceBlock {
   // input Stream "StreamController and his Sink"

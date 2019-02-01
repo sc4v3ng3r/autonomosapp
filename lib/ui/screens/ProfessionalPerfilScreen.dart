@@ -1,7 +1,7 @@
-import 'package:autonos_app/firebase/FirebaseUserHelper.dart';
-import 'package:autonos_app/model/ProfessionalData.dart';
-import 'package:autonos_app/model/User.dart';
-import 'package:autonos_app/ui/widget/PerfilDetailsWidget.dart';
+import 'package:autonomosapp/firebase/FirebaseUserHelper.dart';
+import 'package:autonomosapp/model/ProfessionalData.dart';
+import 'package:autonomosapp/model/User.dart';
+import 'package:autonomosapp/ui/widget/PerfilDetailsWidget.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 

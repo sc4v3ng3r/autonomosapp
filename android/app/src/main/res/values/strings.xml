@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Autonomos</string>
-    <string name="facebook_app_id">254907575382202</string>
-    <string name="fb_login_protocol_scheme">fb254907575382202</string>
-    <string name="title_activity_maps">Map</string>
+
+    <string name="app_name">autonomosapp</string>
+    <string name="facebook_app_id">2027906354169518</string>
+    <string name="fb_login_protocol_scheme">fb2027906354169518</string>
+
+
 </resources>

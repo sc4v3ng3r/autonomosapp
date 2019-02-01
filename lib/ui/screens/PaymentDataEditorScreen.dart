@@ -1,8 +1,8 @@
-import 'package:autonos_app/firebase/FirebaseUserHelper.dart';
-import 'package:autonos_app/model/User.dart';
-import 'package:autonos_app/utility/UserRepository.dart';
+import 'package:autonomosapp/firebase/FirebaseUserHelper.dart';
+import 'package:autonomosapp/model/User.dart';
+import 'package:autonomosapp/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
-import 'package:autonos_app/ui/widget/NiftyRowDivisorWidget.dart';
+import 'package:autonomosapp/ui/widget/NiftyRowDivisorWidget.dart';
 
 class PaymentDataEditorScreen extends StatefulWidget {
   final List<String> _paymentAlreadySelected;

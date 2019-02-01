@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:autonos_app/ui/widget/AbstractDropDownWidget.dart';
+import 'package:autonomosapp/ui/widget/AbstractDropDownWidget.dart';
 
 class StateDropDownWidget extends AbstractDropDownWidget<String> {
 

@@ -1,14 +1,14 @@
-import 'package:autonos_app/bloc/CityListWidgetBloc.dart';
-import 'package:autonos_app/model/Cidade.dart';
-import 'package:autonos_app/model/Estado.dart';
-import 'package:autonos_app/model/Service.dart';
-import 'package:autonos_app/model/User.dart';
-import 'package:autonos_app/ui/widget/CityListWidget.dart';
-import 'package:autonos_app/ui/widget/ModalRoundedProgressBar.dart';
-import 'package:autonos_app/utility/UserRepository.dart';
+import 'package:autonomosapp/bloc/CityListWidgetBloc.dart';
+import 'package:autonomosapp/model/Cidade.dart';
+import 'package:autonomosapp/model/Estado.dart';
+import 'package:autonomosapp/model/Service.dart';
+import 'package:autonomosapp/model/User.dart';
+import 'package:autonomosapp/ui/widget/CityListWidget.dart';
+import 'package:autonomosapp/ui/widget/ModalRoundedProgressBar.dart';
+import 'package:autonomosapp/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
-import 'package:autonos_app/firebase/FirebaseUserHelper.dart';
-import 'package:autonos_app/firebase/FirebaseUfCidadesServicosProfissionaisHelper.dart';
+import 'package:autonomosapp/firebase/FirebaseUserHelper.dart';
+import 'package:autonomosapp/firebase/FirebaseUfCidadesServicosProfissionaisHelper.dart';
 
 //TODO implementar bloc nessa tela
 class LocationEditorScreen extends StatefulWidget {

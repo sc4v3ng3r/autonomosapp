@@ -1,7 +1,7 @@
-import 'package:autonos_app/firebase/FirebaseUserHelper.dart';
-import 'package:autonos_app/utility/UserRepository.dart';
+import 'package:autonomosapp/firebase/FirebaseUserHelper.dart';
+import 'package:autonomosapp/utility/UserRepository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:autonos_app/model/User.dart';
+import 'package:autonomosapp/model/User.dart';
 
 class ApplicationState {
 

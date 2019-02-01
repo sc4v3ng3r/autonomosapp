@@ -1,19 +1,19 @@
 import 'dart:io';
-import 'package:autonos_app/firebase/FirebaseAuthHelper.dart';
-import 'package:autonos_app/firebase/FirebaseStorageHelper.dart';
-import 'package:autonos_app/firebase/FirebaseUserHelper.dart';
-import 'package:autonos_app/ui/widget/ChoosePictureBottomSheetWidget.dart';
-import 'package:autonos_app/ui/widget/ModalRoundedProgressBar.dart';
-import 'package:autonos_app/utility/Constants.dart';
-import 'package:autonos_app/utility/UserRepository.dart';
+import 'package:autonomosapp/firebase/FirebaseAuthHelper.dart';
+import 'package:autonomosapp/firebase/FirebaseStorageHelper.dart';
+import 'package:autonomosapp/firebase/FirebaseUserHelper.dart';
+import 'package:autonomosapp/ui/widget/ChoosePictureBottomSheetWidget.dart';
+import 'package:autonomosapp/ui/widget/ModalRoundedProgressBar.dart';
+import 'package:autonomosapp/utility/Constants.dart';
+import 'package:autonomosapp/utility/UserRepository.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:autonos_app/ui/widget/TextInputWidget.dart';
-import 'package:autonos_app/ui/widget/CircularPictureWidget.dart';
-import 'package:autonos_app/utility/InputValidator.dart';
+import 'package:autonomosapp/ui/widget/TextInputWidget.dart';
+import 'package:autonomosapp/ui/widget/CircularPictureWidget.dart';
+import 'package:autonomosapp/utility/InputValidator.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
-import 'package:autonos_app/ui/widget/FormLayoutWidget.dart';
+import 'package:autonomosapp/ui/widget/FormLayoutWidget.dart';
 
 // TODO construir um bloc para esta tela!
 class PerfilDetailsEditorScreen extends StatefulWidget {

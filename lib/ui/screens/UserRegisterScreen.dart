@@ -1,17 +1,17 @@
 import 'dart:io';
-import 'package:autonos_app/firebase/FirebaseAuthHelper.dart';
-import 'package:autonos_app/firebase/FirebaseUserHelper.dart';
-import 'package:autonos_app/ui/widget/ChoosePictureBottomSheetWidget.dart';
-import 'package:autonos_app/utility/Constants.dart';
-import 'package:autonos_app/utility/SharedPreferencesUtility.dart';
-import 'package:autonos_app/utility/UserRepository.dart';
+import 'package:autonomosapp/firebase/FirebaseAuthHelper.dart';
+import 'package:autonomosapp/firebase/FirebaseUserHelper.dart';
+import 'package:autonomosapp/ui/widget/ChoosePictureBottomSheetWidget.dart';
+import 'package:autonomosapp/utility/Constants.dart';
+import 'package:autonomosapp/utility/SharedPreferencesUtility.dart';
+import 'package:autonomosapp/utility/UserRepository.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:autonos_app/utility/InputValidator.dart';
-import 'package:autonos_app/model/User.dart';
-import 'package:autonos_app/ui/screens/MainScreen.dart';
-import 'package:autonos_app/ui/widget/ModalRoundedProgressBar.dart';
+import 'package:autonomosapp/utility/InputValidator.dart';
+import 'package:autonomosapp/model/User.dart';
+import 'package:autonomosapp/ui/screens/MainScreen.dart';
+import 'package:autonomosapp/ui/widget/ModalRoundedProgressBar.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 // TODO metodos do firebase devem sair daqui

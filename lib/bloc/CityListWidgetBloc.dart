@@ -1,6 +1,6 @@
 import 'package:rxdart/rxdart.dart';
-import 'package:autonos_app/model/Cidade.dart';
-import 'package:autonos_app/firebase/FirebaseStateCityHelper.dart';
+import 'package:autonomosapp/model/Cidade.dart';
+import 'package:autonomosapp/firebase/FirebaseStateCityHelper.dart';
 import 'package:flutter/material.dart';
 
 class CityListWidgetBloc {

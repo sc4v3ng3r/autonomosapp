@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:autonos_app/ui/widget/ChipContainerController.dart';
-export 'package:autonos_app/ui/widget/ChipContainerController.dart';
+import 'package:autonomosapp/ui/widget/ChipContainerController.dart';
+export 'package:autonomosapp/ui/widget/ChipContainerController.dart';
 
 abstract class AbstractChipContainerWidget<T> extends StatefulWidget {
 

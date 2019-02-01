@@ -1,11 +1,11 @@
 import 'dart:developer';
 
-import 'package:autonos_app/model/Cidade.dart';
-import 'package:autonos_app/model/Estado.dart';
-import 'package:autonos_app/model/Location.dart';
-import 'package:autonos_app/model/Service.dart';
+import 'package:autonomosapp/model/Cidade.dart';
+import 'package:autonomosapp/model/Estado.dart';
+import 'package:autonomosapp/model/Location.dart';
+import 'package:autonomosapp/model/Service.dart';
 import 'package:flutter/material.dart';
-import 'package:autonos_app/model/ProfessionalData.dart';
+import 'package:autonomosapp/model/ProfessionalData.dart';
 
 class ProfessionalRegisterFlowBloc {
 

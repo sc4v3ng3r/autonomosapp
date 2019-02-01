@@ -1,9 +1,10 @@
-import 'package:autonos_app/ui/screens/LoginScreen.dart';
-import 'package:autonos_app/utility/UserRepository.dart';
+import 'package:autonomosapp/ui/screens/LoginScreen.dart';
+import 'package:autonomosapp/ui/widget/MapWidget.dart';
+import 'package:autonomosapp/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
-import 'package:autonos_app/firebase/FirebaseUserHelper.dart';
-import 'package:autonos_app/model/User.dart';
-import 'package:autonos_app/ui/screens/MainScreen.dart';
+import 'package:autonomosapp/firebase/FirebaseUserHelper.dart';
+import 'package:autonomosapp/model/User.dart';
+import 'package:autonomosapp/ui/screens/MainScreen.dart';
 
 // Marcelo
 /*(71)991259223*/
@@ -15,6 +16,7 @@ class MyApp extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
+
     UserRepository();
     print("Myapp build()");
     return FutureBuilder<User>(
@@ -42,7 +44,14 @@ class MyApp extends StatelessWidget{
       },
     );
   }
-}
+
+    /*return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: MapWidget(),
+    );
+  }*/
+}// end of class
+
 /*
 class _MyAppState extends State<MyApp> {
   @override

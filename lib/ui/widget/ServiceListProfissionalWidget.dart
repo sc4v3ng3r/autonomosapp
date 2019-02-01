@@ -1,4 +1,4 @@
-import 'package:autonos_app/model/User.dart';
+import 'package:autonomosapp/model/User.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 

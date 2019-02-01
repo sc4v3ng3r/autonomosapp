@@ -1,7 +1,7 @@
 //import 'package:meta/meta.dart';
 
 import 'package:firebase_database/firebase_database.dart';
-import 'package:autonos_app/model/ProfessionalData.dart';
+import 'package:autonomosapp/model/ProfessionalData.dart';
 class User {
 
   String name;

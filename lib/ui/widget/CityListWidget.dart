@@ -1,8 +1,8 @@
-import 'package:autonos_app/bloc/CityListWidgetBloc.dart';
-import 'package:autonos_app/model/Cidade.dart';
-import 'package:autonos_app/ui/widget/AbstractDataListWidget.dart';
+import 'package:autonomosapp/bloc/CityListWidgetBloc.dart';
+import 'package:autonomosapp/model/Cidade.dart';
+import 'package:autonomosapp/ui/widget/AbstractDataListWidget.dart';
 import 'package:flutter/material.dart';
-import 'package:autonos_app/ui/widget/SearchBarWidget.dart';
+import 'package:autonomosapp/ui/widget/SearchBarWidget.dart';
 
 class CityListWidget extends StatefulWidget {
   final String _queryKey;

@@ -1,6 +1,6 @@
 import 'package:rxdart/rxdart.dart';
-import 'package:autonos_app/model/Service.dart';
-import 'package:autonos_app/firebase/FirebaseServicesHelper.dart';
+import 'package:autonomosapp/model/Service.dart';
+import 'package:autonomosapp/firebase/FirebaseServicesHelper.dart';
 import 'package:flutter/material.dart';
 
 class ServiceListWidgetBloc {

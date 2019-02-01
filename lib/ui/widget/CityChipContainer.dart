@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:autonos_app/ui/widget/AbstractChipContainerWidget.dart';
-import 'package:autonos_app/model/Cidade.dart';
+import 'package:autonomosapp/ui/widget/AbstractChipContainerWidget.dart';
+import 'package:autonomosapp/model/Cidade.dart';
 
 class CityChipContainer extends AbstractChipContainerWidget<Cidade> {
 

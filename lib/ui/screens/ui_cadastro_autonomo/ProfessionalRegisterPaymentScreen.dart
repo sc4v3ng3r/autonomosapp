@@ -1,10 +1,10 @@
-import 'package:autonos_app/bloc/ProfessionalRegisterFlowBloc.dart';
-import 'package:autonos_app/ui/screens/MainScreen.dart';
-import 'package:autonos_app/ui/widget/NextButton.dart';
-import 'package:autonos_app/utility/UserRepository.dart';
+import 'package:autonomosapp/bloc/ProfessionalRegisterFlowBloc.dart';
+import 'package:autonomosapp/ui/screens/MainScreen.dart';
+import 'package:autonomosapp/ui/widget/NextButton.dart';
+import 'package:autonomosapp/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
-import 'package:autonos_app/firebase/FirebaseUserHelper.dart';
-import 'package:autonos_app/ui/widget/ModalRoundedProgressBar.dart';
+import 'package:autonomosapp/firebase/FirebaseUserHelper.dart';
+import 'package:autonomosapp/ui/widget/ModalRoundedProgressBar.dart';
 
 class ProfessionalRegisterPaymentScreen extends StatefulWidget {
 

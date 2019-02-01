@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:autonos_app/model/Service.dart';
-import 'package:autonos_app/ui/widget/ServiceListWidget.dart';
-import 'package:autonos_app/bloc/ServiceListWidgetBloc.dart';
+import 'package:autonomosapp/model/Service.dart';
+import 'package:autonomosapp/ui/widget/ServiceListWidget.dart';
+import 'package:autonomosapp/bloc/ServiceListWidgetBloc.dart';
 
 class ListagemServicos extends StatefulWidget {
   final List<Service> _alreadySelectedServices; // cidades já selecionadas anteriormente...

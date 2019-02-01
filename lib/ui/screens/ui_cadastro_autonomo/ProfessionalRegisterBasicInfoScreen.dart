@@ -1,11 +1,11 @@
-import 'package:autonos_app/bloc/ProfessionalRegisterFlowBloc.dart';
-import 'package:autonos_app/ui/screens/ui_cadastro_autonomo/ProfessionalRegisterLocationAndServiceScreen.dart';
-import 'package:autonos_app/ui/widget/NextButton.dart';
-import 'package:autonos_app/utility/InputValidator.dart';
-import 'package:autonos_app/utility/UserRepository.dart';
+import 'package:autonomosapp/bloc/ProfessionalRegisterFlowBloc.dart';
+import 'package:autonomosapp/ui/screens/ui_cadastro_autonomo/ProfessionalRegisterLocationAndServiceScreen.dart';
+import 'package:autonomosapp/ui/widget/NextButton.dart';
+import 'package:autonomosapp/utility/InputValidator.dart';
+import 'package:autonomosapp/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
-import 'package:autonos_app/model/ProfessionalData.dart';
+import 'package:autonomosapp/model/ProfessionalData.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class ProfessionalRegisterBasicInfoScreen extends StatefulWidget {

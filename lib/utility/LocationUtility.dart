@@ -20,7 +20,6 @@ class LocationUtility {
     return Geolocator().placemarkFromCoordinates(
         position.latitude, position.longitude);
   }
-
 }
 
 

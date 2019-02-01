@@ -1,28 +1,28 @@
-import 'package:autonos_app/bloc/ServiceListWidgetBloc.dart';
-import 'package:autonos_app/firebase/FirebaseUfCidadesServicosProfissionaisHelper.dart';
-import 'package:autonos_app/firebase/FirebaseUserHelper.dart';
-import 'package:autonos_app/model/Estado.dart';
-import 'package:autonos_app/model/Location.dart';
-import 'package:autonos_app/model/ProfessionalData.dart';
-import 'package:autonos_app/model/Service.dart';
-import 'package:autonos_app/ui/screens/LoginScreen.dart';
-import 'package:autonos_app/ui/screens/ProfessionalPerfilScreen.dart';
-import 'package:autonos_app/ui/screens/ui_cadastro_autonomo/ProfessionalRegisterBasicInfoScreen.dart';
-import 'package:autonos_app/ui/widget/ModalRoundedProgressBar.dart';
-import 'package:autonos_app/ui/widget/RatingBar.dart';
-import 'package:autonos_app/model/User.dart';
-import 'package:autonos_app/ui/widget/ServiceListWidget.dart';
-import 'package:autonos_app/utility/PermissionUtiliy.dart';
-import 'package:autonos_app/utility/UserRepository.dart';
+import 'package:autonomosapp/bloc/ServiceListWidgetBloc.dart';
+import 'package:autonomosapp/firebase/FirebaseUfCidadesServicosProfissionaisHelper.dart';
+import 'package:autonomosapp/firebase/FirebaseUserHelper.dart';
+import 'package:autonomosapp/model/Estado.dart';
+import 'package:autonomosapp/model/Location.dart';
+import 'package:autonomosapp/model/ProfessionalData.dart';
+import 'package:autonomosapp/model/Service.dart';
+import 'package:autonomosapp/ui/screens/LoginScreen.dart';
+import 'package:autonomosapp/ui/screens/ProfessionalPerfilScreen.dart';
+import 'package:autonomosapp/ui/screens/ui_cadastro_autonomo/ProfessionalRegisterBasicInfoScreen.dart';
+import 'package:autonomosapp/ui/widget/ModalRoundedProgressBar.dart';
+import 'package:autonomosapp/ui/widget/RatingBar.dart';
+import 'package:autonomosapp/model/User.dart';
+import 'package:autonomosapp/ui/widget/ServiceListWidget.dart';
+import 'package:autonomosapp/utility/PermissionUtiliy.dart';
+import 'package:autonomosapp/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:autonos_app/ui/widget/UserAccountsHackedDrawerHeader.dart';
+import 'package:autonomosapp/ui/widget/UserAccountsHackedDrawerHeader.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:autonos_app/utility/LocationUtility.dart';
+import 'package:autonomosapp/utility/LocationUtility.dart';
 import 'package:flutter/services.dart';
-import 'package:autonos_app/ui/widget/GenericAlertDialog.dart';
+import 'package:autonomosapp/ui/widget/GenericAlertDialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:autonos_app/ui/widget/PerfilDetailsWidget.dart';
+import 'package:autonomosapp/ui/widget/PerfilDetailsWidget.dart';
 import 'dart:io' show Platform;
 
 //FIXME BUG build method é sempre chamado até mesmo quando clicamos Ok no teclado
@@ -63,7 +63,9 @@ class _MainScreenState extends State<MainScreen> {
   Color appBarIconMenuColor = Colors.white;
   double _elevation = .0;
   User _user;
+
   Placemark _placemark;
+
   ProgressBarHandler _progressBarHandler;
   UserRepository _repository;
   var _serviceListFragment;
@@ -423,6 +425,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _serviceClickedCallback(Service item) async {
+
     _progressBarHandler.show( message: "Buscando Profissionais");
     Location location = UserRepository().currentLocation;
     var results = false;
@@ -445,7 +448,9 @@ class _MainScreenState extends State<MainScreen> {
 
   /// faz ua nova consulta à localização do usuário
   /// e atualiza sua posição no repository
+
   Future<bool> _updateUserCurrentPosition() async {
+
     if (Platform.isAndroid){
       var permission = await _handleLocationPermissionForAndroid();
 
@@ -475,11 +480,12 @@ class _MainScreenState extends State<MainScreen> {
       //TODO iOS implementation
       return false;
     }
-
   }
 
+
   void _fetchProfessionalsAndGoToMapScreen(Service serviceItem) async {
-      String sigla = Estado.keyOfState(_placemark.administrativeArea);
+
+    String sigla = Estado.keyOfState(_placemark.administrativeArea);
 
       FirebaseUfCidadesServicosProfissionaisHelper
           .getProfessionalsIdsFromCityAndService( estadoSigla: sigla,
@@ -497,6 +503,7 @@ class _MainScreenState extends State<MainScreen> {
                   FirebaseUserHelper.getProfessionalsData(
                       idsMap.keys.toList() ).then((dataMap) {
                         dataMap.forEach( (key, value) => dataList.add(value) );
+                        _progressBarHandler.dismiss();
                         _showAndroidNativeMapActivity(dataList);
                       });
                 }
@@ -522,20 +529,9 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Future<Null> _showAndroidNativeMapActivity(List<dynamic> dataMapList) async {
-
-    try {
-      var result = await _platform.invokeMethod(
-          'show_maps_activity', {
-            "dataList": dataMapList,
-            "localLat": UserRepository().currentLocation.latitude,
-            "localLong":UserRepository().currentLocation.longitude,
-      });
-
-      _progressBarHandler.dismiss();
-    } on PlatformException catch (e) {
-      print("ERROR ${e.message} ${e.code}");
-    }
+    print("OPEN MAPS WIDGE!!!");
   }
+
 
   Future<bool> _handleLocationPermissionForAndroid() async {
     var hasPermission =  await PermissionUtility.hasLocationPermission();
@@ -623,5 +619,4 @@ class _MainScreenState extends State<MainScreen> {
         //return new Future.value("");
     }
   }
-
 } // end of class

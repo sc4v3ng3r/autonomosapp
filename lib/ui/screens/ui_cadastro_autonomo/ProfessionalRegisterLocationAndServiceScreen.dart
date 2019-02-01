@@ -1,18 +1,18 @@
-import 'package:autonos_app/bloc/ProfessionalRegisterFlowBloc.dart';
-import 'package:autonos_app/model/Cidade.dart';
-import 'package:autonos_app/ui/screens/ui_cadastro_autonomo/ListagemCidadesScreen.dart';
-import 'package:autonos_app/ui/screens/ui_cadastro_autonomo/ProfessionalRegisterPaymentScreen.dart';
-import 'package:autonos_app/model/Service.dart';
-import 'package:autonos_app/model/Estado.dart';
-import 'package:autonos_app/ui/screens/ui_cadastro_autonomo/ListagemServicosScreen.dart';
-import 'package:autonos_app/ui/widget/CityChipContainer.dart';
-import 'package:autonos_app/utility/UserRepository.dart';
+import 'package:autonomosapp/bloc/ProfessionalRegisterFlowBloc.dart';
+import 'package:autonomosapp/model/Cidade.dart';
+import 'package:autonomosapp/ui/screens/ui_cadastro_autonomo/ListagemCidadesScreen.dart';
+import 'package:autonomosapp/ui/screens/ui_cadastro_autonomo/ProfessionalRegisterPaymentScreen.dart';
+import 'package:autonomosapp/model/Service.dart';
+import 'package:autonomosapp/model/Estado.dart';
+import 'package:autonomosapp/ui/screens/ui_cadastro_autonomo/ListagemServicosScreen.dart';
+import 'package:autonomosapp/ui/widget/CityChipContainer.dart';
+import 'package:autonomosapp/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
-import 'package:autonos_app/ui/widget/NextButton.dart';
-import 'package:autonos_app/ui/widget/ServiceChipContainer.dart';
-import 'package:autonos_app/ui/widget/ChipContainerController.dart';
-import 'package:autonos_app/ui/widget/StateDropDownWidget.dart';
-import 'package:autonos_app/ui/widget/EditableButton.dart';
+import 'package:autonomosapp/ui/widget/NextButton.dart';
+import 'package:autonomosapp/ui/widget/ServiceChipContainer.dart';
+import 'package:autonomosapp/ui/widget/ChipContainerController.dart';
+import 'package:autonomosapp/ui/widget/StateDropDownWidget.dart';
+import 'package:autonomosapp/ui/widget/EditableButton.dart';
 
 class ProfessionalRegisterLocationAndServiceScreen extends StatefulWidget {
 

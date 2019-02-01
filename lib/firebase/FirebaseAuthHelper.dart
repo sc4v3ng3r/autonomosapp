@@ -1,8 +1,8 @@
 import 'dart:io' show Platform;
-import 'package:autonos_app/firebase/FirebaseUserHelper.dart';
-import 'package:autonos_app/model/User.dart';
-import 'package:autonos_app/utility/Constants.dart';
-import 'package:autonos_app/utility/UserRepository.dart';
+import 'package:autonomosapp/firebase/FirebaseUserHelper.dart';
+import 'package:autonomosapp/model/User.dart';
+import 'package:autonomosapp/utility/Constants.dart';
+import 'package:autonomosapp/utility/UserRepository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';

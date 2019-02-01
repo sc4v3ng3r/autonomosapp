@@ -1,17 +1,17 @@
-import 'package:autonos_app/model/ApplicationState.dart';
-import 'package:autonos_app/utility/UserRepository.dart';
+import 'package:autonomosapp/model/ApplicationState.dart';
+import 'package:autonomosapp/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
-import 'package:autonos_app/ui/screens/UserRegisterScreen.dart';
-import 'package:autonos_app/utility/InputValidator.dart';
+import 'package:autonomosapp/ui/screens/UserRegisterScreen.dart';
+import 'package:autonomosapp/utility/InputValidator.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
-import 'package:autonos_app/ui/widget/ModalRoundedProgressBar.dart';
-import 'package:autonos_app/ui/screens/MainScreen.dart';
-import 'package:autonos_app/model/User.dart';
+import 'package:autonomosapp/ui/widget/ModalRoundedProgressBar.dart';
+import 'package:autonomosapp/ui/screens/MainScreen.dart';
+import 'package:autonomosapp/model/User.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:autonos_app/utility/SharedPreferencesUtility.dart';
-import 'package:autonos_app/firebase/FirebaseAuthHelper.dart';
-import 'package:autonos_app/utility/Constants.dart';
+import 'package:autonomosapp/utility/SharedPreferencesUtility.dart';
+import 'package:autonomosapp/firebase/FirebaseAuthHelper.dart';
+import 'package:autonomosapp/utility/Constants.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -53,7 +53,6 @@ class _LoginScreenState extends State<LoginScreen> {
     _passwordFocus = FocusNode();
 
       SharedPreferences prefs = UserRepository().preferences;
-
     _rememberMe = prefs.getBool(ApplicationState.KEY_REMEMBER_ME)?? false;
     if (_rememberMe) {
       _email = prefs.getString(ApplicationState.KEY_EMAIL);
@@ -62,11 +61,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
     _emailController = TextEditingController(text: _email);
     _passwordController = TextEditingController(text: _password);
-
   }
 
   void initiateFacebookLogin(BuildContext context) async {
+
     _handler.show();
+
     final facebookLogin = new FacebookLogin();
 
     final facebookLoginResult = await facebookLogin
@@ -89,10 +89,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
         var resuls = await FirebaseAuthHelper.firebaseAuthWithFacebook(
             token: facebookLoginResult.accessToken.token);
+
         if (resuls){
           print("LOGADO COM SUCESSO");
           _gotoMainScreen(context, UserRepository().currentUser);
         }
+
         else {
           print("Login não aconteceu!");
           _handler.dismiss();

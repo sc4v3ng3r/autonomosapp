@@ -1,7 +1,7 @@
-import 'package:autonos_app/model/Service.dart';
+import 'package:autonomosapp/model/Service.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:autonos_app/ui/widget/NiftyRowDivisorWidget.dart';
+import 'package:autonomosapp/ui/widget/NiftyRowDivisorWidget.dart';
 
 class ChipPanelWidget<T> extends StatefulWidget {
 

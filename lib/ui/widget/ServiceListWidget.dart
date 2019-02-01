@@ -1,8 +1,8 @@
-import 'package:autonos_app/bloc/ServiceListWidgetBloc.dart';
-import 'package:autonos_app/model/Service.dart';
-import 'package:autonos_app/ui/widget/AbstractDataListWidget.dart';
+import 'package:autonomosapp/bloc/ServiceListWidgetBloc.dart';
+import 'package:autonomosapp/model/Service.dart';
+import 'package:autonomosapp/ui/widget/AbstractDataListWidget.dart';
 import 'package:flutter/material.dart';
-import 'package:autonos_app/ui/widget/SearchBarWidget.dart';
+import 'package:autonomosapp/ui/widget/SearchBarWidget.dart';
 
 
 // ainda exista a falta de generalizacao, e tem 1 único armengue

@@ -1,6 +1,6 @@
-import 'package:autonos_app/model/Service.dart';
+import 'package:autonomosapp/model/Service.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:autonos_app/firebase/FirebaseReferences.dart';
+import 'package:autonomosapp/firebase/FirebaseReferences.dart';
 
 class FirebaseServicesHelper {
 

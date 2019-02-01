@@ -1,8 +1,8 @@
-import 'package:autonos_app/model/Cidade.dart';
-import 'package:autonos_app/model/Estado.dart';
-import 'package:autonos_app/ui/widget/CityListWidget.dart';
+import 'package:autonomosapp/model/Cidade.dart';
+import 'package:autonomosapp/model/Estado.dart';
+import 'package:autonomosapp/ui/widget/CityListWidget.dart';
 import 'package:flutter/material.dart';
-import 'package:autonos_app/bloc/CityListWidgetBloc.dart';
+import 'package:autonomosapp/bloc/CityListWidgetBloc.dart';
 
 class ListagemCidades extends StatefulWidget {
   final Estado _estado;

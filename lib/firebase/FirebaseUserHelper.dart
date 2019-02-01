@@ -1,13 +1,13 @@
-import 'package:autonos_app/firebase/FirebaseAuthHelper.dart';
-import 'package:autonos_app/firebase/FirebaseStorageHelper.dart';
-import 'package:autonos_app/firebase/FirebaseUfCidadesServicosProfissionaisHelper.dart';
-import 'package:autonos_app/model/ProfessionalData.dart';
-import 'package:autonos_app/utility/UserRepository.dart';
+import 'package:autonomosapp/firebase/FirebaseAuthHelper.dart';
+import 'package:autonomosapp/firebase/FirebaseStorageHelper.dart';
+import 'package:autonomosapp/firebase/FirebaseUfCidadesServicosProfissionaisHelper.dart';
+import 'package:autonomosapp/model/ProfessionalData.dart';
+import 'package:autonomosapp/utility/UserRepository.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:autonos_app/model/User.dart';
-import 'package:autonos_app/firebase/FirebaseReferences.dart';
+import 'package:autonomosapp/model/User.dart';
+import 'package:autonomosapp/firebase/FirebaseReferences.dart';
 import 'package:meta/meta.dart';
 
 class FirebaseUserHelper {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:autonos_app/ui/widget/AbstractChipContainerWidget.dart';
-import 'package:autonos_app/model/Service.dart';
+import 'package:autonomosapp/ui/widget/AbstractChipContainerWidget.dart';
+import 'package:autonomosapp/model/Service.dart';
 
 class ServiceChipContainer extends AbstractChipContainerWidget<Service>{
 

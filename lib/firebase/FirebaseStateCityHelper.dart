@@ -1,7 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
-import 'package:autonos_app/model/Estado.dart';
-import 'package:autonos_app/model/Cidade.dart';
-import 'package:autonos_app/firebase/FirebaseReferences.dart';
+import 'package:autonomosapp/model/Estado.dart';
+import 'package:autonomosapp/model/Cidade.dart';
+import 'package:autonomosapp/firebase/FirebaseReferences.dart';
 import 'package:flutter/foundation.dart';
 
 class FirebaseStateCityHelper {
