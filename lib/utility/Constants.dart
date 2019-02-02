@@ -10,4 +10,7 @@ class Constants {
   static const String PROVIDER_ID_FACEBOOK = "facebook.com";
   static const String PROVIDER_ID_PASSWORD = "password";
   static const SizedBox VERTICAL_SEPARATOR_16 = const SizedBox(height: 16.0,);
+  static const SizedBox VERTICAL_SEPARATOR_8 = const SizedBox(height: 8.0,);
+  static const SizedBox HORIZONTAL_SEPARATOR_16 = const SizedBox(width: 16.0,);
+  static const SizedBox HORIZONTAL_SEPARATOR_8 = const SizedBox(width: 8.0,);
 }

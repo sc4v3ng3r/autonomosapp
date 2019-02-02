@@ -6,6 +6,7 @@ import 'package:autonomosapp/model/Location.dart';
 import 'package:autonomosapp/model/ProfessionalData.dart';
 import 'package:autonomosapp/model/Service.dart';
 import 'package:autonomosapp/ui/screens/LoginScreen.dart';
+import 'package:autonomosapp/ui/screens/ProfessionalsMapScreen.dart';
 import 'package:autonomosapp/ui/screens/ProfessionalPerfilScreen.dart';
 import 'package:autonomosapp/ui/screens/ui_cadastro_autonomo/ProfessionalRegisterBasicInfoScreen.dart';
 import 'package:autonomosapp/ui/widget/ModalRoundedProgressBar.dart';
@@ -110,7 +111,7 @@ class _MainScreenState extends State<MainScreen> {
     PermissionUtility.hasLocationPermission().then( (permission){
       if (permission){
         LocationUtility.getCurrentPosition( desiredAccuracy:
-        LocationAccuracy.medium ).then( (position) {
+        LocationAccuracy.lowest ).then( (position) {
           if (position != null){
             print("starting geocoding on init");
 
@@ -393,7 +394,7 @@ class _MainScreenState extends State<MainScreen> {
     switch (position) {
       case 0:
         _serviceListFragment = null;
-        return PerfilDetailsWidget(user: _user); /*PerfilUsuarioScreen()*/
+        return PerfilDetailsWidget(user: _user);
 
       case 1:
         return _serviceListFragment;
@@ -488,6 +489,7 @@ class _MainScreenState extends State<MainScreen> {
     String sigla = Estado.keyOfState(_placemark.administrativeArea);
 
       FirebaseUfCidadesServicosProfissionaisHelper
+
           .getProfessionalsIdsFromCityAndService( estadoSigla: sigla,
               cidadeNome: _placemark.subAdministratieArea,
               serviceId: serviceItem.id).then(
@@ -498,13 +500,27 @@ class _MainScreenState extends State<MainScreen> {
                   //removo usuario atual da lista caso o mesmo exerca o servico procurado
                   //idsMap.remove(_user.uid);
 
-                  List<dynamic> dataList = new List();
-
+                  List<ProfessionalData> professionalsList = new List();
+                  
                   FirebaseUserHelper.getProfessionalsData(
-                      idsMap.keys.toList() ).then((dataMap) {
-                        dataMap.forEach( (key, value) => dataList.add(value) );
-                        _progressBarHandler.dismiss();
-                        _showAndroidNativeMapActivity(dataList);
+                      idsMap.keys.toList() ).then(
+                          (dataMap) {
+                            dataMap.forEach( (key, value) => professionalsList.add(
+                            ProfessionalData.fromJson( Map.from(value)) )
+                        );
+
+                        Navigator.push(context, MaterialPageRoute(
+                            builder: (context){
+                              return ProfessionalsMapScreen(
+                                initialLatitude: _repository.currentLocation.latitude,
+                                initialLongitude: _repository.currentLocation.longitude,
+                                professionalList: professionalsList,
+                                
+                              );
+                            })
+                        ).then((_) => _progressBarHandler.dismiss()  );
+
+                        //_showAndroidNativeMapActivity(dataList);
                       });
                 }
 
@@ -520,7 +536,7 @@ class _MainScreenState extends State<MainScreen> {
 
   void _showWarningSnackbar(String serviceName,String cityName){
     _scaffoldKey.currentState.showSnackBar(
-        SnackBar(content: Text("Não há profissonais para $serviceName "
+        SnackBar(content: Text("Não há profissonais para $serviceName"
             "disponíveis em $cityName",
           ),
           backgroundColor: Colors.red,

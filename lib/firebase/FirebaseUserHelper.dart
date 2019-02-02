@@ -99,7 +99,9 @@ class FirebaseUserHelper {
     }
   }
 
-  static Future<Map<String,dynamic>> getProfessionalsData( List<String> ids) async {
+  /// Obtém os dados profissionais ProfessionalData do firebase dos usuários
+  /// específicados pelos ID's.
+  static Future<Map<String,dynamic>> getProfessionalsData( List<String> ids ) async {
 
     DatabaseReference ref = FirebaseDatabase.instance
         .reference()

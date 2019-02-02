@@ -1,3 +1,4 @@
+import 'package:autonomosapp/utility/Constants.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -27,15 +28,13 @@ class _CircularEditablePictureWidgetState extends State<CircularEditablePictureW
       stream: widget._bloc.currentImageProvider,
       builder: (context, snapshot){
         if (snapshot.hasData){
-          print("HAS IMAGE PROVIDER DATA");
           return createWidget( snapshot.data );
         }
-
-        else{
-          print("HAS NOT IMAGE PROVIDER DATA");
-          return createWidget( AssetImage("assets/usuario.png") );
+        else {
+          return createWidget( AssetImage(
+              Constants.ASSETS_LOGO_USER_PROFILE_FILE_NAME )
+          );
         }
-
       },
     );
   }

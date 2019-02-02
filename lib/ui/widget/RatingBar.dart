@@ -14,7 +14,7 @@ class RatingBar extends StatelessWidget{
   RatingBar({
     this.starCount = 5, this.rating = .0,
     this.onRatingChanged, this.cor}
-      );
+    );
 
   Widget construirEstrelas(BuildContext context,int index){
 
@@ -44,8 +44,9 @@ class RatingBar extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return new Row(
-        children:
-        new List.generate(starCount, (index) => construirEstrelas(context, index))
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children: new List.generate(starCount, (index) => construirEstrelas(context, index))
     );
   }
 }
