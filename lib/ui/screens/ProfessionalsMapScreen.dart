@@ -127,9 +127,7 @@ class _ProfessionalsMapScreenState extends State<ProfessionalsMapScreen> {
   }
 
   void _mapChange(){
-   // print("on map changed");
-    //_extractCurrentMapInfo();
-   // setState(() { });
+    print("on map changed");
   }
 
   void _extractCurrentMapInfo(){

@@ -1,5 +1,4 @@
 import 'package:autonomosapp/ui/screens/LoginScreen.dart';
-import 'package:autonomosapp/ui/widget/MapWidget.dart';
 import 'package:autonomosapp/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
 import 'package:autonomosapp/firebase/FirebaseUserHelper.dart';
@@ -16,7 +15,6 @@ class MyApp extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-
     UserRepository();
     print("Myapp build()");
     return FutureBuilder<User>(
@@ -44,12 +42,6 @@ class MyApp extends StatelessWidget{
       },
     );
   }
-
-    /*return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: MapWidget(),
-    );
-  }*/
 }// end of class
 
 /*

@@ -17,7 +17,7 @@
 
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="autonomosapp"
+        android:label="Autônomos"
         android:icon="@mipmap/ic_launcher">
 
         <meta-data

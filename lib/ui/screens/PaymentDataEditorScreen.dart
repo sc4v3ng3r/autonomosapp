@@ -105,6 +105,7 @@ class _PaymentDataEditorScreenState extends State<PaymentDataEditorScreen> {
 
       body: body,
     );
+
   }
   
   /// Método que reliza a criação da lista de chips
