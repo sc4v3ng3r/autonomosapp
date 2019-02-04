@@ -16,7 +16,7 @@ class User {
   static final String UID = "uid";
   static final String RATING = "rating";
   static final String PICTURE_URL = "photo_url";
-
+  static final String PROFESSIONAL_DATA = "professionalData";
   User( {String uid, String name, String email, double rating, String picturePath} ) :
     uid = uid,
     name = name,
@@ -29,8 +29,9 @@ class User {
       name = json[NAME],
       email = json[EMAIL],
       uid = json[UID],
-      rating = json[RATING],
-      picturePath = json[PICTURE_URL];
+      rating =  double.parse(json[RATING].toString() ),
+      picturePath = json[PICTURE_URL],
+      professionalData = ProfessionalData.fromJson( Map.from( json[PROFESSIONAL_DATA] ) );
 
   // aqui nao tera serializacao de ProfissionalData
   Map<String, dynamic> toJson() => {
@@ -39,6 +40,8 @@ class User {
     RATING : rating,
     UID : uid,
     PICTURE_URL : picturePath,
+    PROFESSIONAL_DATA : professionalData?.toJson(),
+
   };
 
   //TODO aqui tera leitura dos dados profissionais
@@ -47,6 +50,9 @@ class User {
     email = snapshot.value[EMAIL],
     rating = double.parse( (snapshot.value[RATING]).toString() ),
     uid =   snapshot.value[UID],
-    picturePath = snapshot.value[PICTURE_URL];
+    picturePath = snapshot.value[PICTURE_URL],
+    professionalData = ProfessionalData.fromJson( 
+      Map.from( snapshot.value[PROFESSIONAL_DATA] )
+    );
 
 }

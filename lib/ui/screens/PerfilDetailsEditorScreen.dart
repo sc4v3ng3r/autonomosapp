@@ -47,7 +47,7 @@ class _PerfilDetailsEditorScreenState extends State<PerfilDetailsEditorScreen> {
 
     _circularWidgetBloc = CircularPictureWidgetBloc(
       initialImageProvider: (widget._repository.currentUser.picturePath == null)
-          ? AssetImage("assets/usuario.png")
+          ? AssetImage(Constants.ASSETS_LOGO_USER_PROFILE_FILE_NAME)
           : CachedNetworkImageProvider(
               widget._repository.currentUser.picturePath),
     );
@@ -251,26 +251,26 @@ class _PerfilDetailsEditorScreenState extends State<PerfilDetailsEditorScreen> {
         displayName: _nameInputController.text);
 
      if (results)
-       fbUser = await FirebaseAuthHelper.reAuthCurrentUser();
+       fbUser = await FirebaseAuthHelper.reauthCurrentUser();
 
      var user = UserRepository().currentUser;
      user.picturePath = fbUser.photoUrl;
      user.name = fbUser.displayName;
 
     if (user.professionalData != null) {
-      if (url != null)
-        user.professionalData.photoUrl = url;
       user.professionalData.descricao =
           _descriptionFieldController.text;
       user.professionalData.telefone =
           _phoneFieldController.text;
-      user.professionalData.nome = fbUser.displayName;
 
-      FirebaseUserHelper.registerUserProfessionalData(
-          user.professionalData );
+      FirebaseUserHelper.setUserProfessionalData(
+        data: user.professionalData,
+        uid: user.uid
+      );
     }
 
-    FirebaseUserHelper.writeUserAccountData(fbUser);
+
+    FirebaseUserHelper.updateUser(user: user);
     _handler.dismiss();
   }
 }

@@ -34,7 +34,6 @@ class ProfessionalRegisterFlowBloc {
     @required String professionalName,
     @required Location currentLocation} ){
 
-      _professionalData.nome = professionalName;
       _professionalData.estadoAtuante =  state.sigla;
       _professionalData.latitude = currentLocation.latitude;
       _professionalData.longitude = currentLocation.longitude;

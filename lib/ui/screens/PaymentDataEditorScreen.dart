@@ -133,7 +133,10 @@ class _PaymentDataEditorScreenState extends State<PaymentDataEditorScreen> {
     User user = UserRepository().currentUser;
     user.professionalData.emissorNotaFiscal = (_radioGroupValue == 1);
     user.professionalData.formasPagamento = _selectedData;
-    FirebaseUserHelper.registerUserProfessionalData( user.professionalData );
+    FirebaseUserHelper.setUserProfessionalData(
+      uid: user.uid,
+      data: user.professionalData
+    );
   }
 
   void _onRadioClicked(int radioValue){

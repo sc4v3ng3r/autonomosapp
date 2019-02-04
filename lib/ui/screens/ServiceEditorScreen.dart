@@ -35,7 +35,6 @@ class _ServiceEditorScreenState extends State<ServiceEditorScreen>{
           child: ServiceListWidget(
             initialSelectedItems: _selectedServices,
             itemsSelectedCallback: (serviceList) {
-              //print("Total SERVICE data selected ${serviceList.length}");
               _selectedServices = serviceList;
             } ,
           ),
@@ -83,8 +82,11 @@ class _ServiceEditorScreenState extends State<ServiceEditorScreen>{
     }
 
     FirebaseUfCidadesServicosProfissionaisHelper.removeServicesFromProfessionalUser(
-        servicesToRemove , user.professionalData);
-    FirebaseUserHelper.registerUserProfessionalData(user.professionalData);
+      user.uid, servicesToRemove , user.professionalData);
+    FirebaseUserHelper.setUserProfessionalData(
+      data: user.professionalData,
+      uid: user.uid,
+    );
 
     _handler.dismiss();
     Navigator.pop(context);

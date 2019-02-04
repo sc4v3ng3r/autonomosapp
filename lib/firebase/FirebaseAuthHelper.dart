@@ -63,7 +63,7 @@ class FirebaseAuthHelper {
     // se eh a primeira vez de login com o facebook, entra nessa parte!
     catch (ex) {
 
-      user = await FirebaseUserHelper.writeUserAccountData(firebaseUser);
+      user = await FirebaseUserHelper.createUserAccountData(firebaseUser);
 
       if (user != null){
         print("USUARIO CRIADO COM SUCESSO!");
@@ -96,7 +96,7 @@ class FirebaseAuthHelper {
     return createdUser;
   }
 
-  static Future<FirebaseUser> reAuthCurrentUser() async {
+  static Future<FirebaseUser> reauthCurrentUser() async {
     UserRepository repository = UserRepository();
     FirebaseUser fbUser = await FirebaseAuth.instance.currentUser();
     var isFacebook = await _userProviderIsFacebook();

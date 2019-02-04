@@ -3,11 +3,9 @@ import 'package:autonomosapp/firebase/FirebaseUfCidadesServicosProfissionaisHelp
 import 'package:autonomosapp/firebase/FirebaseUserHelper.dart';
 import 'package:autonomosapp/model/Estado.dart';
 import 'package:autonomosapp/model/Location.dart';
-import 'package:autonomosapp/model/ProfessionalData.dart';
 import 'package:autonomosapp/model/Service.dart';
 import 'package:autonomosapp/ui/screens/LoginScreen.dart';
 import 'package:autonomosapp/ui/screens/ProfessionalsMapScreen.dart';
-import 'package:autonomosapp/ui/screens/ProfessionalPerfilScreen.dart';
 import 'package:autonomosapp/ui/screens/ui_cadastro_autonomo/ProfessionalRegisterBasicInfoScreen.dart';
 import 'package:autonomosapp/ui/widget/ModalRoundedProgressBar.dart';
 import 'package:autonomosapp/ui/widget/RatingBar.dart';
@@ -20,7 +18,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:autonomosapp/ui/widget/UserAccountsHackedDrawerHeader.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:autonomosapp/utility/LocationUtility.dart';
-import 'package:flutter/services.dart';
 import 'package:autonomosapp/ui/widget/GenericAlertDialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:autonomosapp/ui/widget/PerfilDetailsWidget.dart';
@@ -54,8 +51,9 @@ class _MainScreenState extends State<MainScreen> {
 
   final bool sair = false;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  static const _platform =
-      const MethodChannel("autonomos.com.br.jopeb.autonosapp");
+
+  /*static const _platform =
+      const MethodChannel("autonomos.com.br.jopeb.autonosapp");*/
 
   int _drawerCurrentPosition;
   String appBarName = 'Serviços';
@@ -82,7 +80,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
-    _platform.setMethodCallHandler( _handleMethod );
+   // _platform.setMethodCallHandler( _handleMethod );
     _repository = UserRepository();
     _user = _repository.currentUser;
 
@@ -394,7 +392,9 @@ class _MainScreenState extends State<MainScreen> {
     switch (position) {
       case 0:
         _serviceListFragment = null;
-        return PerfilDetailsWidget(user: _user);
+        return PerfilDetailsWidget(
+            user: _user
+        );
 
       case 1:
         return _serviceListFragment;
@@ -500,13 +500,13 @@ class _MainScreenState extends State<MainScreen> {
                   //removo usuario atual da lista caso o mesmo exerca o servico procurado
                   //idsMap.remove(_user.uid);
 
-                  List<ProfessionalData> professionalsList = new List();
+                  List<User> professionalUsersList = new List();
                   
-                  FirebaseUserHelper.getProfessionalsData(
+                  FirebaseUserHelper.getProfessionalUsers(
                       idsMap.keys.toList() ).then(
-                          (dataMap) {
-                            dataMap.forEach( (key, value) => professionalsList.add(
-                            ProfessionalData.fromJson( Map.from(value)) )
+                          (professionalUsersMap) {
+                            professionalUsersMap.forEach( (key, value) => professionalUsersList.add(
+                            User.fromJson( Map.from(value)) )
                         );
 
                         Navigator.push(context, MaterialPageRoute(
@@ -514,7 +514,7 @@ class _MainScreenState extends State<MainScreen> {
                               return ProfessionalsMapScreen(
                                 initialLatitude: _repository.currentLocation.latitude,
                                 initialLongitude: _repository.currentLocation.longitude,
-                                professionalList: professionalsList,
+                                professionalList: professionalUsersList,
                                 
                               );
                             })
@@ -621,7 +621,8 @@ class _MainScreenState extends State<MainScreen> {
    * ANDROID NATIVO PARA O FLUTTER.*/
   //metodo que trata as chamadas do nativo ao flutter
 
-  Future<dynamic> _handleMethod(MethodCall call) async {
+
+  /*Future<dynamic> _handleMethod(MethodCall call) async {
     print("handle_method flutter side");
     switch (call.method) {
       case "message":
@@ -634,5 +635,6 @@ class _MainScreenState extends State<MainScreen> {
         //print(call.arguments);
         //return new Future.value("");
     }
-  }
+  }*/
+
 } // end of class

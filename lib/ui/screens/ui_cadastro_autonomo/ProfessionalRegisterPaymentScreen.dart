@@ -139,9 +139,9 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
 
   Future<void> _finishRegister() async {
     _handler.show(message: "Registrando...");
-    widget._bloc.currentData.photoUrl = UserRepository().currentUser.picturePath;
-    FirebaseUserHelper.registerUserProfessionalData(widget._bloc.currentData)
-        .then( (_) {
+    FirebaseUserHelper.setUserProfessionalData(
+        data: widget._bloc.currentData,
+        uid: UserRepository().currentUser.uid ).then( (_) {
           _handler.dismiss();
           UserRepository().currentUser.professionalData = widget._bloc.currentData;
           Navigator.pushAndRemoveUntil(context,
@@ -182,10 +182,4 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
 
   }
 
-  @override
-  void initState() {
-    widget._bloc.currentData.uid = UserRepository().currentUser.uid;
-    super.initState();
-
-  }
 }

@@ -9,8 +9,10 @@ import 'package:flutter/material.dart';
 class UserRepository {
 
   static UserRepository _instance = new UserRepository._internal();
+  static get instance => _instance;
   User currentUser;
   Location currentLocation;
+
   SharedPreferences preferences;
   String fbPassword="";/// password se a conta for de algum provider do firebase
   String fbLogin=""; /// login se a conta for de algum provier do firebase

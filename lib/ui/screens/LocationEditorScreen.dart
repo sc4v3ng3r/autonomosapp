@@ -161,7 +161,7 @@ class _LocationEditorScreenState extends State<LocationEditorScreen> {
             .servicosAtuantes.map((serviceId) { return Service(serviceId,""); } ).toList();
 
         FirebaseUfCidadesServicosProfissionaisHelper.removeServicesFromProfessionalUser(
-           serviceList, user.professionalData);
+          user.uid, serviceList, user.professionalData);
       }
 
       // colocando a nova lista de cidades & estado atuante no user repository
@@ -169,7 +169,10 @@ class _LocationEditorScreenState extends State<LocationEditorScreen> {
           _selectedCityList.map( (city) { return city.nome;}).toList();
       user.professionalData.estadoAtuante = _currentStateSelected;
 
-      FirebaseUserHelper.registerUserProfessionalData( UserRepository().currentUser.professionalData );
+      FirebaseUserHelper.setUserProfessionalData(
+          uid: UserRepository().currentUser.uid,
+          data: UserRepository().currentUser.professionalData
+      );
     }
 
     _handler.dismiss();

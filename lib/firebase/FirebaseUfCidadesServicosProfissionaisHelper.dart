@@ -6,14 +6,14 @@ import 'package:meta/meta.dart';
 
 class FirebaseUfCidadesServicosProfissionaisHelper {
 
-  static void writeIntoRelationship( ProfessionalData data ){
+  static void writeIntoRelationship({@required String userId, ProfessionalData data}  ){
     DatabaseReference ref = FirebaseDatabase.instance.reference()
         .child(FirebaseReferences.REFERENCE_UF_CIDADES_SERVICOS_PROFISSIONAIS)
         .child( data.estadoAtuante);
 
     for(String cityName in data.cidadesAtuantes){
       for(String serviceId in data.servicosAtuantes){
-        ref.child(cityName).child(serviceId).child( data.uid).set( data.uid )
+        ref.child(cityName).child(serviceId).child( userId ).set( userId )
             .catchError( (onError){
               print("FirebaseUfCidadesServicosProfissionaisHelper:: ${onError.toString()}");
         });
@@ -32,14 +32,14 @@ class FirebaseUfCidadesServicosProfissionaisHelper {
     return ref.once();
   }
 
-  static void removeServicesFromProfessionalUser(List< Service > toRemove, ProfessionalData proData){
+  static void removeServicesFromProfessionalUser( String uid, List< Service > toRemove, ProfessionalData proData){
     DatabaseReference ref = FirebaseDatabase.instance.reference()
         .child(FirebaseReferences.REFERENCE_UF_CIDADES_SERVICOS_PROFISSIONAIS)
         .child(proData.estadoAtuante);
 
     for (String city in proData.cidadesAtuantes)
       for(Service service in toRemove)
-        ref.child( city).child( service.id ).child(proData.uid).remove();
+        ref.child( city).child( service.id ).child(uid).remove();
   }
 
 }

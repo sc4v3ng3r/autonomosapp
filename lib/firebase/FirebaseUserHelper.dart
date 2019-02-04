@@ -13,6 +13,7 @@ import 'package:meta/meta.dart';
 class FirebaseUserHelper {
   static final RATING_INIT_VALUE = 5.0;
   static final FirebaseAuth AUTH = FirebaseAuth.instance;
+
   static final DatabaseReference USERS_REFERENCE = FirebaseDatabase.instance
       .reference()
       .child(FirebaseReferences.REFERENCE_USERS);
@@ -20,10 +21,10 @@ class FirebaseUserHelper {
   // TODO melhorar a execução deste método!ls
 
   static Future<User> readUserAccountData(FirebaseUser fbUser) async {
-    DatabaseReference proRef = FirebaseDatabase.instance
+    /*DatabaseReference proRef = FirebaseDatabase.instance
         .reference()
         .child(FirebaseReferences.REFERENCE_PROFISSIONAIS);
-
+    */
     User user;
     String uid = fbUser.uid;
 
@@ -39,12 +40,12 @@ class FirebaseUserHelper {
           CachedNetworkImageProvider( url );
       }
 
-      DataSnapshot professionalData = await proRef.child(user.uid).once();
-      if ((professionalData.value != null)) {
+      //DataSnapshot professionalData = await proRef.child(user.uid).once();
+      /*if ((professionalData.value != null)) {
         print(
             "FirebaseUserHelper user $uid has pro data ${professionalData.value.toString()}");
         user.professionalData = ProfessionalData.fromSnapshot(professionalData);
-      }
+      }*/
 
     }
 
@@ -56,8 +57,8 @@ class FirebaseUserHelper {
     return user;
   }
 
-  static Future<User> writeUserAccountData(
-      FirebaseUser recentCreatedUser) async {
+  /// Método usado para criar um conta de um simples  usuário no database
+  static Future<User> createUserAccountData( FirebaseUser recentCreatedUser) async {
 
     try {
       //print("Registrando conta no DB!");
@@ -75,17 +76,23 @@ class FirebaseUserHelper {
     } catch (ex) { throw ex; }
   }
 
-  static Future<void> registerUserProfessionalData(
-      final ProfessionalData data) {
-    DatabaseReference ref = FirebaseDatabase.instance
-        .reference()
-        .child(FirebaseReferences.REFERENCE_PROFISSIONAIS);
+  static Future<void> updateUser({@required User user}) async{
+    USERS_REFERENCE.child( user.uid).set( user.toJson() );
+  }
+  /// Registra no database os dados profissionais de um usuário específico.
+  static Future<void> setUserProfessionalData( {
+    @required String uid, @required ProfessionalData data}) {
 
-    FirebaseUfCidadesServicosProfissionaisHelper.writeIntoRelationship(data);
-    return ref.child(data.uid).set(data.toJson());
+    FirebaseUfCidadesServicosProfissionaisHelper.writeIntoRelationship(
+      userId: uid,
+      data:  data,
+    );
+    return USERS_REFERENCE.child(uid)
+        .child(FirebaseReferences.REFERENCE_USER_PRO_DATA).set(data.toJson());
   }
 
   // TODO MELHORAR ESSE METODO
+  ///Obtpem o usuário atualmente logado.
   static Future<User> currentLoggedUser() async {
     try {
       FirebaseUser fbUser = await AUTH.currentUser();
@@ -101,18 +108,16 @@ class FirebaseUserHelper {
 
   /// Obtém os dados profissionais ProfessionalData do firebase dos usuários
   /// específicados pelos ID's.
-  static Future<Map<String,dynamic>> getProfessionalsData( List<String> ids ) async {
+  static Future< Map<String,dynamic> > getProfessionalUsers( List<String> UsersIds ) async {
 
     DatabaseReference ref = FirebaseDatabase.instance
-        .reference()
-        .child(FirebaseReferences.REFERENCE_PROFISSIONAIS);
+        .reference();
 
     Map<String, dynamic> map = Map();
-    for(String id in ids){
-     var snapshot = await ref.child(id).once();
-      print(snapshot.value.toString());
-      map.putIfAbsent( id, () => snapshot.value );
-     //list.add(  );
+    for(String userId in UsersIds){
+     var snapshot = await readUserNode(uid: userId);
+     print(snapshot.value.toString());
+      map.putIfAbsent( userId, () => snapshot.value );
     }
     return map;
   }
@@ -125,9 +130,9 @@ class FirebaseUserHelper {
     DatabaseReference userRef = db.reference()
         .child(FirebaseReferences.REFERENCE_USERS);
 
-    DatabaseReference proRef = db.reference()
+    /*DatabaseReference proRef = db.reference()
         .child(FirebaseReferences.REFERENCE_PROFISSIONAIS);
-
+    */
     DatabaseReference relationshipRef = db.reference()
         .child(FirebaseReferences.REFERENCE_UF_CIDADES_SERVICOS_PROFISSIONAIS);
 
@@ -140,20 +145,19 @@ class FirebaseUserHelper {
               .child( city ).child( serviceId ).child( user.uid).remove();
         }
       }
-      proRef.child(user.uid).remove();
     }
 
+    //TODO BREVE REMOÇÃO DESTE USUARIO DAS VISUALIZACOES DOS OUTROS!
     userRef.child(user.uid).remove();
 
   }
 
   ///Remove toda a "conta do usuário", tanto seus dados do database
   ///quando sua autenticação.
-
-  //TODO nao precisa mais de reauth aqui!! basta chamar reauh de AuthHelper e remover os dados!
+  
   static Future<bool> _removeUserAccountFromAuthSystem() async {
     UserRepository repository = UserRepository();
-    FirebaseUser fbUser =  await FirebaseAuthHelper.reAuthCurrentUser();
+    FirebaseUser fbUser =  await FirebaseAuthHelper.reauthCurrentUser();
 
     await FirebaseStorageHelper.removeUserProfilePicture(
         userUid: repository.currentUser.uid);
@@ -164,6 +168,7 @@ class FirebaseUserHelper {
         }).catchError((error){ print("Error $error"); return false;});
   }
 
+  /// Método utilizado para remover todos os dados do usuário do backend
   static Future<bool> removeUser(User user) async {
     var results = await _removeUserAccountFromAuthSystem();
     if (results){
@@ -194,6 +199,7 @@ class FirebaseUserHelper {
     }
   }
 
-  static Future<DataSnapshot> readUserNode({@required String uid}) async
+  ///OBtém um usuário específico
+  static Future<DataSnapshot> readUserNode( {@required String uid} ) async
      => USERS_REFERENCE.child(uid).once();
 }

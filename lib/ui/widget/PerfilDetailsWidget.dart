@@ -89,6 +89,7 @@ class _PerfilDetailsWidgetState extends State<PerfilDetailsWidget> {
         editable: widget._editable,
         data: user.professionalData.cidadesAtuantes,
         onEditCallback: (userCityNamesList){
+
           Navigator.push(context, MaterialPageRoute(
               builder: (buildContext){
                 return LocationEditorScreen(

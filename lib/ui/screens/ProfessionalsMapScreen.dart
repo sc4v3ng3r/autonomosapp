@@ -1,4 +1,5 @@
-import 'package:autonomosapp/model/ProfessionalData.dart';
+import 'package:autonomosapp/model/User.dart';
+import 'package:autonomosapp/ui/screens/ProfessionalPerfilScreen.dart';
 import 'package:autonomosapp/ui/widget/RatingBar.dart';
 import 'package:autonomosapp/utility/Constants.dart';
 import 'package:flutter/material.dart';
@@ -6,13 +7,12 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class ProfessionalsMapScreen extends StatefulWidget {
-  //static final double _defaultZoom = 16.0;
   final CameraPosition _initialCameraPosition;
-  final List<ProfessionalData> _dataList;
+  final List<User> _dataList;
 
   ProfessionalsMapScreen(
       {@required double initialLatitude, @required initialLongitude,
-        @required List<ProfessionalData> professionalList}):
+        @required List<User> professionalList}):
       _dataList = professionalList,
       _initialCameraPosition = CameraPosition(
         target: LatLng(initialLatitude, initialLongitude),
@@ -29,7 +29,7 @@ class _ProfessionalsMapScreenState extends State<ProfessionalsMapScreen> {
   MapType _currentMapType = MapType.normal;
   CameraPosition _currentCameraPosition;
   double _currentZoom = 16.0;
-  Map<String, ProfessionalData> _dataMap = Map();
+  Map<String, User> _dataMap = Map();
 
   @override
   void initState() {
@@ -51,7 +51,7 @@ class _ProfessionalsMapScreenState extends State<ProfessionalsMapScreen> {
             myLocationEnabled: true,
           ),
 
-          Padding(
+          /*Padding(
             padding: EdgeInsets.all(16.0),
             child: Align(
               alignment: Alignment.bottomRight,
@@ -65,7 +65,7 @@ class _ProfessionalsMapScreenState extends State<ProfessionalsMapScreen> {
                   }
                ),
             ),
-          ),
+          ),*/
         ],
 
       ),
@@ -84,29 +84,27 @@ class _ProfessionalsMapScreenState extends State<ProfessionalsMapScreen> {
             _currentZoom),
         );
 
-
-
     var iterator = widget._dataList.iterator;
 
-
     while( iterator.moveNext() ){
-      ProfessionalData proData = iterator.current;
-      print("adding ${proData.nome} lat: ${proData.latitude} long: ${proData.longitude}");
+      User proUser = iterator.current;
+      print("adding ${proUser.name} "
+          "lat: ${proUser.professionalData.latitude} "
+          "long: ${proUser.professionalData.longitude}");
 
       var markerOption = MarkerOptions(
-        position: LatLng(proData.latitude, proData.longitude),
+        position: LatLng(proUser.professionalData.latitude, proUser.professionalData.longitude),
         //infoWindowText: InfoWindowText( proData.nome, proData.descricao),
       );
 
 
       _controller.addMarker( markerOption )
           .then( (marker){
-              _dataMap.putIfAbsent( marker.id, ()=> proData);
+              _dataMap.putIfAbsent( marker.id, ()=> proUser);
           } );
     }
 
-    _controller.onMarkerTapped.add( (marker){
-      print("ON mark tap ${marker.id}");
+    _controller.onMarkerTapped.add( (marker) {
       _showBottomSheet(marker);
     } );
 
@@ -116,12 +114,21 @@ class _ProfessionalsMapScreenState extends State<ProfessionalsMapScreen> {
 
 
   void _showBottomSheet(Marker marker){
-    var proData = _dataMap[marker.id];
-    if (proData != null)
+    var markProUser = _dataMap[marker.id];
+    if (markProUser != null)
       showModalBottomSheet(context: context,
           builder: (buildContext){
             return MapBottomSheetWidget(
-              data: proData,
+              proUser: markProUser,
+              perfilButtonCallback: (){
+                Navigator.of(context).push( MaterialPageRoute(
+                    builder: (BuildContext context){
+                      return ProfessionalPerfilScreen(
+                        userProData: markProUser,
+                      );
+                    } )
+                );
+              },
             );
           });
   }
@@ -135,7 +142,6 @@ class _ProfessionalsMapScreenState extends State<ProfessionalsMapScreen> {
     //_currentZoom = _currentCameraPosition.zoom;
   }
 
-
   @override
   void dispose() {
     _controller.removeListener( _mapChange );
@@ -148,20 +154,20 @@ class _ProfessionalsMapScreenState extends State<ProfessionalsMapScreen> {
 
 
 class MapBottomSheetWidget extends StatelessWidget {
-  final ProfessionalData _professionalData;
-  final _perfilButtonCallback;
-  final _callWhatsappCallback;
+  final User _proUser;
+  final Function _perfilCallback;
+  final Function _contactCallback;
 
-  MapBottomSheetWidget({ProfessionalData data,
+  MapBottomSheetWidget({
+    @required User proUser,
     Function perfilButtonCallback,
-    Function callWhatsappCallback}) :
-      _perfilButtonCallback = perfilButtonCallback,
-      _callWhatsappCallback = callWhatsappCallback,
-      _professionalData = data;
+    Function contactButtonCallback }) :
+      _perfilCallback = perfilButtonCallback,
+      _contactCallback = contactButtonCallback,
+      _proUser = proUser;
 
   @override
   Widget build(BuildContext context) {
-    print("build bottom sheet");
 
     var buttonsRow = new Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -169,7 +175,10 @@ class MapBottomSheetWidget extends StatelessWidget {
       children: <Widget>[
         Expanded(
           child: RaisedButton(
-            onPressed: (){},
+            onPressed: (){
+              if (_perfilCallback != null)
+                _perfilCallback();
+            },
             child: Text("Perfil", style: TextStyle(color: Colors.white),),
             color: Colors.blue,
           ),
@@ -179,7 +188,10 @@ class MapBottomSheetWidget extends StatelessWidget {
 
         Expanded(
           child: RaisedButton(
-            onPressed: (){},
+            onPressed: (){
+              if (_contactCallback != null)
+                _contactCallback();
+            },
             child: Text("Contactar Whatsapp",
                 style: TextStyle(color: Colors.white) ),
             color: Colors.green,
@@ -188,6 +200,7 @@ class MapBottomSheetWidget extends StatelessWidget {
       ],
     );
 
+    print("bottomSheet builded");
     return Container(
       padding: EdgeInsets.all(16.0),
         child: Column(
@@ -196,10 +209,10 @@ class MapBottomSheetWidget extends StatelessWidget {
             Container(
               width: 120.0,
               height: 120.0,
-              child: (_professionalData.photoUrl != null) ?
+              child: (_proUser.picturePath != null) ?
                   ClipOval(
                     child: CachedNetworkImage(
-                      imageUrl: _professionalData.photoUrl,
+                      imageUrl: _proUser.picturePath,
                       placeholder: CircularProgressIndicator(),
                     ),
                   ) :
@@ -211,7 +224,7 @@ class MapBottomSheetWidget extends StatelessWidget {
             ),
 
             Center(
-              child: Text("${_professionalData.nome}",
+              child: Text("${_proUser.name}",
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
@@ -223,7 +236,6 @@ class MapBottomSheetWidget extends StatelessWidget {
             ),
 
             //Constants.VERTICAL_SEPARATOR_8,
-
             Center(
               child: RatingBar(
                 starCount: 5,
@@ -239,6 +251,5 @@ class MapBottomSheetWidget extends StatelessWidget {
     );
 
   }
+
 }
-
-
