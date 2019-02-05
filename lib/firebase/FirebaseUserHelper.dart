@@ -149,7 +149,6 @@ class FirebaseUserHelper {
 
     //TODO BREVE REMOÇÃO DESTE USUARIO DAS VISUALIZACOES DOS OUTROS!
     userRef.child(user.uid).remove();
-
   }
 
   ///Remove toda a "conta do usuário", tanto seus dados do database

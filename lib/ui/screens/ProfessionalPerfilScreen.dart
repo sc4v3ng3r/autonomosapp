@@ -5,13 +5,6 @@ import 'package:flutter/material.dart';
 class ProfessionalPerfilScreen extends StatelessWidget {
 
   final User _userProData;
-  static final _errorWidget = Container(
-    child: Material(
-      child: Center(
-        child: Text("Impossível obter detalhes do usuário."),
-      ),
-    ),
-  );
 
   ProfessionalPerfilScreen({@required User userProData}) :
         _userProData = userProData;
@@ -27,7 +20,6 @@ class ProfessionalPerfilScreen extends StatelessWidget {
         editable: false,
         user: _userProData,
       ),
-
     );
   }
 

@@ -20,7 +20,6 @@ class ProfessionalsMapScreen extends StatefulWidget {
 
   @override
   _ProfessionalsMapScreenState createState() => _ProfessionalsMapScreenState();
-
 }
 
 class _ProfessionalsMapScreenState extends State<ProfessionalsMapScreen> {
@@ -41,6 +40,7 @@ class _ProfessionalsMapScreenState extends State<ProfessionalsMapScreen> {
   Widget build(BuildContext context) {
     print("ProfessionalsMapScreenBuild");
     return Scaffold(
+      primary: true,
       body: Stack(
         children: <Widget>[
 
@@ -111,7 +111,6 @@ class _ProfessionalsMapScreenState extends State<ProfessionalsMapScreen> {
     _controller.addListener( _mapChange );
     _extractCurrentMapInfo();
   }
-
 
   void _showBottomSheet(Marker marker){
     var markProUser = _dataMap[marker.id];
@@ -240,7 +239,7 @@ class MapBottomSheetWidget extends StatelessWidget {
               child: RatingBar(
                 starCount: 5,
                 cor: Colors.amberAccent,
-                rating: 5.0,
+                rating: _proUser.rating,
               ),
             ),
 
