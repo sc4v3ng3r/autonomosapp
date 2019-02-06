@@ -15,7 +15,7 @@ class UserView {
   UserView({@required this.userVisitorId, @required this.userVisualizedId, @required this.date});
 
   UserView.fromJson( final Map<String, dynamic> json) :
-    this.id = json[_viewId],
+    //this.id = json[_viewId],
     this.date = json[_visitDate],
     this.userVisualizedId = json[_visualizedId],
     this.userVisitorId = json[_visitorId];
@@ -33,6 +33,10 @@ class UserView {
     //_visualizedId : userVisualizedId,
   };
 
+  @override
+  String toString() {
+    return "ID: $id \n$_visitorId : $userVisitorId\n";
+  }
   /*Map<String, dynamic> toHistoryJson() => {
     _viewId : id,
     _date : date,

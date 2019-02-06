@@ -402,15 +402,15 @@ class _MainScreenState extends State<MainScreen> {
 
       case 2:
         _serviceListFragment = null;
-        return UsersViewWidget(
+        return Center(
+          child: Text("Histórico vai sair"),
+        );
+       /* return UsersViewWidget(
             userList: List.generate(5, (index) { return UserRepository().currentUser;} ),
-          );
-
+          );*/
       case 3:
         _serviceListFragment = null;
-        return UsersViewWidget(
-            userList: List.generate(15, (index) { return UserRepository().currentUser;} ),
-          );
+        return UsersViewWidget();
 
       case 4:
         _serviceListFragment = null;

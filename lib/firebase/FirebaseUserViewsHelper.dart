@@ -18,7 +18,7 @@ class FirebaseUserViewsHelper {
 
 
   static Future<DataSnapshot> getUserVisualizations({@required String uid}) async {
-    return _viewsRef.child(uid).limitToFirst(50).once();
+    return _viewsRef.child(uid).limitToLast(50).once();
   }
 
   static Future<void> removeAllUserViews( {@required String userId } ) async {
@@ -28,7 +28,11 @@ class FirebaseUserViewsHelper {
   static Future<void> removeUserViews( {@required String uid,
     @required List<String> viewsIds} ) async {
     for(String viewId in viewsIds)
-      _viewsRef.child(uid).child(viewId).remove();
+      removeUserView(uid: uid, viewId: viewId);
+  }
+
+  static Future<void> removeUserView( {@required String uid, String viewId}) async {
+    return _viewsRef.child(uid).child(viewId).remove();
   }
 
 /*

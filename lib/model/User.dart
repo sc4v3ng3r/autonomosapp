@@ -44,15 +44,13 @@ class User {
 
   };
 
-  //TODO aqui tera leitura dos dados profissionais
+
   User.fromDataSnapshot(DataSnapshot snapshot ) :
     name = snapshot.value[NAME],
     email = snapshot.value[EMAIL],
     rating = double.parse( (snapshot.value[RATING]).toString() ),
     uid =   snapshot.value[UID],
     picturePath = snapshot.value[PICTURE_URL],
-    professionalData = ProfessionalData.fromJson( 
-      Map.from( snapshot.value[PROFESSIONAL_DATA] )
-    );
-
+    professionalData = (snapshot.value[PROFESSIONAL_DATA] !=null) ?
+      ProfessionalData.fromJson(Map.from( snapshot.value[PROFESSIONAL_DATA] )) : null;
 }
