@@ -18,7 +18,7 @@ class UsersViewWidgetBloc {
 
   UsersViewWidgetBloc(){
 
-    // escutamos a chegada de Views
+    /// escutamos a chegada de Views
     _networkUserViewStream.listen( _onUserViewData );
 
     FirebaseUserViewsHelper.getUserVisualizations(uid: _currentUid)
@@ -64,8 +64,8 @@ class UsersViewWidgetBloc {
         }
 
         else {
-          // caso nao exista mais, mostramos usuario inexistente e removemos
-          // tal registro de visualização
+          /// caso nao exista mais, mostramos usuário inexistente uma única vez e removemos
+          /// tais registros de visualização
           var data = Map<UserView, User>();
           data.putIfAbsent( view, () => null);
           _addUiDataToSink( data );

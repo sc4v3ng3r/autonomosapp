@@ -37,6 +37,7 @@ import 'dart:io' show Platform;
 //necessário para evitar problemas internos no ServiceListWidget e suas Streams.
 
 
+enum  DrawerOption { PERFIL, SERVICES, VIEWS, AUTONOMOS, EXIT, DELETE_ACCOUNT }
 //TODO transformar essa tela em stateless
 class MainScreen extends StatefulWidget {
 
@@ -56,7 +57,7 @@ class _MainScreenState extends State<MainScreen> {
   /*static const _platform =
       const MethodChannel("autonomos.com.br.jopeb.autonosapp");*/
 
-  int _drawerCurrentPosition;
+  DrawerOption _drawerCurrentOption;
   String appBarName = 'Serviços';
   Color appBarColor = Colors.red[300];
   Color appBarNameColor = Colors.white;
@@ -85,7 +86,7 @@ class _MainScreenState extends State<MainScreen> {
     _repository = UserRepository();
     _user = _repository.currentUser;
 
-    _drawerCurrentPosition = 1;
+    _drawerCurrentOption = DrawerOption.SERVICES;
     _initUserPosition();
     _initServicesListFragment();
     print("Main initState");
@@ -154,7 +155,7 @@ class _MainScreenState extends State<MainScreen> {
       ),
 
       drawer: _drawerMenuBuild(context),
-      body: _getFragment( _drawerCurrentPosition ),
+      body: _getFragment( _drawerCurrentOption ),
       );
 
       return WillPopScope(
@@ -174,10 +175,10 @@ class _MainScreenState extends State<MainScreen> {
       return true;
     }
 
-    if (_drawerCurrentPosition == 1)
+    if (_drawerCurrentOption == DrawerOption.SERVICES)
       return true;
 
-    _setCurrentPosition(1);
+    _setCurrentPosition(DrawerOption.SERVICES);
     return false;
   }
 
@@ -209,37 +210,39 @@ class _MainScreenState extends State<MainScreen> {
     drawerOptions.add(drawerHeader);
 
     final optionPerfil = ListTile(
-      selected: _drawerCurrentPosition == 0,
+      selected: _drawerCurrentOption == DrawerOption.PERFIL,
       leading: Icon(Icons.person),
       title: Text('Perfil'),
-      onTap: () => _setCurrentPosition(0),
+      onTap: () => _setCurrentPosition(DrawerOption.PERFIL),
     );
     drawerOptions.add(optionPerfil);
 
     final optionServices = ListTile(
-      selected: _drawerCurrentPosition == 1,
+      selected: _drawerCurrentOption == DrawerOption.SERVICES,
       leading: Icon(Icons.work),
       title: Text('Serviços'),
       onTap: () {
-        _setCurrentPosition(1);
+        _setCurrentPosition(DrawerOption.SERVICES);
       },
     );
 
     drawerOptions.add(optionServices);
 
+    /*
     final optionHistory = ListTile(
-      selected: _drawerCurrentPosition == 2,
+      selected: _drawerCurrentOption == 2,
       leading: Icon(Icons.history),
       title: Text('Histórico'),
       onTap: () => _setCurrentPosition(2),
     );
     drawerOptions.add(optionHistory);
+     */
 
     final optionViews = ListTile(
-      selected: _drawerCurrentPosition == 3,
+      selected: _drawerCurrentOption == DrawerOption.VIEWS,
       leading: Icon(Icons.remove_red_eye),
       title: Text('Visualizações'),
-      onTap: () => _setCurrentPosition(3),
+      onTap: () => _setCurrentPosition(DrawerOption.VIEWS),
     );
     drawerOptions.add(optionViews);
 
@@ -331,52 +334,49 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-  void _changeAppBarName(int position) {
-    if (position == 0) {
-      appBarColor = Colors.white;
-      appBarName = 'Perfil';
-      appBarNameColor = Colors.blueGrey;
-      appBarIconMenuColor = Colors.red[300];
-      _elevation = 4.0;
-    } else if (position == 1) {
-      appBarColor = Colors.red[300];
-      appBarName = 'Serviços';
-      appBarNameColor = Colors.white;
-      appBarIconMenuColor = Colors.white;
-      _elevation = .0;
-    } else if (position == 2) {
-      appBarColor = Colors.white;
-      appBarName = 'Histórico';
-      _elevation = .0;
-      appBarNameColor = Colors.blueGrey;
-      appBarIconMenuColor = Colors.red[300];
-      _elevation = 4.0;
-    } else if (position == 3) {
-      appBarColor = Colors.white;
-      appBarName = 'Visualizações';
-      _elevation = .0;
-      appBarNameColor = Colors.blueGrey;
-      appBarIconMenuColor = Colors.red[300];
-      _elevation = 4.0;
-    } else if (position == 4) {
-      appBarColor = Colors.white;
-      appBarName = 'Favoritos';
-      _elevation = .0;
-      appBarNameColor = Colors.blueGrey;
-      appBarIconMenuColor = Colors.red[300];
-      _elevation = 4.0;
+  void _changeAppBarName(DrawerOption option) {
+    switch(option){
+      case DrawerOption.PERFIL:
+        appBarColor = Colors.white;
+        appBarName = 'Perfil';
+        appBarNameColor = Colors.blueGrey;
+        appBarIconMenuColor = Colors.red[300];
+        _elevation = 4.0;
+        break;
+
+      case DrawerOption.SERVICES:
+        appBarColor = Colors.red[300];
+        appBarName = 'Serviços';
+        appBarNameColor = Colors.white;
+        appBarIconMenuColor = Colors.white;
+        _elevation = .0;
+        break;
+
+      ///case DrawerOption.HISTORY:
+      ///  break;
+      case DrawerOption.VIEWS:
+        appBarColor = Colors.white;
+        appBarName = 'Visualizações';
+        _elevation = .0;
+        appBarNameColor = Colors.blueGrey;
+        appBarIconMenuColor = Colors.red[300];
+        _elevation = 4.0;
+        break;
+
+      default:
+        break;
     }
   }
 
-  void _setCurrentPosition(int position) {
+  void _setCurrentPosition(DrawerOption option) {
 
-    if (position != _drawerCurrentPosition){
+    if (option != _drawerCurrentOption){
       setState(() {
         if (_serviceListFragment == null)
           _initServicesListFragment();
 
-        _changeAppBarName(position);
-        _drawerCurrentPosition = position;
+        _changeAppBarName(option);
+        _drawerCurrentOption = option;
       });
     }
 
@@ -389,40 +389,36 @@ class _MainScreenState extends State<MainScreen> {
     return (box != null) ? true : false;
   }
 
-  Widget _getFragment(int position) {
-    switch (position) {
-      case 0:
+  Widget _getFragment(DrawerOption option) {
+    switch (option) {
+      case  DrawerOption.PERFIL:
         _serviceListFragment = null;
         return PerfilDetailsWidget(
             user: _user
         );
 
-      case 1:
+      case DrawerOption.SERVICES:
         return _serviceListFragment;
 
-      case 2:
+        /*
+      case : TODO historico em breve
         _serviceListFragment = null;
         return Center(
           child: Text("Histórico vai sair"),
-        );
-       /* return UsersViewWidget(
-            userList: List.generate(5, (index) { return UserRepository().currentUser;} ),
-          );*/
-      case 3:
+        );*/
+
+      case DrawerOption.VIEWS:
         _serviceListFragment = null;
         return UsersViewWidget();
-
-      case 4:
+      /*
+      case 4: // TODO Breve
         _serviceListFragment = null;
         return Center(
           child: Text("Favoritos"),
-        );
-
+        );*/
+      //NUNCA DEVE VIM AQUI!!
       default:
-        _serviceListFragment = null;
-        return Center(
-          child: Text("Outras Telas!"),
-        );
+        break;
     }
   }
 

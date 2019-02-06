@@ -5,7 +5,6 @@ import 'package:autonomosapp/utility/Constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
-///
 class UserViewItemWidget extends StatelessWidget {
   final User _user;
   final UserView _view;
@@ -56,57 +55,6 @@ class UserViewItemWidget extends StatelessWidget {
 
       onTap: null,
     );
-
-    /*return Container(
-      padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0 ),
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        children: <Widget>[
-          RoundedPictureWidget(
-            height: 80,
-            width: 80,
-            networkImageUrl: _user.picturePath,
-          ),
-
-          Constants.HORIZONTAL_SEPARATOR_16,
-
-          Flexible(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(_user.name,
-                  overflow: TextOverflow.clip,
-                  maxLines: 2,
-                  style: TextStyle(
-                      fontSize: 18.0,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold
-                  ),
-                ),
-
-                RatingBar(
-                  starCount: 5,
-                  onRatingChanged: null,
-                  rating: _user.rating,
-                  cor: Colors.amber,
-                ),
-
-              ],
-            ),
-          ),
-
-         Text("11/10/18",
-           textAlign: TextAlign.end,
-           style: TextStyle(
-             fontSize: 10.0,
-             color: Colors.black45,
-           ),
-          ),
-        ],
-      ),
-    );*/
-
   }
 
 }

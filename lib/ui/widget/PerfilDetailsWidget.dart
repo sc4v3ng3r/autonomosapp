@@ -167,8 +167,8 @@ class _PerfilDetailsWidgetState extends State<PerfilDetailsWidget> {
     var textWidget =  Flexible(
         child: Text(
           text,
-          overflow: TextOverflow.clip,
-          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          maxLines: 2,
           softWrap: false,
           style: TextStyle(
               color: color,
@@ -205,12 +205,12 @@ class _PerfilDetailsWidgetState extends State<PerfilDetailsWidget> {
         ),
 
         title: Text(widget._user.name,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 16.0,
-          ),
+              maxLines: 1,
+              overflow: TextOverflow.clip,
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 16.0,
+              ),
         ),
 
         trailing: (widget._editable == true) ? GestureDetector(
@@ -223,8 +223,7 @@ class _PerfilDetailsWidgetState extends State<PerfilDetailsWidget> {
           onTap: (){
             Navigator.push(context, MaterialPageRoute(builder: (buildContext) {
               return PerfilDetailsEditorScreen();
-            })
-
+            }),
             );
           },
         ) : null

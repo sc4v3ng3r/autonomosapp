@@ -37,6 +37,7 @@ class _PerfilDetailsEditorScreenState extends State<PerfilDetailsEditorScreen> {
   FocusNode _descriptionFieldFocus;
   ProgressBarHandler _handler;
   final GlobalKey<FormState> _formKey = GlobalKey();
+  
   //TODO esse membro & demais regras devem ficar no Bloc desta tela!
   File _currentImageFile;
 
