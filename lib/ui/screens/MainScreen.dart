@@ -6,6 +6,7 @@ import 'package:autonomosapp/model/Location.dart';
 import 'package:autonomosapp/model/Service.dart';
 import 'package:autonomosapp/ui/screens/LoginScreen.dart';
 import 'package:autonomosapp/ui/screens/ProfessionalsMapScreen.dart';
+import 'package:autonomosapp/ui/screens/UsersViewWidget.dart';
 import 'package:autonomosapp/ui/screens/ui_cadastro_autonomo/ProfessionalRegisterBasicInfoScreen.dart';
 import 'package:autonomosapp/ui/widget/ModalRoundedProgressBar.dart';
 import 'package:autonomosapp/ui/widget/RatingBar.dart';
@@ -401,15 +402,15 @@ class _MainScreenState extends State<MainScreen> {
 
       case 2:
         _serviceListFragment = null;
-        return Center(
-          child: Text("Histórico"),
-        );
+        return UsersViewWidget(
+            userList: List.generate(5, (index) { return UserRepository().currentUser;} ),
+          );
 
       case 3:
         _serviceListFragment = null;
-        return Center(
-          child: Text("Visualizações"),
-        );
+        return UsersViewWidget(
+            userList: List.generate(15, (index) { return UserRepository().currentUser;} ),
+          );
 
       case 4:
         _serviceListFragment = null;
@@ -508,7 +509,6 @@ class _MainScreenState extends State<MainScreen> {
                             professionalUsersMap.forEach( (key, value) => professionalUsersList.add(
                             User.fromJson( Map.from(value)) )
                         );
-
                         Navigator.push(context, MaterialPageRoute(
                             builder: (context){
                               return ProfessionalsMapScreen(

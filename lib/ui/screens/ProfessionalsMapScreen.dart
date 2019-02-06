@@ -20,6 +20,7 @@ class ProfessionalsMapScreen extends StatefulWidget {
 
   @override
   _ProfessionalsMapScreenState createState() => _ProfessionalsMapScreenState();
+
 }
 
 class _ProfessionalsMapScreenState extends State<ProfessionalsMapScreen> {
