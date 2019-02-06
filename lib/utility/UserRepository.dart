@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 class UserRepository {
 
   static UserRepository _instance = new UserRepository._internal();
-  static get instance => _instance;
+  static UserRepository get instance => _instance;
   User currentUser;
   Location currentLocation;
 

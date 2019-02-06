@@ -1,6 +1,7 @@
 import 'package:autonomosapp/firebase/FirebaseAuthHelper.dart';
 import 'package:autonomosapp/firebase/FirebaseStorageHelper.dart';
 import 'package:autonomosapp/firebase/FirebaseUfCidadesServicosProfissionaisHelper.dart';
+import 'package:autonomosapp/firebase/FirebaseUserViewsHelper.dart';
 import 'package:autonomosapp/model/ProfessionalData.dart';
 import 'package:autonomosapp/utility/UserRepository.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -127,6 +128,9 @@ class FirebaseUserHelper {
   static void _removeUserAccountFromDb(User user) async {
     FirebaseDatabase db = FirebaseDatabase.instance;
 
+
+    FirebaseUserViewsHelper.removeAllUserViews(userId: user.uid);
+
     DatabaseReference userRef = db.reference()
         .child(FirebaseReferences.REFERENCE_USERS);
 
@@ -146,8 +150,6 @@ class FirebaseUserHelper {
         }
       }
     }
-
-    //TODO BREVE REMOÇÃO DESTE USUARIO DAS VISUALIZACOES DOS OUTROS!
     userRef.child(user.uid).remove();
   }
 

@@ -13,4 +13,8 @@ class Constants {
   static const SizedBox VERTICAL_SEPARATOR_8 = const SizedBox(height: 8.0,);
   static const SizedBox HORIZONTAL_SEPARATOR_16 = const SizedBox(width: 16.0,);
   static const SizedBox HORIZONTAL_SEPARATOR_8 = const SizedBox(width: 8.0,);
+
+  static const String USER_DELETED = "Usuário removido";
+
+
 }

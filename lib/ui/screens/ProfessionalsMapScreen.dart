@@ -1,7 +1,11 @@
+import 'package:autonomosapp/firebase/FirebaseUserViewsHelper.dart';
 import 'package:autonomosapp/model/User.dart';
+import 'package:autonomosapp/model/UserView.dart';
 import 'package:autonomosapp/ui/screens/ProfessionalPerfilScreen.dart';
 import 'package:autonomosapp/ui/widget/RatingBar.dart';
 import 'package:autonomosapp/utility/Constants.dart';
+import 'package:autonomosapp/utility/UserRepository.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -51,22 +55,6 @@ class _ProfessionalsMapScreenState extends State<ProfessionalsMapScreen> {
             initialCameraPosition: _currentCameraPosition,
             myLocationEnabled: true,
           ),
-
-          /*Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Align(
-              alignment: Alignment.bottomRight,
-              child: FloatingActionButton(
-                  materialTapTargetSize: MaterialTapTargetSize.padded,
-                  child: Icon(Icons.map, color: Colors.white,),
-                  backgroundColor: Colors.green,
-                  onPressed: (){
-                    _currentMapType = (_currentMapType == MapType.satellite) ? MapType.normal : MapType.satellite;
-                    //setState(() { });
-                  }
-               ),
-            ),
-          ),*/
         ],
 
       ),
@@ -95,7 +83,6 @@ class _ProfessionalsMapScreenState extends State<ProfessionalsMapScreen> {
 
       var markerOption = MarkerOptions(
         position: LatLng(proUser.professionalData.latitude, proUser.professionalData.longitude),
-        //infoWindowText: InfoWindowText( proData.nome, proData.descricao),
       );
 
 
@@ -121,6 +108,7 @@ class _ProfessionalsMapScreenState extends State<ProfessionalsMapScreen> {
             return MapBottomSheetWidget(
               proUser: markProUser,
               perfilButtonCallback: (){
+
                 Navigator.of(context).push( MaterialPageRoute(
                     builder: (BuildContext context){
                       return ProfessionalPerfilScreen(
@@ -128,9 +116,30 @@ class _ProfessionalsMapScreenState extends State<ProfessionalsMapScreen> {
                       );
                     } )
                 );
-              },
+
+                _registerVisualization( markProUser.uid );
+                //compute(_registerVisualization,  markProUser.uid);
+               },
             );
           });
+  }
+
+
+  void _registerVisualization(final String proUid){
+    var uid = UserRepository.instance.currentUser.uid;
+    if (proUid == uid)
+      return;
+
+    var time = DateTime.now();
+    String date = "${time.day}/${time.month}/${time.year}";
+
+    var visualization = UserView(
+        userVisitorId: uid,
+        userVisualizedId: proUid,
+        date: date
+    );
+
+    FirebaseUserViewsHelper.pushUserVisualization( viewData: visualization );
   }
 
   void _mapChange(){

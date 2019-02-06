@@ -18,16 +18,16 @@ class UserViewItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: RoundedPictureWidget(
-        height: 60,
-        width: 60,
-        networkImageUrl: _user.picturePath,
+        height: 50,
+        width: 50,
+        networkImageUrl: _user?.picturePath,
       ),
 
       title: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(_user.name,
+            Text(_user?.name ?? Constants.USER_DELETED,
               overflow: TextOverflow.clip,
               maxLines: 2,
               style: TextStyle(
@@ -40,14 +40,13 @@ class UserViewItemWidget extends StatelessWidget {
             RatingBar(
               starCount: 5,
               onRatingChanged: null,
-              rating: _user.rating,
-              cor: Colors.amber,
+              rating: _user?.rating ?? 5.0,
+              cor: (_user == null) ? Colors.grey[400] : Colors.amber,
             ),
-
           ],
       ),
 
-      trailing: Text("11/10/18",
+      trailing: Text(_view?.date ?? "----",
           textAlign: TextAlign.end,
           style: TextStyle(
             fontSize: 10.0,

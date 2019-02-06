@@ -5,8 +5,11 @@ import 'package:flutter/material.dart';
 class ProfessionalPerfilScreen extends StatelessWidget {
 
   final User _userProData;
+  final bool _registerView;
 
-  ProfessionalPerfilScreen({@required User userProData}) :
+  ProfessionalPerfilScreen(
+      { @required User userProData, bool registerVisualization = false } ) :
+        _registerView = registerVisualization,
         _userProData = userProData;
 
   @override
