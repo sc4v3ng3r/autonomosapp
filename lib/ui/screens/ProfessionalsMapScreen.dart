@@ -9,15 +9,19 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:badges/badges.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfessionalsMapScreen extends StatefulWidget {
   final CameraPosition _initialCameraPosition;
   final List<User> _dataList;
+  final String _screenTitle;
 
   ProfessionalsMapScreen(
       {@required double initialLatitude, @required initialLongitude,
-        @required List<User> professionalList}):
+        @required List<User> professionalList, @required screenTitle}):
       _dataList = professionalList,
+      _screenTitle = screenTitle,
       _initialCameraPosition = CameraPosition(
         target: LatLng(initialLatitude, initialLongitude),
       );
@@ -45,10 +49,30 @@ class _ProfessionalsMapScreenState extends State<ProfessionalsMapScreen> {
   Widget build(BuildContext context) {
     print("ProfessionalsMapScreenBuild");
     return Scaffold(
-      primary: true,
+      appBar: AppBar(
+        title: Text(widget._screenTitle),
+        actions: <Widget>[
+          // TEST feature
+
+          IconButton(
+            tooltip: Constants.TOOLTIP_MAP_TYPE,
+            icon: Icon(Icons.map, color: Colors.white,),
+            onPressed: _changeMapType,
+          ),
+
+          Tooltip(
+            message: Constants.TOOLTIP_PRO_LIST,
+            child: BadgeIconButton(
+              itemCount: widget._dataList.length,
+              icon: Icon( Icons.list, color: Colors.white, ),
+              onPressed: (){},
+            ),
+          ),
+        ],
+      ),
+
       body: Stack(
         children: <Widget>[
-
           GoogleMap(
             mapType: _currentMapType,
             onMapCreated: _onMapCreated,
@@ -97,7 +121,7 @@ class _ProfessionalsMapScreenState extends State<ProfessionalsMapScreen> {
     } );
 
     _controller.addListener( _mapChange );
-    _extractCurrentMapInfo();
+    //_extractCurrentMapInfo();
   }
 
   void _showBottomSheet(Marker marker){
@@ -107,8 +131,19 @@ class _ProfessionalsMapScreenState extends State<ProfessionalsMapScreen> {
           builder: (buildContext){
             return MapBottomSheetWidget(
               proUser: markProUser,
-              perfilButtonCallback: (){
+              contactButtonCallback: () async {
 
+                var whatsUrl =
+                  "whatsapp://send?phone=55${markProUser.professionalData.telefone}"
+                  "&text=${Constants.getDefaultWhatsappMessage(
+                    professionalName: markProUser.name)}";
+
+                await canLaunch(whatsUrl) ?
+                  launch(whatsUrl):
+                    _showNoWhatsappDialog();
+              },
+
+              perfilButtonCallback: (){
                 Navigator.of(context).push( MaterialPageRoute(
                     builder: (BuildContext context){
                       return ProfessionalPerfilScreen(
@@ -122,6 +157,28 @@ class _ProfessionalsMapScreenState extends State<ProfessionalsMapScreen> {
                },
             );
           });
+  }
+
+  void _showNoWhatsappDialog(){
+    showDialog(
+        context: context,
+        builder: (BuildContext context){
+          return AlertDialog(
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Text("Whatsapp não está instalado"),
+                ],
+              ),
+            ),
+          );
+    });
+  }
+  /// TEST
+  void _changeMapType(){
+    (_currentMapType == MapType.normal) ? _currentMapType = MapType.satellite
+        : _currentMapType = MapType.normal;
+    setState(() {});
   }
 
 
@@ -141,6 +198,7 @@ class _ProfessionalsMapScreenState extends State<ProfessionalsMapScreen> {
 
     FirebaseUserViewsHelper.pushUserVisualization( viewData: visualization );
   }
+
 
   void _mapChange(){
     print("on map changed");

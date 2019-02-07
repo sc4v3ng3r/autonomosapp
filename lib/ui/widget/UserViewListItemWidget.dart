@@ -2,21 +2,21 @@ import 'package:autonomosapp/model/User.dart';
 import 'package:autonomosapp/model/UserView.dart';
 import 'package:autonomosapp/ui/widget/RatingBar.dart';
 import 'package:autonomosapp/utility/Constants.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:autonomosapp/ui/widget/NetworkRoundedPictureWidget.dart';
 
-class UserViewItemWidget extends StatelessWidget {
+class UserViewListItemWidget extends StatelessWidget {
   final User _user;
   final UserView _view;
 
-  UserViewItemWidget({ @required User user, @required UserView view }) :
+  UserViewListItemWidget({ @required User user, @required UserView view }) :
     _user = user,
     _view = view;
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: RoundedPictureWidget(
+      leading: NetworkRoundedPictureWidget(
         height: 50,
         width: 50,
         networkImageUrl: _user?.picturePath,
@@ -57,34 +57,4 @@ class UserViewItemWidget extends StatelessWidget {
     );
   }
 
-}
-
-class RoundedPictureWidget extends StatelessWidget {
-  final String _networkImage;
-  final double _width;
-  final double _height;
-
-  RoundedPictureWidget({String networkImageUrl, double width = 100, double height = 100}) :
-      _width = width,
-      _height = height,
-      _networkImage = networkImageUrl;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: _width,
-      height: _height,
-      child: (_networkImage != null) ?
-      ClipOval(
-        child: CachedNetworkImage(
-          imageUrl: _networkImage,
-          placeholder: CircularProgressIndicator(),
-        ),
-      ) :
-      CircleAvatar(
-        backgroundImage: AssetImage(
-            Constants.ASSETS_LOGO_USER_PROFILE_FILE_NAME
-        ),),
-    );
-  }
 }

@@ -482,7 +482,6 @@ class _MainScreenState extends State<MainScreen> {
 
 
   void _fetchProfessionalsAndGoToMapScreen(Service serviceItem) async {
-
     String sigla = Estado.keyOfState(_placemark.administrativeArea);
 
       FirebaseUfCidadesServicosProfissionaisHelper
@@ -508,6 +507,7 @@ class _MainScreenState extends State<MainScreen> {
                         Navigator.push(context, MaterialPageRoute(
                             builder: (context){
                               return ProfessionalsMapScreen(
+                                screenTitle: serviceItem.name,
                                 initialLatitude: _repository.currentLocation.latitude,
                                 initialLongitude: _repository.currentLocation.longitude,
                                 professionalList: professionalUsersList,
@@ -533,7 +533,7 @@ class _MainScreenState extends State<MainScreen> {
   void _showWarningSnackbar(String serviceName,String cityName){
     _scaffoldKey.currentState.showSnackBar(
         SnackBar(content: Text("Não há profissonais para $serviceName"
-            "disponíveis em $cityName",
+            " disponíveis em $cityName",
           ),
           backgroundColor: Colors.red,
         )

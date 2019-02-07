@@ -4,7 +4,6 @@ import 'package:autonomosapp/model/ApplicationState.dart';
 import 'package:autonomosapp/model/Location.dart';
 import 'package:autonomosapp/model/User.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/material.dart';
 
 class UserRepository {
 

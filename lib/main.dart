@@ -25,7 +25,6 @@ class MyApp extends StatelessWidget{
           case ConnectionState.none:
           case ConnectionState.active:
           case ConnectionState.waiting:
-            print("STATE ${snapshot.connectionState.toString()}");
             return Container(
               color: Colors.black,
             );

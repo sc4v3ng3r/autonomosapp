@@ -1,7 +1,7 @@
 import 'package:autonomosapp/bloc/UsersViewWidgetBloc.dart';
 import 'package:autonomosapp/model/User.dart';
 import 'package:autonomosapp/model/UserView.dart';
-import 'package:autonomosapp/ui/widget/UserViewItemWidget.dart';
+import 'package:autonomosapp/ui/widget/UserViewListItemWidget.dart';
 import 'package:flutter/material.dart';
 
 class UsersViewWidget extends StatefulWidget {
@@ -49,7 +49,7 @@ class _UsersViewWidgetState extends State<UsersViewWidget> {
                       var map = snapshot.data[index];
                       var currentKey = map.keys.first;
                       return Card(
-                        child: UserViewItemWidget(
+                        child: UserViewListItemWidget(
                           user:  map[ currentKey ], //widget._userList[index],
                           view: currentKey,
                         ),

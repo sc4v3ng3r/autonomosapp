@@ -3,6 +3,7 @@ import 'package:autonomosapp/firebase/FirebaseStorageHelper.dart';
 import 'package:autonomosapp/firebase/FirebaseUfCidadesServicosProfissionaisHelper.dart';
 import 'package:autonomosapp/firebase/FirebaseUserViewsHelper.dart';
 import 'package:autonomosapp/model/ProfessionalData.dart';
+import 'package:autonomosapp/utility/InputValidator.dart';
 import 'package:autonomosapp/utility/UserRepository.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -34,7 +35,6 @@ class FirebaseUserHelper {
       if (snapshot.value != null) {
         print("FirebaseUserHelper user $uid exist in DB!");
         user = User.fromDataSnapshot(snapshot);
-
         var url = fbUser.photoUrl;
 
         if (url != null)
@@ -95,16 +95,18 @@ class FirebaseUserHelper {
   // TODO MELHORAR ESSE METODO
   ///Obtpem o usuário atualmente logado.
   static Future<User> currentLoggedUser() async {
+    var user;
     try {
       FirebaseUser fbUser = await AUTH.currentUser();
       if (fbUser == null)
         return null;
-      return await readUserAccountData(fbUser);
+      user = await readUserAccountData(fbUser);
     }
     catch (ex) {
       print("FirebaseUserHelper::" + ex.toString());
       throw ex;
     }
+    return user;
   }
 
   /// Obtém os dados profissionais ProfessionalData do firebase dos usuários

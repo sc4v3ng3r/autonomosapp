@@ -74,6 +74,25 @@ class InputValidator {
     return null;
   }
 
+  /// SUPER ARMENGUE PARA REMOVER CARACTERES ESPECIAIS DO NUMERO DE TELEFONE
+  /// TODO tem que utilizar expressões regulares.
+  static String phoneWithoutMask(final String phone){
+    var s1 ='(';
+    var s2 = ')';
+    var s3 = '-';
+    var s4 = ' ';
+    String str = "";
+
+    for(var i=0; i < phone.length; i++){
+      var char = phone[i];
+      if ( (char.compareTo(s1) != 0 ) && (char.compareTo(s2)!=0) &&
+           (char.compareTo(s3) != 0 ) && (char.compareTo(s4) !=0)){
+        str+= char;
+      }
+    }
+    return str;
+  }
+
   static String _removingMask(String number){
     String numberWithoutMask  = "";
     for(int i=0; i < number.length; i++){
