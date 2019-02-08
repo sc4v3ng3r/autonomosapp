@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    UserRepository();
+    UserRepository repo = UserRepository.instance;
     print("Myapp build()");
 
     return FutureBuilder<User>(
@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget{
             );
 
           case ConnectionState.done:
-            UserRepository repo = UserRepository();
+
             repo.currentUser = snapshot.data;
             return MaterialApp(
               debugShowCheckedModeBanner: false,

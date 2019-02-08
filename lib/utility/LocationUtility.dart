@@ -6,6 +6,7 @@ import 'dart:io' show Platform;
 class LocationUtility {
 
   static Future<Position> getCurrentPosition({@required LocationAccuracy desiredAccuracy}) async {
+
     if (Platform.isAndroid) {
       return Geolocator().getCurrentPosition(
           desiredAccuracy: desiredAccuracy

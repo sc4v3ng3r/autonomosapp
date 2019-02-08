@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 /// Essa classe representa um Objeto divisor de layout
 /// Ela desennha uma linha com um texto ao meio semelhante ao seguinte
 /// __________ Meu Título __________
-/// 
+///
 class NiftyRowDivisorWidget extends StatelessWidget {
   final _rowColor;
   final _rowHeight;

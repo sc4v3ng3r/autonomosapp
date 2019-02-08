@@ -14,11 +14,15 @@ class Constants {
   static const SizedBox HORIZONTAL_SEPARATOR_16 = const SizedBox(width: 16.0,);
   static const SizedBox HORIZONTAL_SEPARATOR_8 = const SizedBox(width: 8.0,);
 
+  static const String LABEL_KM = "Kilômetros";
+  static const String LABEM_M = "Metros";
+
   static const String USER_DELETED = "Usuário removido";
   static const String TOOLTIP_MAP_TYPE = "Tipo do mapa";
   static const String TOOLTIP_PRO_LIST = "Profissionais";
 
   static const String PHONE_BRAZIL_PERFIX = "55";
+
   static String getDefaultWhatsappMessage({@required String professionalName }){
     return "Olá $professionalName sou usuário do Autônomos e pretendo "
         "contratar seus serviços";

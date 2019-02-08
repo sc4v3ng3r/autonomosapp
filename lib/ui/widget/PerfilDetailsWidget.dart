@@ -13,7 +13,6 @@ import 'package:autonomosapp/ui/screens/LocationEditorScreen.dart';
 
 class PerfilDetailsWidget extends StatefulWidget {
   final User _user;
-  final SizedBox _SEPARATOR = SizedBox(height: 8.0,);
   final bool _editable;
 
   PerfilDetailsWidget( {@required User user, bool editable = true} ):
@@ -55,7 +54,7 @@ class _PerfilDetailsWidgetState extends State<PerfilDetailsWidget> {
 
     widgetList.add( userName);//0
     widgetList.add( userRatingBar );//1
-    widgetList.add( widget._SEPARATOR );//2
+    widgetList.add( Constants.VERTICAL_SEPARATOR_8 );//2
     widgetList.add( userEmail);//3
 
     if (user.professionalData!=null){
@@ -76,13 +75,13 @@ class _PerfilDetailsWidgetState extends State<PerfilDetailsWidget> {
           Icon( Icons.clear, color: Colors.red,));
 
       widgetList.insert(3, userNote);
-      widgetList.insert(4, widget._SEPARATOR);
+      widgetList.insert(4, Constants.VERTICAL_SEPARATOR_8 );
       widgetList.insert(5, userPhone);
 
       if (widget._editable)
         widgetList.add( _getChangePasswordField() );
 
-      widgetList.add(widget._SEPARATOR);
+      widgetList.add( Constants.VERTICAL_SEPARATOR_8 );
 
       var cityChipContainer = ChipPanelWidget<String>(
         title: "Cidades Atuantes",
@@ -102,7 +101,7 @@ class _PerfilDetailsWidgetState extends State<PerfilDetailsWidget> {
       );
 
       widgetList.add( cityChipContainer );
-      widgetList.add( widget._SEPARATOR );
+      widgetList.add( Constants.VERTICAL_SEPARATOR_8 );
 
       var servicesChipContainer = ChipPanelWidget<Service>(
         title: "Serviços Atuantes",
@@ -117,7 +116,7 @@ class _PerfilDetailsWidgetState extends State<PerfilDetailsWidget> {
       );
 
       widgetList.add( servicesChipContainer );
-      widgetList.add( widget._SEPARATOR );
+      widgetList.add( Constants.VERTICAL_SEPARATOR_8 );
 
       var paymentPanel = ChipPanelWidget<String>(
         title: "Formas de pagamento",
@@ -138,7 +137,7 @@ class _PerfilDetailsWidgetState extends State<PerfilDetailsWidget> {
     else {
       if (widget._editable)
         widgetList.add( _getChangePasswordField() );
-      widgetList.add( widget._SEPARATOR );
+      widgetList.add( Constants.VERTICAL_SEPARATOR_8 );
     }
 
     var infoGroup= Card(
