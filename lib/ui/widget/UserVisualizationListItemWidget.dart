@@ -5,11 +5,11 @@ import 'package:autonomosapp/utility/Constants.dart';
 import 'package:flutter/material.dart';
 import 'package:autonomosapp/ui/widget/NetworkRoundedPictureWidget.dart';
 
-class UserViewListItemWidget extends StatelessWidget {
+class UserVisualizationListItemWidget extends StatelessWidget {
   final User _user;
   final UserView _view;
 
-  UserViewListItemWidget({ @required User user, @required UserView view }) :
+  UserVisualizationListItemWidget({ @required User user, @required UserView view }) :
     _user = user,
     _view = view;
 
