@@ -3,7 +3,6 @@ import 'package:autonomosapp/firebase/FirebaseStorageHelper.dart';
 import 'package:autonomosapp/firebase/FirebaseUfCidadesServicosProfissionaisHelper.dart';
 import 'package:autonomosapp/firebase/FirebaseUserViewsHelper.dart';
 import 'package:autonomosapp/model/ProfessionalData.dart';
-import 'package:autonomosapp/utility/InputValidator.dart';
 import 'package:autonomosapp/utility/UserRepository.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -23,10 +22,6 @@ class FirebaseUserHelper {
   // TODO melhorar a execução deste método!ls
 
   static Future<User> readUserAccountData(FirebaseUser fbUser) async {
-    /*DatabaseReference proRef = FirebaseDatabase.instance
-        .reference()
-        .child(FirebaseReferences.REFERENCE_PROFISSIONAIS);
-    */
     User user;
     String uid = fbUser.uid;
 
@@ -40,14 +35,6 @@ class FirebaseUserHelper {
         if (url != null)
           CachedNetworkImageProvider( url );
       }
-
-      //DataSnapshot professionalData = await proRef.child(user.uid).once();
-      /*if ((professionalData.value != null)) {
-        print(
-            "FirebaseUserHelper user $uid has pro data ${professionalData.value.toString()}");
-        user.professionalData = ProfessionalData.fromSnapshot(professionalData);
-      }*/
-
     }
 
     catch (ex) {

@@ -23,6 +23,7 @@ class Constants {
 
   static const String PHONE_BRAZIL_PERFIX = "55";
 
+  static const int NETWORK_TIMEOUT_SECONDS = 45;
   static String getDefaultWhatsappMessage({@required String professionalName }){
     return "Olá $professionalName sou usuário do Autônomos e pretendo "
         "contratar seus serviços";

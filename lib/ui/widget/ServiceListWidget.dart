@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:autonomosapp/bloc/ServiceListWidgetBloc.dart';
 import 'package:autonomosapp/model/Service.dart';
 import 'package:autonomosapp/ui/widget/AbstractDataListWidget.dart';
+import 'package:autonomosapp/utility/Constants.dart';
 import 'package:flutter/material.dart';
 import 'package:autonomosapp/ui/widget/SearchBarWidget.dart';
 
@@ -76,14 +79,15 @@ class _ServiceListWidgetState extends State<ServiceListWidget> {
     return StreamBuilder< List<Service> >(
       stream: _bloc.getAllServices,
       builder: (BuildContext context, AsyncSnapshot<List<Service>> snapshot) {
-
         switch(snapshot.connectionState){
           case ConnectionState.waiting:
             return Column(
               children: <Widget>[
                 searchBar,
-                CircularProgressIndicator(
-                  semanticsLabel: "Carregando...",
+                Center(
+                  child: CircularProgressIndicator(
+                    semanticsLabel: "Carregando...",
+                  ),
                 ),
 
               ],
@@ -91,16 +95,17 @@ class _ServiceListWidgetState extends State<ServiceListWidget> {
 
           case ConnectionState.active:
           case ConnectionState.done:
-            return Column(
-              children: <Widget>[
-                searchBar,
-                ListWidget(
+              return Column(
+                children: <Widget>[
+                  searchBar,
+                  ListWidget(
                     snapshot.data,
                     singleClickCallback: widget._singleClickCallback,
                     clickMode: widget._clickMode,
-                ),
-              ],
-            );
+                  ),
+                ],
+              );
+
           case ConnectionState.none:
             return Text("NO CONNECTION!!!");
         }

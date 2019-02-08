@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:autonomosapp/bloc/ServiceListWidgetBloc.dart';
 import 'package:autonomosapp/firebase/FirebaseUfCidadesServicosProfissionaisHelper.dart';
 import 'package:autonomosapp/firebase/FirebaseUserHelper.dart';
@@ -12,6 +14,7 @@ import 'package:autonomosapp/ui/widget/ModalRoundedProgressBar.dart';
 import 'package:autonomosapp/ui/widget/RatingBar.dart';
 import 'package:autonomosapp/model/User.dart';
 import 'package:autonomosapp/ui/widget/ServiceListWidget.dart';
+import 'package:autonomosapp/utility/Constants.dart';
 import 'package:autonomosapp/utility/PermissionUtiliy.dart';
 import 'package:autonomosapp/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
@@ -430,17 +433,13 @@ class _MainScreenState extends State<MainScreen> {
 
     if (location == null) {
       results = await _updateUserCurrentPosition();
-      if (results)
-        _fetchProfessionalsAndGoToMapScreen(item);
-      else {
+      if (!results) {
         _progressBarHandler.dismiss();
-        print("Não foi possível buscar profisisonais!");
         return;
       }
     }
-    else{
-      _fetchProfessionalsAndGoToMapScreen(item);
-    }
+
+    _fetchProfessionalsAndGoToMapScreen(item);
 
   }
 
@@ -481,52 +480,62 @@ class _MainScreenState extends State<MainScreen> {
   }
 
 
-  void _fetchProfessionalsAndGoToMapScreen(Service serviceItem) async {
+  void _fetchProfessionalsAndGoToMapScreen(Service serviceItem)  async {
     String sigla = Estado.keyOfState(_placemark.administrativeArea);
-
       FirebaseUfCidadesServicosProfissionaisHelper
-
           .getProfessionalsIdsFromCityAndService( estadoSigla: sigla,
-              cidadeNome: _placemark.subAdministratieArea,
-              serviceId: serviceItem.id).then(
+          cidadeNome: _placemark.subAdministratieArea,
+          serviceId: serviceItem.id).then(
               (snapshotProfIds) {
-                if (snapshotProfIds.value != null) {
+            if (snapshotProfIds.value != null) {
 
-                  Map<String, dynamic> idsMap = Map.from(snapshotProfIds.value);
-                  //removo usuario atual da lista caso o mesmo exerca o servico procurado
-                  //idsMap.remove(_user.uid);
+              Map<String, dynamic> idsMap = Map.from(snapshotProfIds.value);
+              //removo usuario atual da lista caso o mesmo exerca o servico procurado
+              //idsMap.remove(_user.uid);
 
-                  List<User> professionalUsersList = new List();
-                  
-                  FirebaseUserHelper.getProfessionalUsers(
-                      idsMap.keys.toList() ).then(
-                          (professionalUsersMap) {
-                            professionalUsersMap.forEach( (key, value) => professionalUsersList.add(
-                            User.fromJson( Map.from(value)) )
-                        );
-                        Navigator.push(context, MaterialPageRoute(
-                            builder: (context){
-                              return ProfessionalsMapScreen(
-                                screenTitle: serviceItem.name,
-                                initialLatitude: _repository.currentLocation.latitude,
-                                initialLongitude: _repository.currentLocation.longitude,
-                                professionalList: professionalUsersList,
-                                
-                              );
-                            })
-                        ).then((_) => _progressBarHandler.dismiss()  );
+              List<User> professionalUsersList = new List();
 
-                        //_showAndroidNativeMapActivity(dataList);
-                      });
-                }
+              FirebaseUserHelper.getProfessionalUsers(
+                  idsMap.keys.toList() ).then(
+                      (professionalUsersMap) {
+                    professionalUsersMap.forEach( (key, value) => professionalUsersList.add(
+                        User.fromJson( Map.from(value)) )
+                    );
 
-                else {
-                  // EH PQ NAO HA PROFISISONAIS PARA TAL SERVICO EM TAL CIDADE!
-                  //desbloquear tela
-                  _progressBarHandler.dismiss();
-                  _showWarningSnackbar(serviceItem.name, _placemark.subAdministratieArea);
+                    Navigator.push(context, MaterialPageRoute(
+                        builder: (context){
+                          return ProfessionalsMapScreen(
+                            screenTitle: serviceItem.name,
+                            initialLatitude: _repository.currentLocation.latitude,
+                            initialLongitude: _repository.currentLocation.longitude,
+                            professionalList: professionalUsersList,
 
-                }
+                          );
+                        })
+                    ).then((_) => _progressBarHandler.dismiss()  );
+                    //_showAndroidNativeMapActivity(dataList);
+                  });
+            }
+
+            else {
+              // EH PQ NAO HA PROFISISONAIS PARA TAL SERVICO EM TAL CIDADE!
+              //desbloquear tela
+              _progressBarHandler.dismiss();
+              _showWarningSnackbar(serviceItem.name, _placemark.subAdministratieArea);
+
+            }
+          }).timeout(Duration(seconds: Constants.NETWORK_TIMEOUT_SECONDS ),
+              onTimeout: () => throw TimeoutException("network exception"))
+          .catchError((ex){
+            print(ex);
+            _progressBarHandler.dismiss();
+            _scaffoldKey.currentState.showSnackBar(
+
+              SnackBar(content: Text("Não foi possível localizar profissionais. Verifique sua "
+                  "conexão com a internet"),
+                backgroundColor: Colors.red,
+              ),
+            );
           });
   }
 

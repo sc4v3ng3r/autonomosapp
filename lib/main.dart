@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:autonomosapp/ui/screens/LoginScreen.dart';
+import 'package:autonomosapp/utility/Constants.dart';
 import 'package:autonomosapp/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
 import 'package:autonomosapp/firebase/FirebaseUserHelper.dart';
@@ -19,14 +22,24 @@ class MyApp extends StatelessWidget{
     print("Myapp build()");
 
     return FutureBuilder<User>(
-      future: FirebaseUserHelper.currentLoggedUser(),
+      future: FirebaseUserHelper.currentLoggedUser()
+          .timeout(Duration(seconds: Constants.NETWORK_TIMEOUT_SECONDS),
+          onTimeout: (){ throw TimeoutException("timeout!!");}),
+
       builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.none:
           case ConnectionState.active:
           case ConnectionState.waiting:
-            return Container(
-              color: Colors.black,
+            return Material(
+              color: Colors.grey[350],
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  CircularProgressIndicator(),
+                ],
+              ),
             );
 
           case ConnectionState.done:
