@@ -1,4 +1,5 @@
 import 'package:autonomosapp/model/Service.dart';
+import 'package:autonomosapp/utility/Constants.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:autonomosapp/firebase/FirebaseReferences.dart';
 import 'package:autonomosapp/model/ProfessionalData.dart';
@@ -29,7 +30,8 @@ class FirebaseUfCidadesServicosProfissionaisHelper {
         .child(FirebaseReferences.REFERENCE_UF_CIDADES_SERVICOS_PROFISSIONAIS)
         .child( estadoSigla ).child( cidadeNome ).child( serviceId );
 
-    return ref.once();
+    return ref.once().timeout(
+      Duration(seconds: Constants.NETWORK_TIMEOUT_SECONDS) );
   }
 
   static void removeServicesFromProfessionalUser( String uid, List< Service > toRemove, ProfessionalData proData){

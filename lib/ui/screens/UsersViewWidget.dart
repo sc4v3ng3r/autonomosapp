@@ -73,11 +73,7 @@ class _UsersViewWidgetState extends State<UsersViewWidget> {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  NetworkFailWidget(
-                    title: "Falha de conexão",
-                    subtitle: "Não foi possível obter dados do servidor. Verifique "
-                        "sua conexão com a internet.",
-                  ),
+                  NetworkFailWidget(),
                 ],
               );
             }

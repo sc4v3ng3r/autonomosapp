@@ -3,6 +3,7 @@ import 'package:autonomosapp/firebase/FirebaseStorageHelper.dart';
 import 'package:autonomosapp/firebase/FirebaseUfCidadesServicosProfissionaisHelper.dart';
 import 'package:autonomosapp/firebase/FirebaseUserViewsHelper.dart';
 import 'package:autonomosapp/model/ProfessionalData.dart';
+import 'package:autonomosapp/utility/Constants.dart';
 import 'package:autonomosapp/utility/UserRepository.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -98,15 +99,14 @@ class FirebaseUserHelper {
 
   /// Obtém os dados profissionais ProfessionalData do firebase dos usuários
   /// específicados pelos ID's.
-  static Future< Map<String,dynamic> > getProfessionalUsers( List<String> UsersIds ) async {
-
-    DatabaseReference ref = FirebaseDatabase.instance
-        .reference();
+  static Future< Map<String,dynamic> > getProfessionalUsers( List<String> usersIds ) async {
 
     Map<String, dynamic> map = Map();
-    for(String userId in UsersIds){
-     var snapshot = await readUserNode(uid: userId);
-     print(snapshot.value.toString());
+
+    for(String userId in usersIds){
+     var snapshot = await readUserNode(uid: userId)
+         .timeout( Duration( seconds: Constants.NETWORK_TIMEOUT_SECONDS ) )
+         .catchError( (error) { throw error;} );
       map.putIfAbsent( userId, () => snapshot.value );
     }
     return map;
@@ -191,5 +191,6 @@ class FirebaseUserHelper {
 
   ///OBtém um usuário específico
   static Future<DataSnapshot> readUserNode( {@required String uid} ) async
-     => USERS_REFERENCE.child(uid).once();
+     => USERS_REFERENCE.child(uid).once()
+          .timeout( Duration(seconds: Constants.NETWORK_TIMEOUT_SECONDS ) );
 }

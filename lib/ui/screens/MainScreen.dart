@@ -11,6 +11,7 @@ import 'package:autonomosapp/ui/screens/ProfessionalsMapScreen.dart';
 import 'package:autonomosapp/ui/screens/UsersViewWidget.dart';
 import 'package:autonomosapp/ui/screens/ui_cadastro_autonomo/ProfessionalRegisterBasicInfoScreen.dart';
 import 'package:autonomosapp/ui/widget/ModalRoundedProgressBar.dart';
+import 'package:autonomosapp/ui/widget/NetworkFailWidget.dart';
 import 'package:autonomosapp/ui/widget/RatingBar.dart';
 import 'package:autonomosapp/model/User.dart';
 import 'package:autonomosapp/ui/widget/ServiceListWidget.dart';
@@ -479,6 +480,18 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
+  void _showNetworkFailDialog(){
+    showDialog(context: context,
+      barrierDismissible: true,
+      builder: (context){
+        return SimpleDialog(
+          children: <Widget>[
+            NetworkFailWidget(),
+          ],
+        );
+      }
+    );
+  }
 
   void _fetchProfessionalsAndGoToMapScreen(Service serviceItem)  async {
     String sigla = Estado.keyOfState(_placemark.administrativeArea);
@@ -494,7 +507,6 @@ class _MainScreenState extends State<MainScreen> {
               //idsMap.remove(_user.uid);
 
               List<User> professionalUsersList = new List();
-
               FirebaseUserHelper.getProfessionalUsers(
                   idsMap.keys.toList() ).then(
                       (professionalUsersMap) {
@@ -509,11 +521,20 @@ class _MainScreenState extends State<MainScreen> {
                             initialLatitude: _repository.currentLocation.latitude,
                             initialLongitude: _repository.currentLocation.longitude,
                             professionalList: professionalUsersList,
-
                           );
                         })
                     ).then((_) => _progressBarHandler.dismiss()  );
-                    //_showAndroidNativeMapActivity(dataList);
+
+                  }).catchError(
+                      (exception) {
+                    if(exception.runtimeType == TimeoutException){
+                      _showNetworkFailDialog();
+
+                    }
+
+                    else print("capturei excessao na main screen");
+                    _progressBarHandler.dismiss();
+                    return;
                   });
             }
 
@@ -524,19 +545,12 @@ class _MainScreenState extends State<MainScreen> {
               _showWarningSnackbar(serviceItem.name, _placemark.subAdministratieArea);
 
             }
-          }).timeout(Duration(seconds: Constants.NETWORK_TIMEOUT_SECONDS ),
-              onTimeout: () => throw TimeoutException("network exception"))
-          .catchError((ex){
-            print(ex);
-            _progressBarHandler.dismiss();
-            _scaffoldKey.currentState.showSnackBar(
-
-              SnackBar(content: Text("Não foi possível localizar profissionais. Verifique sua "
-                  "conexão com a internet"),
-                backgroundColor: Colors.red,
-              ),
-            );
-          });
+          }).catchError(
+              (ex){
+                print( "MainScreen fetching pro error! $ex" );
+                _progressBarHandler.dismiss();
+                _showNetworkFailDialog();
+              });
   }
 
   void _showWarningSnackbar(String serviceName,String cityName){
@@ -548,11 +562,6 @@ class _MainScreenState extends State<MainScreen> {
         )
     );
   }
-
-  Future<Null> _showAndroidNativeMapActivity(List<dynamic> dataMapList) async {
-    print("OPEN MAPS WIDGE!!!");
-  }
-
 
   Future<bool> _handleLocationPermissionForAndroid() async {
     var hasPermission =  await PermissionUtility.hasLocationPermission();

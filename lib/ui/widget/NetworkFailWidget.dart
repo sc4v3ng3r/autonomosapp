@@ -8,7 +8,11 @@ class NetworkFailWidget extends StatelessWidget {
   final String _subTitle;
   final bool _refreshAction;
 
-  NetworkFailWidget({@required String title , @required String subtitle,
+  static const String DEFAULT_TITLE = "Falha de conexão";
+  static const String DEFAULT_SUBTITLE = "Não foi possível obter dados do servidor. "
+      "Verifique sua conexão com a internet.";
+
+  NetworkFailWidget({String title = DEFAULT_TITLE  ,String subtitle = DEFAULT_SUBTITLE,
     bool refreshAction = false, Function callback}) :
     _title = title,
     _refreshAction = refreshAction,
