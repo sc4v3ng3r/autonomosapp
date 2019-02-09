@@ -1,9 +1,7 @@
-import 'dart:async';
 
 import 'package:autonomosapp/bloc/ServiceListWidgetBloc.dart';
 import 'package:autonomosapp/model/Service.dart';
 import 'package:autonomosapp/ui/widget/AbstractDataListWidget.dart';
-import 'package:autonomosapp/utility/Constants.dart';
 import 'package:flutter/material.dart';
 import 'package:autonomosapp/ui/widget/SearchBarWidget.dart';
 
@@ -43,9 +41,10 @@ class _ServiceListWidgetState extends State<ServiceListWidget> {
 
   @override
   void dispose() {
-    super.dispose();
     if (_bloc != null)
       _bloc.dispose();
+
+    super.dispose();
   }
 
   @override
@@ -195,7 +194,6 @@ class _ServiceItemViewState extends State<ServiceItemView> {
                 else _bloc.selectItem( widget.item );
                 setState(() {});
               }
-
             },
           ),
         ),

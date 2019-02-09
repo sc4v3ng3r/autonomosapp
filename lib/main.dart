@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:autonomosapp/firebase/FirebaseUserHelper.dart';
 import 'package:autonomosapp/model/User.dart';
 import 'package:autonomosapp/ui/screens/MainScreen.dart';
-
+import 'package:autonomosapp/ui/widget/NetworkFailWidget.dart';
 // Marcelo
 /*(71)991259223*/
 void main() {

@@ -3,7 +3,9 @@ import 'package:autonomosapp/model/User.dart';
 import 'package:autonomosapp/model/UserView.dart';
 import 'package:autonomosapp/ui/widget/UserVisualizationListItemWidget.dart';
 import 'package:flutter/material.dart';
+import 'package:autonomosapp/ui/widget/NetworkFailWidget.dart';
 
+/// Classe utilizada como "fragment" que exibe as viesualizações de um usuário
 class UsersViewWidget extends StatefulWidget {
 
   final UsersViewWidgetBloc _bloc = UsersViewWidgetBloc();
@@ -26,21 +28,25 @@ class _UsersViewWidgetState extends State<UsersViewWidget> {
     return StreamBuilder< List< Map<UserView, User> >  >(
       stream: widget._bloc.dataUiStream,
       builder: (BuildContext context, AsyncSnapshot< List< Map<UserView, User> > > snapshot ){
+        print("Current state ${snapshot.connectionState}");
         switch( snapshot.connectionState){
+
           case ConnectionState.none:
             return Center(
               child: Text("Não foi possível obter suas visualizações"),
             );
 
           case ConnectionState.waiting:
-            print("connection waiting");
+
             return Center(
               child: CircularProgressIndicator(),
             );
 
           case ConnectionState.done:
           case ConnectionState.active:
+
             if (snapshot.hasData){
+              print("Snapshot data ${snapshot.data}");
               if (snapshot.data.isNotEmpty){
                 return ListView.builder(
                     shrinkWrap: true,
@@ -62,6 +68,18 @@ class _UsersViewWidgetState extends State<UsersViewWidget> {
                   child: Text("Não há visualizações!"),
                 );
               }
+            }
+            else {
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  NetworkFailWidget(
+                    title: "Falha de conexão",
+                    subtitle: "Não foi possível obter dados do servidor. Verifique "
+                        "sua conexão com a internet.",
+                  ),
+                ],
+              );
             }
         }
 
