@@ -1,6 +1,7 @@
 import 'package:autonomosapp/bloc/CityListWidgetBloc.dart';
 import 'package:autonomosapp/model/Cidade.dart';
 import 'package:autonomosapp/ui/widget/AbstractDataListWidget.dart';
+import 'package:autonomosapp/ui/widget/NetworkFailWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:autonomosapp/ui/widget/SearchBarWidget.dart';
 
@@ -28,6 +29,7 @@ class _CityListWidgetState extends State<CityListWidget> {
   void initState() {
     super.initState();
   }
+
 
   @override
   void dispose() {
@@ -64,29 +66,52 @@ class _CityListWidgetState extends State<CityListWidget> {
     return StreamBuilder< List<Cidade> >(
       stream: _bloc.allCities,
       builder: (BuildContext context, AsyncSnapshot<List<Cidade>> snapshot) {
-
+        print("CityListWIdget current state ${snapshot?.connectionState}");
         switch(snapshot.connectionState){
           case ConnectionState.waiting:
             return Column(
               children: <Widget>[
                 searchBar,
-                CircularProgressIndicator(),
-                Text("CARREGANDO..."),
+                Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    CircularProgressIndicator(),
+                    Text("CARREGANDO..."),
+                  ],
+                ),
               ],
             );
 
           case ConnectionState.active:
           case ConnectionState.done:
-            //print("stream builder");
-            return Column(
-              children: <Widget>[
-                searchBar,
-                ListWidget(
-                    snapshot.data
+            if (snapshot.hasData){
+              return Column(
+                children: <Widget>[
+                  searchBar,
+                  ListWidget(
+                      snapshot.data
+                  ),
+                ],
+              );
+            }
 
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
+              children: <Widget>[
+                Center(
+                  child: NetworkFailWidget(
+                    refreshAction: true,
+                    callback: (){
+                      setState(() {});
+                    },
+                  ),
                 ),
               ],
             );
+            //print("stream builder");
+
           case ConnectionState.none:
             return Text("NO CONNECTION!!!");
         }
@@ -135,7 +160,6 @@ class _CityItemViewState extends State<CityItemView> {
 
   @override
   Widget build(BuildContext context) {
-    //print("_CityItemViewState build()");
     _bloc = CityListWidgetBlocProvider.of(context);
 
     return

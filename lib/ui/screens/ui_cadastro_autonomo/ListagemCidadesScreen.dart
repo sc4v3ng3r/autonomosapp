@@ -24,6 +24,7 @@ class ListagemCidadesState extends State<ListagemCidades> {
 
   @override
   void initState() {
+    super.initState();
     _cidadesSelecionadas = new List();
     _body = CityListWidgetBlocProvider(
         child: CityListWidget(
@@ -35,7 +36,7 @@ class ListagemCidadesState extends State<ListagemCidades> {
           },
         )
     );
-    super.initState();
+
   }
 
 
@@ -50,17 +51,6 @@ class ListagemCidadesState extends State<ListagemCidades> {
         color: Colors.white,
       ),
     );
-  }
-//
-  Widget _iconButton(BuildContext context) {
-    return IconButton(
-        icon: Icon(
-          Icons.arrow_back,
-          color: Colors.white,
-        ),
-        onPressed: () {
-          _voltarDialog(context);
-        });
   }
 
   @override
@@ -93,19 +83,5 @@ class ListagemCidadesState extends State<ListagemCidades> {
     );
   }
 
-  // está funcionando???
-  AlertDialog _voltarDialog(BuildContext context) {
-    return AlertDialog(
-      title: Text('Alerta!'),
-      content: Text('Tem certeza que você deseja voltar?'),
-      actions: <Widget>[
-        new FlatButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: Text('Cancelar'))
-      ],
-    );
-  }
 }
 

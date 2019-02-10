@@ -1,10 +1,12 @@
+import 'package:autonomosapp/utility/Constants.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:autonomosapp/model/Cidade.dart';
 import 'package:autonomosapp/firebase/FirebaseStateCityHelper.dart';
 import 'package:flutter/material.dart';
 
 class CityListWidgetBloc {
-  final _cityInput = PublishSubject<List<Cidade>>();
+  final _cityInput = ReplaySubject<List<Cidade>>(maxSize: 1);
   final _searchInput = new PublishSubject<String>();
   final _selectedItemsInput = new PublishSubject<List<Cidade>>();
 
@@ -20,21 +22,49 @@ class CityListWidgetBloc {
       if (searchPattern.isEmpty) {
         _onData(_mainDataList); // reenvia a lista local
       } else {
-        _searchList.clear();
-        _mainDataList.forEach((city) {
-          if (city.nome.toLowerCase().contains(searchPattern.toLowerCase())) {
-            _searchList.add(city);
-          }
-        });
 
-        _cityInput.sink.add(_searchList);
+        if(_mainDataList != null){
+          _searchList.clear();
+          _mainDataList.forEach((city) {
+            if (city.nome.toLowerCase().contains(searchPattern.toLowerCase())) {
+              _searchList.add(city);
+            }
+          });
+          _cityInput.sink.add(_searchList);
+        }
       }
     });
   }
 
-  getCity( {@required String key}) {
-    FirebaseStateCityHelper.getCitiesFrom(key, _onData);
+  void getCity( {@required String key}) {
+      FirebaseStateCityHelper.getCitiesFrom(key)
+          .timeout( Duration(seconds: Constants.NETWORK_TIMEOUT_SECONDS),
+          onTimeout: (){
+            print("CityListWidgetBloc::getCity Timeout exception");
+            _onData(null);
+          })
+          .then(
+              (dataSnapshot) {
+                print("then() $dataSnapshot");
+                if (dataSnapshot != null){
+                  _onData( _parseData(dataSnapshot) );
+                }  else _onData(null);
+              });
     //_lastKey = key;
+  }
+
+  List<Cidade> _parseData (DataSnapshot dataSnapshot) {
+    Map<String, dynamic> citiesMap = Map.from( dataSnapshot.value);
+    List<Cidade> cityList = new List();
+
+    citiesMap.forEach( (key, value) {
+      Cidade city = Cidade.fromJson(Map.from(value));
+      city.id = key; // id da cidade eh o nó raiz da cidade
+      city.uf = dataSnapshot.key.toString();// a sigla do estado eh  Nó raiz do snapshot
+      cityList.add(city);
+    } );
+
+    return cityList;
   }
 
   searchFor(String pattern) {
@@ -42,8 +72,10 @@ class CityListWidgetBloc {
   }
 
   void _onData(List<Cidade> list) {
+    print("CityListWIdgetBloc List is: $list");
     _mainDataList = list;
-    list.sort((a, b) => (a.nome.compareTo(b.nome)));
+    list?.sort((a, b) => (a.nome.compareTo(b.nome)));
+
     _cityInput.sink.add(list);
   }
 
