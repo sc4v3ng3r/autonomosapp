@@ -38,18 +38,17 @@ class CityListWidgetBloc {
 
   void getCity( {@required String key}) {
       FirebaseStateCityHelper.getCitiesFrom(key)
-          .timeout( Duration(seconds: Constants.NETWORK_TIMEOUT_SECONDS),
-          onTimeout: (){
-            print("CityListWidgetBloc::getCity Timeout exception");
-            _onData(null);
-          })
           .then(
               (dataSnapshot) {
                 print("then() $dataSnapshot");
                 if (dataSnapshot != null){
                   _onData( _parseData(dataSnapshot) );
                 }  else _onData(null);
-              });
+              })
+          .timeout( Duration(seconds: Constants.NETWORK_TIMEOUT_SECONDS), onTimeout: (){
+            print("CityListWidgetBloc::getCity Timeout exception");
+            _onData(null);
+          });
     //_lastKey = key;
   }
 
@@ -103,9 +102,9 @@ class CityListWidgetBloc {
 
   dispose() {
     print("CityListWidgetBloc dispose()");
-    _cityInput.close();
-    _searchInput.close();
-    _selectedItemsInput.close();
+    _cityInput?.close();
+    _searchInput?.close();
+    _selectedItemsInput?.close();
   }
 }
 

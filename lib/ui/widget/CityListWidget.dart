@@ -101,12 +101,7 @@ class _CityListWidgetState extends State<CityListWidget> {
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
                 Center(
-                  child: NetworkFailWidget(
-                    refreshAction: true,
-                    callback: (){
-                      setState(() {});
-                    },
-                  ),
+                  child: NetworkFailWidget(),
                 ),
               ],
             );

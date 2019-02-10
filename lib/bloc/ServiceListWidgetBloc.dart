@@ -1,10 +1,12 @@
+import 'package:autonomosapp/utility/Constants.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:autonomosapp/model/Service.dart';
 import 'package:autonomosapp/firebase/FirebaseServicesHelper.dart';
 import 'package:flutter/material.dart';
 
 class ServiceListWidgetBloc {
-  final _servicesInput = PublishSubject<List<Service>>();
+  final _servicesInput = ReplaySubject<List<Service>>(maxSize: 1);
   final _searchInput = new PublishSubject<String>();
   final _selectedItemsInput = new PublishSubject<List<Service>>();
 
@@ -34,11 +36,33 @@ class ServiceListWidgetBloc {
     });
   }
 
+  List<Service> _parseData(DataSnapshot dataSnapshot) {
+    List<Service> services =new List();
+    Map<String, dynamic> mapOfMaps = Map.from( dataSnapshot.value);
+    //print(event.snapshot.key);
+    mapOfMaps.values.forEach( (value) {
+      services.add( Service.fromJson( Map.from(value) ));
+    });
+
+    return services;
+
+  }
+
   loadServicesFromWeb() {
     if (_mainDataList == null)
-      FirebaseServicesHelper.getAllServices( _onData );
-    else
-      _onData(_mainDataList);
+      FirebaseServicesHelper.getAllServices()
+          .then(
+              (dataSnapshot){
+                if (dataSnapshot !=null)
+                  _onData( _parseData(dataSnapshot) );
+                else
+                  _onData(_mainDataList);
+              } ).timeout(
+                    Duration(seconds: Constants.NETWORK_TIMEOUT_SECONDS),
+                    onTimeout: (){
+                      _onData(_mainDataList);
+                    });
+
     //_lastKey = key;
   }
 
@@ -48,7 +72,7 @@ class ServiceListWidgetBloc {
 
   void _onData(List<Service> list) {
     _mainDataList = list;
-    list.sort((a, b) => (a.name.compareTo(b.name)));
+    list?.sort((a, b) => (a.name.compareTo(b.name)));
     _servicesInput.sink.add(list);
   }
 

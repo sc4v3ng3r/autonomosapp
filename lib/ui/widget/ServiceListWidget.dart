@@ -2,6 +2,7 @@
 import 'package:autonomosapp/bloc/ServiceListWidgetBloc.dart';
 import 'package:autonomosapp/model/Service.dart';
 import 'package:autonomosapp/ui/widget/AbstractDataListWidget.dart';
+import 'package:autonomosapp/ui/widget/NetworkFailWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:autonomosapp/ui/widget/SearchBarWidget.dart';
 
@@ -94,6 +95,7 @@ class _ServiceListWidgetState extends State<ServiceListWidget> {
 
           case ConnectionState.active:
           case ConnectionState.done:
+            if (snapshot.hasData){
               return Column(
                 children: <Widget>[
                   searchBar,
@@ -104,6 +106,17 @@ class _ServiceListWidgetState extends State<ServiceListWidget> {
                   ),
                 ],
               );
+            }
+
+            return Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Center(
+                  child: NetworkFailWidget(),
+                ),
+              ],
+            );
 
           case ConnectionState.none:
             return Text("NO CONNECTION!!!");

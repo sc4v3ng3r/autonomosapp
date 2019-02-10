@@ -19,21 +19,10 @@ class FirebaseServicesHelper {
     return services;
   }
 
-  static Future< List<Service> > getAllServices( void onData( List<Service> data) ) async {
+  static /*Future< List<Service> >*/ Future<DataSnapshot> getAllServices( /*void onData( List<Service> data)*/ ) async {
     DatabaseReference servicesReference = FirebaseDatabase.instance
         .reference().child(FirebaseReferences.REFERENCE_SERVICOS);
-
-    List<Service> services;
-    servicesReference.orderByKey().onValue.listen( (event){
-        services =  _parseData(event.snapshot);
-        onData(services);
-
-    } )
-      .onError( (error) {
-        throw error;
-    });
-
-    return services;
+    return servicesReference.orderByKey().once();
   }
 
 
@@ -44,18 +33,6 @@ class FirebaseServicesHelper {
 
   }
 
-  static List<Service> _parseData(DataSnapshot dataSnapshot) {
-    List<Service> services =new List();
-    Map<String, dynamic> mapOfMaps = Map.from( dataSnapshot.value);
-    //print(event.snapshot.key);
-    mapOfMaps.values.forEach( (value) {
-
-      services.add( Service.fromJson( Map.from(value) ));
-    });
-
-    return services;
-
-  }
 
   /// Método utilizado para inseriri servicos no db.
   static Future<bool> insertServices(List<String> stringServices) async {
