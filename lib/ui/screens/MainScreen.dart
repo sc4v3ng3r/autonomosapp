@@ -15,7 +15,6 @@ import 'package:autonomosapp/ui/widget/NetworkFailWidget.dart';
 import 'package:autonomosapp/ui/widget/RatingBar.dart';
 import 'package:autonomosapp/model/User.dart';
 import 'package:autonomosapp/ui/widget/ServiceListWidget.dart';
-import 'package:autonomosapp/utility/Constants.dart';
 import 'package:autonomosapp/utility/PermissionUtiliy.dart';
 import 'package:autonomosapp/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +25,7 @@ import 'package:autonomosapp/utility/LocationUtility.dart';
 import 'package:autonomosapp/ui/widget/GenericAlertDialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:autonomosapp/ui/widget/PerfilDetailsWidget.dart';
+//import 'package:permission_handler/permission_handler.dart';
 import 'dart:io' show Platform;
 
 //FIXME BUG build method é sempre chamado até mesmo quando clicamos Ok no teclado
@@ -86,12 +86,10 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
-   // _platform.setMethodCallHandler( _handleMethod );
     _repository = UserRepository();
     _user = _repository.currentUser;
 
     _drawerCurrentOption = DrawerOption.SERVICES;
-    _initUserPosition();
     _initServicesListFragment();
     print("Main initState");
     _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -107,31 +105,6 @@ class _MainScreenState extends State<MainScreen> {
         },
       ), //ClientChooseServicesFragment(),
     );
-  }
-
-  //TODO esse codigo pode ser executado antes da MainScreen
-  // com algumas adaptacoes para obter o placemark.
-  void _initUserPosition(){
-    PermissionUtility.hasLocationPermission().then( (permission){
-      if (permission){
-        LocationUtility.getCurrentPosition( desiredAccuracy:
-        LocationAccuracy.lowest ).then( (position) {
-          if (position != null){
-            print("starting geocoding on init");
-
-            print("Location getting LA: ${position.latitude} LO: ${position.longitude} ");
-            UserRepository().currentLocation = Location(
-                latitude: position.latitude,
-                longitude: position.longitude);
-
-            LocationUtility.doGeoCoding(position).then((placeMarkList) {
-              _placemark = placeMarkList[0];
-              print("geocoding done on init");
-            });
-          }
-        });
-      }
-    });
   }
 
   @override
@@ -429,17 +402,12 @@ class _MainScreenState extends State<MainScreen> {
   void _serviceClickedCallback(Service item) async {
 
     _progressBarHandler.show( message: "Buscando Profissionais");
-    Location location = UserRepository().currentLocation;
-    var results = false;
 
-    if (location == null) {
-      results = await _updateUserCurrentPosition();
+      var results = await _updateUserCurrentPosition();
       if (!results) {
         _progressBarHandler.dismiss();
         return;
       }
-    }
-
     _fetchProfessionalsAndGoToMapScreen(item);
 
   }
@@ -451,22 +419,42 @@ class _MainScreenState extends State<MainScreen> {
 
     if (Platform.isAndroid){
       var permission = await _handleLocationPermissionForAndroid();
+      print("permission is $permission");
 
       if (permission){
-        Position position = await LocationUtility.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.medium );
-        if (position != null){
-          var placeMarks = await LocationUtility.doGeoCoding( position );
-          _placemark = placeMarks[0];
-          var location = Location(
-              latitude: position.latitude,
-              longitude: position.longitude);
-          UserRepository().currentLocation = location;
-          return true;
+        Position position;
+        try{
+          position = await LocationUtility.getCurrentPosition(
+              desiredAccuracy: LocationAccuracy.medium );
+          print("position is: $position");
+
+        }
+        catch(ex){
+         print("_updateUserCurrentPosition $ex");
+         return false;
         }
 
+        if (position != null){
+          print("geocoding");
+          List<Placemark> placeMarks;
+          try{
+            placeMarks = await LocationUtility.doGeoCoding( position );
+            _placemark = placeMarks[0];
+            var location = Location(
+                latitude: position.latitude,
+                longitude: position.longitude);
+            UserRepository().currentLocation = location;
+            return true;
+          }
+
+          catch (ex){
+            print("_updateUserCurrentPosition error geocoding... $ex");
+            return false;
+          }
+
+        }
         else {
-          //GPS provavelmente desligado!
+          print("GPS deligado?:");
           return false;
         }
       }
@@ -495,69 +483,68 @@ class _MainScreenState extends State<MainScreen> {
 
   void _fetchProfessionalsAndGoToMapScreen(Service serviceItem)  async {
     String sigla = Estado.keyOfState(_placemark.administrativeArea);
-      FirebaseUfCidadesServicosProfissionaisHelper
-          .getProfessionalsIdsFromCityAndService( estadoSigla: sigla,
-          cidadeNome: _placemark.subAdministratieArea,
-          serviceId: serviceItem.id).then(
-              (snapshotProfIds) {
-            if (snapshotProfIds.value != null) {
 
-              Map<String, dynamic> idsMap = Map.from(snapshotProfIds.value);
-              //removo usuario atual da lista caso o mesmo exerca o servico procurado
-              //idsMap.remove(_user.uid);
+    FirebaseUfCidadesServicosProfissionaisHelper
+        .getProfessionalsIdsFromCityAndService( estadoSigla: sigla,
+        cidadeNome: _placemark.subAdministratieArea,
+        serviceId: serviceItem.id).then(
+            (snapshotProfIds) {
+          if (snapshotProfIds.value != null) {
 
-              List<User> professionalUsersList = new List();
-              FirebaseUserHelper.getProfessionalUsers(
-                  idsMap.keys.toList() ).then(
-                      (professionalUsersMap) {
-                    professionalUsersMap.forEach( (key, value) => professionalUsersList.add(
-                        User.fromJson( Map.from(value)) )
-                    );
+            Map<String, dynamic> idsMap = Map.from(snapshotProfIds.value);
+            //removo usuario atual da lista caso o mesmo exerca o servico procurado
+            //idsMap.remove(_user.uid);
+            List<User> professionalUsersList = new List();
+            FirebaseUserHelper.getProfessionalUsers(
+                idsMap.keys.toList() ).then(
+                    (professionalUsersMap) {
+                  professionalUsersMap.forEach( (key, value) => professionalUsersList.add(
+                      User.fromJson( Map.from(value)) )
+                  );
 
-                    Navigator.push(context, MaterialPageRoute(
-                        builder: (context){
-                          return ProfessionalsMapScreen(
-                            screenTitle: serviceItem.name,
-                            initialLatitude: _repository.currentLocation.latitude,
-                            initialLongitude: _repository.currentLocation.longitude,
-                            professionalList: professionalUsersList,
-                          );
-                        })
-                    ).then((_) => _progressBarHandler.dismiss()  );
+                  Navigator.push(context, MaterialPageRoute(
+                      builder: (context){
+                        return ProfessionalsMapScreen(
+                          screenTitle: serviceItem.name,
+                          initialLatitude: _repository.currentLocation.latitude,
+                          initialLongitude: _repository.currentLocation.longitude,
+                          professionalList: professionalUsersList,
+                        );
+                      })
+                  ).then((_) => _progressBarHandler.dismiss()  );
 
-                  }).catchError(
-                      (exception) {
-                    if(exception.runtimeType == TimeoutException){
-                      _showNetworkFailDialog();
+                }).catchError(
+                    (exception) {
+                  if(exception.runtimeType == TimeoutException){
+                    _showNetworkFailDialog();
 
-                    }
+                  }
 
-                    else print("capturei excessao na main screen");
-                    _progressBarHandler.dismiss();
-                    return;
-                  });
-            }
+                  else print("capturei excessao na main screen");
+                  _progressBarHandler.dismiss();
+                  return;
+                });
+          }
 
-            else {
-              // EH PQ NAO HA PROFISISONAIS PARA TAL SERVICO EM TAL CIDADE!
-              //desbloquear tela
-              _progressBarHandler.dismiss();
-              _showWarningSnackbar(serviceItem.name, _placemark.subAdministratieArea);
+          else {
+            // EH PQ NAO HA PROFISISONAIS PARA TAL SERVICO EM TAL CIDADE!
+            //desbloquear tela
+            _progressBarHandler.dismiss();
+            _showWarningSnackbar(serviceItem.name, _placemark.subAdministratieArea);
 
-            }
-          }).catchError(
-              (ex){
-                print( "MainScreen fetching pro error! $ex" );
-                _progressBarHandler.dismiss();
-                _showNetworkFailDialog();
-              });
+          }
+        }).catchError(
+            (ex){
+          print( "MainScreen fetching pro error! $ex" );
+          _progressBarHandler.dismiss();
+          _showNetworkFailDialog();
+        });
   }
 
   void _showWarningSnackbar(String serviceName,String cityName){
     _scaffoldKey.currentState.showSnackBar(
         SnackBar(content: Text("Não há profissonais para $serviceName"
-            " disponíveis em $cityName",
-          ),
+            " disponíveis em $cityName",),
           backgroundColor: Colors.red,
         )
     );
@@ -628,27 +615,4 @@ class _MainScreenState extends State<MainScreen> {
         }
     );
   }
-
-
-/**
-  *Esse MÉTODO SERÁ RESPONSÁVEL POR RECEBER AS CHAMADAS DO LADO
-   * ANDROID NATIVO PARA O FLUTTER.*/
-  //metodo que trata as chamadas do nativo ao flutter
-
-
-  /*Future<dynamic> _handleMethod(MethodCall call) async {
-    print("handle_method flutter side");
-    switch (call.method) {
-      case "message":
-        ProfessionalData data = ProfessionalData.fromJson( Map.from( call.arguments));
-        return Navigator.push(context, MaterialPageRoute( builder: (builContext){
-          return ProfessionalPerfilScreen(
-            userProData: data,
-          );
-        } ) );
-        //print(call.arguments);
-        //return new Future.value("");
-    }
-  }*/
-
 } // end of class

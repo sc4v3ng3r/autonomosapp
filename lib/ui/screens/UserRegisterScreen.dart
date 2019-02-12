@@ -190,7 +190,19 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
               ),
             ),
           ),
-        )
+        ),
+        Constants.VERTICAL_SEPARATOR_8,
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text("Toque para escolher sua foto",
+              style: TextStyle(
+                fontSize: 14,
+              ),
+            ),
+          ],
+        ),
       ],
     );
 
@@ -299,7 +311,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
           onPressed: (){
             print("Termo de uso pressionado");
           },
-          child: Text("Temos de uso",
+          child: Text("Termos de uso",
             style: TextStyle(
                 fontSize: 12.0,
                 fontStyle: FontStyle.italic),
