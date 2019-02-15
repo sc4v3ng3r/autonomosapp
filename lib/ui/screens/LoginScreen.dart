@@ -88,7 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
         _handler.show(message: "Aguarde...");
 
         var resuls = await FirebaseAuthHelper.firebaseAuthWithFacebook(
-            token: facebookLoginResult.accessToken.token);
+            token: facebookLoginResult.accessToken);
 
         if (resuls){
           print("LOGADO COM SUCESSO");

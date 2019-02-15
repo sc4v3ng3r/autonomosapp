@@ -486,7 +486,7 @@ class _MainScreenState extends State<MainScreen> {
 
     FirebaseUfCidadesServicosProfissionaisHelper
         .getProfessionalsIdsFromCityAndService( estadoSigla: sigla,
-        cidadeNome: _placemark.subAdministratieArea,
+        cidadeNome: _placemark.subAdministrativeArea,
         serviceId: serviceItem.id).then(
             (snapshotProfIds) {
           if (snapshotProfIds.value != null) {
@@ -530,7 +530,7 @@ class _MainScreenState extends State<MainScreen> {
             // EH PQ NAO HA PROFISISONAIS PARA TAL SERVICO EM TAL CIDADE!
             //desbloquear tela
             _progressBarHandler.dismiss();
-            _showWarningSnackbar(serviceItem.name, _placemark.subAdministratieArea);
+            _showWarningSnackbar(serviceItem.name, _placemark.subAdministrativeArea);
 
           }
         }).catchError(

@@ -44,10 +44,12 @@ class FirebaseAuthHelper {
       });
   }
 
-  static Future<bool> firebaseAuthWithFacebook({@required String token}) async{
-    print("FirebaseAuth -> Token:" + token);
+  static Future<bool> firebaseAuthWithFacebook({@required FacebookAccessToken token}) async{
+    //print("FirebaseAuth -> Token:" + token);
     User user;
-    FirebaseUser firebaseUser = await _authInstance.signInWithFacebook(accessToken: token);
+    AuthCredential credential= FacebookAuthProvider.getCredential(accessToken: token.token);
+
+    FirebaseUser firebaseUser = await _authInstance.signInWithCredential(credential);
 
     if (firebaseUser == null)
       return false;
@@ -103,19 +105,17 @@ class FirebaseAuthHelper {
 
     if (isFacebook) {
       FacebookAccessToken accessToken = await FacebookLogin().currentAccessToken;
-
-      await FirebaseAuth.instance.reauthenticateWithFacebookCredential(
-          accessToken: accessToken.token);
-      fbUser = await FirebaseAuth.instance.currentUser();
-
+      fbUser.reauthenticateWithCredential( FacebookAuthProvider
+          .getCredential(accessToken: accessToken.token));
       return fbUser;
     }
 
-    await FirebaseAuth.instance.reauthenticateWithEmailAndPassword(
-        email: repository.fbLogin,
-        password: repository.fbPassword);
+    fbUser = await fbUser.reauthenticateWithCredential(
+        EmailAuthProvider.getCredential(
+            email: repository.fbLogin,
+            password: repository.fbPassword)
+    );
 
-    fbUser = await FirebaseAuth.instance.currentUser();
     return fbUser;
 
   }
