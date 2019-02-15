@@ -46,6 +46,7 @@ class MyApp extends StatelessWidget{
             repo.currentUser = snapshot.data;
             return MaterialApp(
               debugShowCheckedModeBanner: false,
+
               home: (repo.currentUser == null) ? LoginScreen() : MainScreen(),
             );
             break;
