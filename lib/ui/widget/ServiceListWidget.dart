@@ -3,6 +3,7 @@ import 'package:autonomosapp/bloc/ServiceListWidgetBloc.dart';
 import 'package:autonomosapp/model/Service.dart';
 import 'package:autonomosapp/ui/widget/AbstractDataListWidget.dart';
 import 'package:autonomosapp/ui/widget/NetworkFailWidget.dart';
+import 'package:autonomosapp/utility/Constants.dart';
 import 'package:flutter/material.dart';
 import 'package:autonomosapp/ui/widget/SearchBarWidget.dart';
 
@@ -42,8 +43,7 @@ class _ServiceListWidgetState extends State<ServiceListWidget> {
 
   @override
   void dispose() {
-    if (_bloc != null)
-      _bloc.dispose();
+    _bloc?.dispose();
 
     super.dispose();
   }
@@ -69,7 +69,7 @@ class _ServiceListWidgetState extends State<ServiceListWidget> {
 
     var searchBar = SearchBarWidget(
       hint: "Buscar serviços...",
-      color: Colors.red[300],
+      color: Theme.of(context).primaryColor,
       onTyped: (String data) {
         _bloc.searchFor( data );
         //print(data);
@@ -82,14 +82,23 @@ class _ServiceListWidgetState extends State<ServiceListWidget> {
         switch(snapshot.connectionState){
           case ConnectionState.waiting:
             return Column(
+              mainAxisSize: MainAxisSize.max,
               children: <Widget>[
                 searchBar,
-                Center(
-                  child: CircularProgressIndicator(
-                    semanticsLabel: "Carregando...",
+                Flexible(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                      Constants.VERTICAL_SEPARATOR_8,
+                      Center(
+                        child: Text("Carregando Serviços..."),
+                      ),
+                    ],
                   ),
                 ),
-
               ],
             );
 

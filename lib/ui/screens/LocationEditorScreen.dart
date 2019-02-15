@@ -55,7 +55,7 @@ class _LocationEditorScreenState extends State<LocationEditorScreen> {
           key: _scaffoldKey,
           appBar: AppBar(
             elevation: .0,
-            backgroundColor: Colors.red[300],
+            brightness: Brightness.dark,
             title: Text("Editar Locais"),
             actions: <Widget>[
               Theme(

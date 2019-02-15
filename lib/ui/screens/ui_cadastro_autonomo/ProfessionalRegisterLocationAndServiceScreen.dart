@@ -6,6 +6,7 @@ import 'package:autonomosapp/model/Service.dart';
 import 'package:autonomosapp/model/Estado.dart';
 import 'package:autonomosapp/ui/screens/ui_cadastro_autonomo/ListagemServicosScreen.dart';
 import 'package:autonomosapp/ui/widget/CityChipContainer.dart';
+import 'package:autonomosapp/utility/Constants.dart';
 import 'package:autonomosapp/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
 import 'package:autonomosapp/ui/widget/NextButton.dart';
@@ -88,6 +89,7 @@ class ProfessionalRegisterLocationAndServiceScreenState
       _cityChipController.clear();
       _cityChipController.addAll( _cidadesSelecionadas );
     }
+
     else {
       // EH pq ele nao selecinou estado algum!
     }
@@ -113,18 +115,19 @@ class ProfessionalRegisterLocationAndServiceScreenState
 
   Widget _buildForm(BuildContext context) {
 
-    final estadoLabel = Text(
-      'Selecione seu estado:',
-      style: TextStyle(color: Colors.grey),
+    final estadoLabel = Center(
+      child: Text( 'Selecione seu estado:',
+        style: TextStyle(color: Theme.of(context).accentColor),
+      ),
     );
 
     List<String> stateList = DROPDOWN_MENU_OPTIONS.values.toList();
     final dropDownButton = Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         StateDropDownWidget(
           items: stateList,
           initialValue: stateList[0],
-          title: "Selecione seu Estado",
           onItemSelected: (String item) {
             _cityChipController.clear();
             _cidadesSelecionadas.clear();
@@ -140,12 +143,16 @@ class ProfessionalRegisterLocationAndServiceScreenState
     );
 
     final cidadeLabel = Text( 'Cidades que você atua:',
-      style: TextStyle(color: Colors.grey),
+      style: TextStyle(color: Theme.of(context).accentColor),
       maxLines: 1,
       textAlign: TextAlign.center,
     );
 
     final cityButton = EditableButton(
+      backgroundColor: Theme.of(context).primaryColor,
+      textColor: Theme.of(context).accentColor,
+      primaryText: "Cidades",
+      secondaryText: "$_dropdownCurrentOption",
       controllerCallback: (controller) {
         _buttonController = controller;
       },
@@ -155,6 +162,9 @@ class ProfessionalRegisterLocationAndServiceScreenState
     );
 
     final cityChipContainer = CityChipContainer(
+      textColor: Theme.of(context).accentColor,
+      backgroundColor: Theme.of(context).primaryColor,
+      deleteButtonColor: Theme.of(context).accentColor,
       controllerCallback: (controller) { _cityChipController = controller; },
       onDelete: ( serviceDeleted ){
         if(_cidadesSelecionadas.contains(serviceDeleted))
@@ -163,22 +173,26 @@ class ProfessionalRegisterLocationAndServiceScreenState
     );
 
     final areasDeAtuacaoLabel = Text( 'Areas de atuação:',
-      style: TextStyle( color: Colors.grey, ),
+      style: TextStyle( color: Theme.of(context).accentColor, ),
       maxLines: 1,
       textAlign: TextAlign.center,
     );
 
     final buttonListServico = RaisedButton(
       child: Text( 'Serviços',
-        style: TextStyle(color: Colors.white),
+        style: TextStyle(color: Theme.of(context).primaryColor),
       ),
-      color: Colors.blueGrey,
+      color: Theme.of(context).accentColor,
       onPressed: () {
         _gotoServiceListScreen();
       },
     );
 
     final serviceChipContainer = ServiceChipContainer(
+      textColor: Theme.of(context).primaryColor,
+      backgroundColor: Theme.of(context).accentColor,
+      deleteButtonColor: Theme.of(context).primaryColor,
+
       onDelete: (serviceDeleted) {
         if (_servicosSelecionados.contains( serviceDeleted )){
           print("deleting ${serviceDeleted.name}");
@@ -187,11 +201,10 @@ class ProfessionalRegisterLocationAndServiceScreenState
       },
       controllerCallback: (controller) { _serviceChipController = controller; },
     );
-//    bool a = true;
+
     final nextButton = NextButton(
-      buttonColor: Colors.green[300],
+      buttonColor: Colors.green,
       text: '[2/3] Próximo Passo',
-//      text: a ? 'a': 'b',
       textColor: Colors.white,
       callback: () {
 
@@ -210,9 +223,9 @@ class ProfessionalRegisterLocationAndServiceScreenState
     return ListView(
       shrinkWrap: true,
       children: <Widget>[
+        Constants.VERTICAL_SEPARATOR_16,
         estadoLabel,
         dropDownButton,
-        //estados,
         Divider(),
         _VERTICAL_SEPARATOR,
         cidadeLabel,
@@ -245,11 +258,8 @@ class ProfessionalRegisterLocationAndServiceScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Localização & Serviços',
-          style: TextStyle(color: Colors.blueGrey),
-        ),
-        backgroundColor: Colors.white,
-        iconTheme: IconThemeData(color: Colors.red[300]),
+        title: Text('Localização & Serviços',),
+        brightness: Brightness.dark,
       ),
       body: Padding(
         padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, .0),

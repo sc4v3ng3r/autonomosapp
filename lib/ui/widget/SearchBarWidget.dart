@@ -9,7 +9,7 @@ class SearchBarWidget extends StatefulWidget {
   final FocusNode _textFieldFocusNode = new FocusNode();
 
   SearchBarWidget(  {String hint = "Pesquisar...",
-    @required Function onTyped(String text), Color color = Colors.white }) :
+    @required Function onTyped(String text), Color color }) :
       _textHint = hint,
       _color = color,
       _onTypedCallback = onTyped;
@@ -44,7 +44,7 @@ class SearchBarWidgetState extends State<SearchBarWidget> {
   Widget build(BuildContext context) {
   print("SearchBarWidget  build");
     var field = Material(
-        color: widget._color,
+        color: widget._color ?? Theme.of(context).primaryColor,
         elevation: 8.0,
 
       child: Padding (
@@ -56,7 +56,6 @@ class SearchBarWidgetState extends State<SearchBarWidget> {
             controller: _textFieldController,
             keyboardType: TextInputType.text,
             textInputAction: TextInputAction.done,
-
             style: TextStyle(
               fontSize: 20.0,
               color: Colors.black,
@@ -67,6 +66,12 @@ class SearchBarWidgetState extends State<SearchBarWidget> {
                 labelText: widget._textHint,
                 fillColor: Colors.white,
                 filled: true,
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Theme.of(context).accentColor
+                  ),
+                  borderRadius: BorderRadius.circular(22.0),
+                ),
 
                 prefixIcon: Padding(
                     padding: EdgeInsetsDirectional.only(end: 4.0),

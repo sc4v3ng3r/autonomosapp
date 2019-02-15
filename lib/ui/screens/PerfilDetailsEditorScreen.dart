@@ -78,6 +78,7 @@ class _PerfilDetailsEditorScreenState extends State<PerfilDetailsEditorScreen> {
           appBar: AppBar(
             elevation: 4.0,
             title: Text("Editar Perfil"),
+            brightness: Brightness.dark,
           ),
           body: Container(
             padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 22.0),

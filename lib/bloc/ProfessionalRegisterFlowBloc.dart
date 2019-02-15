@@ -35,8 +35,8 @@ class ProfessionalRegisterFlowBloc {
     @required Location currentLocation} ){
 
       _professionalData.estadoAtuante =  state.sigla;
-      _professionalData.latitude = currentLocation.latitude;
-      _professionalData.longitude = currentLocation.longitude;
+      _professionalData.latitude = currentLocation?.latitude;
+      _professionalData.longitude = currentLocation?.longitude;
 
       yourCities.forEach( (cidade) {
         _professionalData.cidadesAtuantes.add( cidade.nome );

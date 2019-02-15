@@ -20,7 +20,7 @@ class Constants {
   static const String USER_DELETED = "Usuário removido";
   static const String TOOLTIP_MAP_TYPE = "Tipo do mapa";
   static const String TOOLTIP_PRO_LIST = "Profissionais";
-
+  static const String TOOLTIP_CONFIRM = "Confirmar";
   static const String PHONE_BRAZIL_PERFIX = "55";
   static const int NETWORK_TIMEOUT_SECONDS = 14;
 

@@ -4,10 +4,19 @@ class EditableButton extends StatefulWidget {
 
   final Function _onPressed;
   final Function _callback;
+  final Color _color;
+  final Color _textColor;
+  String _secondaryText;
+  String _primaryText;
 
   EditableButton({@required Function onPressed,
-    @required controllerCallback(EditableButtonController controller) }) :
+    @required controllerCallback(EditableButtonController controller),
+    Color backgroundColor, Color textColor, String primaryText = "", String secondaryText = ""}) :
       _onPressed = onPressed,
+      _primaryText = primaryText,
+      _secondaryText = secondaryText,
+      _textColor = textColor,
+      _color = backgroundColor,
       _callback = controllerCallback;
 
   @override
@@ -16,11 +25,13 @@ class EditableButton extends StatefulWidget {
 
 class _EditableButtonState extends State<EditableButton> {
 
-  String secondName = "";
+  String _secondName;
 
   @override
   void initState() {
     super.initState();
+    _secondName = widget._secondaryText;
+
     EditableButtonController c = new EditableButtonController();
     c.changeSecondName = this._changeText;
     widget._callback(c);
@@ -29,12 +40,14 @@ class _EditableButtonState extends State<EditableButton> {
   @override
   Widget build(BuildContext context) {
     return RaisedButton(
-        color: Colors.red[300],
+        color: widget._color,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text( 'Cidades ', style: TextStyle(color: Colors.white), ),
-            Text( '$secondName', style: TextStyle(color: Colors.black54),),
+            Text( '${widget._primaryText} ', style: TextStyle(color: widget._textColor), ),
+            Text( '$_secondName', style: TextStyle(
+                color: widget._textColor,
+                fontWeight: FontWeight.bold ),),
           ],
         ),
         onPressed: () {
@@ -44,7 +57,7 @@ class _EditableButtonState extends State<EditableButton> {
 
   void _changeText(String text) {
     setState(() {
-      secondName = text;
+      _secondName = text;
     });
   }
 }

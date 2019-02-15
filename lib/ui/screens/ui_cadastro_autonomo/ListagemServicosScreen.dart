@@ -1,3 +1,4 @@
+import 'package:autonomosapp/utility/Constants.dart';
 import 'package:flutter/material.dart';
 import 'package:autonomosapp/model/Service.dart';
 import 'package:autonomosapp/ui/widget/ServiceListWidget.dart';
@@ -21,6 +22,7 @@ class ListagemServicosState extends State<ListagemServicos> {
 
   @override
   void initState() {
+    super.initState();
     _servicesSelected = new List();
     _body = ServiceListWidgetBlocProvider(
         child: ServiceListWidget(
@@ -31,32 +33,6 @@ class ListagemServicosState extends State<ListagemServicos> {
           },
         )
     );
-    super.initState();
-  }
-
-
-  Widget _confirmButton(BuildContext context) {
-    return IconButton(
-      onPressed: () {
-        SnackBar(content: Text('abc'));
-        Navigator.of(context).pop(_servicesSelected);
-      },
-      icon: Icon(
-        Icons.add,
-        color: Colors.white,
-      ),
-    );
-  }
-//
-  Widget _iconButton(BuildContext context) {
-    return IconButton(
-        icon: Icon(
-          Icons.arrow_back,
-          color: Colors.white,
-        ),
-        onPressed: () {
-          _voltarDialog(context);
-        });
   }
 
   @override
@@ -64,43 +40,22 @@ class ListagemServicosState extends State<ListagemServicos> {
 
     return Scaffold(
       appBar: AppBar(
-        actions: <Widget>[ _confirmButton(context), ],
         elevation: 0.0,
-        backgroundColor: Colors.red[300],
-        title: Text( 'Serviços',  style: TextStyle(color: Colors.white),
-        ),
+        title: Text('Serviços'),
       ),
 
       floatingActionButton: FloatingActionButton(
+        tooltip: Constants.TOOLTIP_CONFIRM,
         onPressed: () {
           Navigator.of(context).pop( _servicesSelected );
         },
-
-        foregroundColor: Colors.red,
         elevation: 8.0,
-        backgroundColor: Colors.red[300],
-        child: Icon(
-          Icons.check,
-          color: Colors.white,
-        ),
+        backgroundColor: Theme.of(context).primaryColor,
+        child: Icon( Icons.check, color: Theme.of(context).accentColor,),
       ),
 
       body: _body,
     );
   }
 
-  // está funcionando???
-  AlertDialog _voltarDialog(BuildContext context) {
-    return AlertDialog(
-      title: Text('Alerta!'),
-      content: Text('Tem certeza que você deseja voltar?'),
-      actions: <Widget>[
-        new FlatButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: Text('Cancelar'))
-      ],
-    );
-  }
 }

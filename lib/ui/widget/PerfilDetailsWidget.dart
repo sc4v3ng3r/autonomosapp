@@ -207,7 +207,7 @@ class _PerfilDetailsWidgetState extends State<PerfilDetailsWidget> {
               maxLines: 1,
               overflow: TextOverflow.clip,
               style: TextStyle(
-                color: Colors.black,
+                color: Theme.of(context).accentColor,
                 fontSize: 16.0,
               ),
         ),
@@ -215,7 +215,7 @@ class _PerfilDetailsWidgetState extends State<PerfilDetailsWidget> {
         trailing: (widget._editable == true) ? GestureDetector(
           child: Text("Editar",
             style: TextStyle(
-                color: Colors.blue,
+                color: Theme.of(context).accentColor,
                 fontSize: 20.0
             ),
           ),
@@ -232,7 +232,9 @@ class _PerfilDetailsWidgetState extends State<PerfilDetailsWidget> {
 
   Widget _getChangePasswordField(){
     return GestureDetector(
-      child: createTextRow("Alterar Senha", fontSize: 20, color: Colors.blue),
+      child: createTextRow("Alterar Senha",
+          fontSize: 20,
+          color: Theme.of(context).accentColor),
       onTap: (){
         print("Change password screen");
       },

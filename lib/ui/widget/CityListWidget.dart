@@ -2,6 +2,7 @@ import 'package:autonomosapp/bloc/CityListWidgetBloc.dart';
 import 'package:autonomosapp/model/Cidade.dart';
 import 'package:autonomosapp/ui/widget/AbstractDataListWidget.dart';
 import 'package:autonomosapp/ui/widget/NetworkFailWidget.dart';
+import 'package:autonomosapp/utility/Constants.dart';
 import 'package:flutter/material.dart';
 import 'package:autonomosapp/ui/widget/SearchBarWidget.dart';
 
@@ -33,9 +34,7 @@ class _CityListWidgetState extends State<CityListWidget> {
 
   @override
   void dispose() {
-    if (_bloc != null)
-      _bloc.dispose();
-
+    _bloc?.dispose();
     super.dispose();
   }
 
@@ -56,7 +55,6 @@ class _CityListWidgetState extends State<CityListWidget> {
 
     var searchBar = SearchBarWidget(
       hint: "Pesquisar...",
-      color: Colors.red[300],
       onTyped: (String data) {
         _bloc.searchFor( data );
         print(data);
@@ -70,15 +68,22 @@ class _CityListWidgetState extends State<CityListWidget> {
         switch(snapshot.connectionState){
           case ConnectionState.waiting:
             return Column(
+              mainAxisSize: MainAxisSize.max,
               children: <Widget>[
                 searchBar,
-                Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    CircularProgressIndicator(),
-                    Text("CARREGANDO..."),
-                  ],
+                Flexible(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                      Constants.VERTICAL_SEPARATOR_8,
+                      Center(
+                        child: Text("Carregando Cidades..."),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             );

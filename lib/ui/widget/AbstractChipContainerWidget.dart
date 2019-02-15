@@ -6,14 +6,16 @@ abstract class AbstractChipContainerWidget<T> extends StatefulWidget {
 
   final Function _deletedCallback;
   final Color _chipBackgroundColor;
+  final Color _deleteButtonColor;
   final Function _controllerCallback;
 
   AbstractChipContainerWidget({
     @required Function onDelete(T item),
     @required Function controllerCallback(ChipContainerController controller),
-    Color chipBackgroundColor: Colors.red}) :
+    Color backgroundColor, Color deleteButtonColor}) :
         _controllerCallback = controllerCallback,
-        _chipBackgroundColor = chipBackgroundColor,
+        _deleteButtonColor = deleteButtonColor,
+        _chipBackgroundColor = backgroundColor,
         _deletedCallback = onDelete;
 
   @override
@@ -66,7 +68,7 @@ class _AbstractChipContainerWidgetState<T> extends State<AbstractChipContainerWi
         print("adding chip!");
         Chip chip = Chip(
           label: widget.chipLabel( data ),
-          backgroundColor: widget._chipBackgroundColor,
+          backgroundColor: widget._chipBackgroundColor ?? Theme.of(context).accentColor,
           onDeleted: null,
         );
 
@@ -80,7 +82,8 @@ class _AbstractChipContainerWidgetState<T> extends State<AbstractChipContainerWi
         print("adding chip!");
         Chip chip = Chip(
           label: widget.chipLabel( data ),
-          backgroundColor: widget._chipBackgroundColor,
+          backgroundColor: widget._chipBackgroundColor ?? Theme.of(context).accentColor,
+          deleteIconColor: widget._deleteButtonColor ?? Theme.of(context).primaryColor,
           onDeleted: (){
             delete(data);
           },

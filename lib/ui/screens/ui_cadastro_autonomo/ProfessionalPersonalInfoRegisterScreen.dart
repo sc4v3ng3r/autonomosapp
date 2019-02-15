@@ -1,19 +1,19 @@
 import 'package:autonomosapp/bloc/ProfessionalRegisterFlowBloc.dart';
 import 'package:autonomosapp/ui/screens/ui_cadastro_autonomo/ProfessionalRegisterLocationAndServiceScreen.dart';
 import 'package:autonomosapp/ui/widget/NextButton.dart';
+import 'package:autonomosapp/utility/Constants.dart';
 import 'package:autonomosapp/utility/InputValidator.dart';
 import 'package:autonomosapp/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
-import 'package:autonomosapp/model/ProfessionalData.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-class ProfessionalRegisterBasicInfoScreen extends StatefulWidget {
+class ProfessionalPersonalInfoRegisterScreen extends StatefulWidget {
   @override
-  ProfessionalRegisterBasicInfoScreenState createState() => ProfessionalRegisterBasicInfoScreenState();
+  ProfessionalPersonalInfoRegisterScreenState createState() => ProfessionalPersonalInfoRegisterScreenState();
 }
 
-class ProfessionalRegisterBasicInfoScreenState extends State<ProfessionalRegisterBasicInfoScreen> {
+class ProfessionalPersonalInfoRegisterScreenState extends State<ProfessionalPersonalInfoRegisterScreen> {
   int _radioValue = 0;
   String _tipoPessoa = '';
   //TODO SOMENTE ENQUANTO NÃO TEMOS BLOC
@@ -72,8 +72,6 @@ class ProfessionalRegisterBasicInfoScreenState extends State<ProfessionalRegiste
     _descricaoFocus = new FocusNode();
     _telefoneFocus = new FocusNode();
     _bloc = new ProfessionalRegisterFlowBloc();
-
-
   }
 
   @override
@@ -96,12 +94,8 @@ class ProfessionalRegisterBasicInfoScreenState extends State<ProfessionalRegiste
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(
-            'Informações Básicas',
-            style: TextStyle(color: Colors.blueGrey),
-          ),
-          backgroundColor: Colors.white,
-          iconTheme: IconThemeData(color: Colors.red[400]),
+          title: Text( 'Informações Pessoais',),
+          brightness: Brightness.dark,
         ),
         body: _buildLayout(),
 
@@ -112,10 +106,11 @@ class ProfessionalRegisterBasicInfoScreenState extends State<ProfessionalRegiste
     var userPicture = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
+        //TODO opção de trocar a foto!
         CircleAvatar(
-          backgroundImage: (_repository.currentUser.picturePath== null) ? AssetImage("assets/usuario.png") :
-              CachedNetworkImageProvider(_repository.currentUser.picturePath ),
-          backgroundColor: Colors.blueGrey,
+          backgroundImage: (_repository.currentUser.picturePath== null) ?
+            AssetImage( Constants.ASSETS_LOGO_USER_PROFILE_FILE_NAME) :
+            CachedNetworkImageProvider(_repository.currentUser.picturePath ),
           maxRadius: 48.0,
         ),
       ],
@@ -128,14 +123,14 @@ class ProfessionalRegisterBasicInfoScreenState extends State<ProfessionalRegiste
           value: 0,
           groupValue: _radioValue,
           onChanged: _handleRadioValueChange,
-          activeColor: Colors.red[400],
+          activeColor: Theme.of(context).primaryColor,
         ),
         new Text('Pessoa Física'),
         new Radio(
           value: 1,
           groupValue: _radioValue,
           onChanged: _handleRadioValueChange,
-          activeColor: Colors.red[400],
+          activeColor: Theme.of(context).primaryColor,
         ),
         new Text('Pessoa Jurídica')
       ],
@@ -167,7 +162,7 @@ class ProfessionalRegisterBasicInfoScreenState extends State<ProfessionalRegiste
           },
           style: TextStyle(
             fontSize: 20.0,
-            color: Colors.black,
+            color: Theme.of(context).accentColor,
           ),
           decoration: InputDecoration(
               labelText: _tipoPessoa,
@@ -195,14 +190,13 @@ class ProfessionalRegisterBasicInfoScreenState extends State<ProfessionalRegiste
           FocusScope.of(context).requestFocus(_descricaoFocus);
         },
         style: TextStyle(
-          fontSize: 20.0,
-          color: Colors.black,
+            fontSize: 20.0,
+            color: Theme.of(context).accentColor
         ),
+
         decoration: InputDecoration(
             labelText: "Telefone",
-            labelStyle: TextStyle(
-              fontSize: 18.0,
-            ),
+            labelStyle: TextStyle( fontSize: 18.0, ),
             contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
             border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(22.0)
@@ -230,18 +224,17 @@ class ProfessionalRegisterBasicInfoScreenState extends State<ProfessionalRegiste
     var documentsButton = RaisedButton(
           color: Colors.white,
           padding: EdgeInsets.fromLTRB(.0, 8.0, .0, 8.0),
-          onPressed: initState,
+          onPressed: (){},
           child: Row(
             mainAxisSize: MainAxisSize.max,
             children: <Widget>[
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 8.0),
-                child: Icon(Icons.fingerprint,color: Colors.blueGrey,),
+                child: Icon(Icons.fingerprint ),
               ),
               Expanded(
                 child: Text(
-                  'Insira seus documentos',
-                  style: TextStyle(color: Colors.red[300]),),
+                  'Insira seus documentos'),
               ),
             ],
           ),
@@ -269,24 +262,18 @@ class ProfessionalRegisterBasicInfoScreenState extends State<ProfessionalRegiste
     );
 
     var nextButton = NextButton(
-      buttonColor: Colors.green[300],
+      buttonColor: Colors.green,
       text: '[1/3]   Próximo Passo',
       textColor: Colors.white,
       callback: (){
 
-        if(_inputValidation()){
+        if( true /*_inputValidation()*/ ){
           _bloc.insertBasicProfessionalInformation(
                 typePeople: _tipoPessoa,
                 documentNumber: _typeCpfOrCnpj().text,
                 phone: _typeTelefoneMask.text,
                 description: _tellMeAboutYouController.text);
-          /*
-          _profissionalData = ProfessionalData();
-          _profissionalData.tipoPessoa = _tipoPessoa;
-          _profissionalData.documento = _typeCpfOrCnpj().text;
-          _profissionalData.telefone = _typeTelefoneMask.text;
-          _profissionalData.descricao = _tellMeAboutYouController.text;
-          */
+
           //TODO falta as referencias aos documentos "fotos"
 
           Navigator.of(context).push(

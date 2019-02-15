@@ -44,7 +44,12 @@ class FirebaseAuthHelper {
       });
   }
 
-  static Future<bool> firebaseAuthWithFacebook({@required FacebookAccessToken token}) async{
+  ///  final facebookLogin = new FacebookLogin();
+  //    final facebookLoginResult = await facebookLogin
+  //        .logInWithReadPermissions(['email', 'public_profile']);
+  ///    Here we are using FacebookAuthProvider
+  ///   AuthCredential credential= FacebookAuthProvider.getCredential(accessToken: token.token);
+  static Future<bool> firebaseAuthWithFacebook({@required FacebookAccessToken token}) async {
     //print("FirebaseAuth -> Token:" + token);
     User user;
     AuthCredential credential= FacebookAuthProvider.getCredential(accessToken: token.token);

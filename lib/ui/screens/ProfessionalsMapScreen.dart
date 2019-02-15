@@ -55,7 +55,7 @@ class _ProfessionalsMapScreenState extends State<ProfessionalsMapScreen> {
 
           IconButton(
             tooltip: Constants.TOOLTIP_MAP_TYPE,
-            icon: Icon(Icons.map, color: Colors.white,),
+            icon: Icon(Icons.map, color: Theme.of(context).accentColor ),
             onPressed: _changeMapType,
           ),
 
@@ -63,11 +63,13 @@ class _ProfessionalsMapScreenState extends State<ProfessionalsMapScreen> {
             message: Constants.TOOLTIP_PRO_LIST,
             child: BadgeIconButton(
               itemCount: widget._dataList.length,
-              icon: Icon( Icons.list, color: Colors.white, ),
+              icon: Icon( Icons.list ),
               onPressed: _showProfessionalListScreen,
             ),
           ),
         ],
+
+        brightness: Brightness.dark,
       ),
 
       body: Stack(

@@ -27,7 +27,7 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
   ProgressBarHandler _handler;
   int _radioValue = 0;
   bool _emiteNota = false;
-  Color _colorChip = Colors.blueGrey[200];
+  //Color _colorChip = Colors.blueGrey[200];
   List<String> _formasDePagamentoChipSelecionado = <String>[];
 
   Iterable<Widget> get _transformaFormasDePagamentoEmChip sync* {
@@ -35,11 +35,14 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
       yield Padding(
         padding: EdgeInsets.all(4.0),
         child: FilterChip(
-            label: Text(nomePagamento),
+            label: Text(nomePagamento,
+              style: TextStyle(
+                color: Theme.of(context).accentColor,
+              ),
+            ),
             selected: _formasDePagamentoChipSelecionado.contains(nomePagamento),
-            backgroundColor: _colorChip,
-            disabledColor: _colorChip,
-            selectedColor: Colors.green[200],
+            backgroundColor: Theme.of(context).primaryColor,
+            selectedColor: Colors.green,
             onSelected: (bool selecionado) {
               setState(() {
                 if (selecionado == true) {
@@ -67,11 +70,13 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
 
   Widget _buildForm() {
 
-    final formasDePagamentoLabel = Padding(
-      padding: EdgeInsets.fromLTRB(16.0, 32.0, 16.0, 16.0),
-      child: Text(
-        'Formas de pagamento que você trabalha:',
-        style: TextStyle(color: Colors.grey),
+    final formasDePagamentoLabel = Center(
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(16.0, 32.0, 16.0, 16.0),
+        child: Text(
+          'Formas de pagamento que você trabalha:',
+          style: TextStyle(color: Theme.of(context).accentColor ),
+        ),
       ),
     );
 
@@ -86,24 +91,28 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
       padding: EdgeInsets.all(16.0),
       child: Row(
         children: <Widget>[
-          Text('Emite ',style: TextStyle(color: Colors.grey),),
-          Text('Nota fiscal: ',style: TextStyle(color:Colors.grey,fontWeight: FontWeight.bold),),
-          new Radio(
-              value: 0,
-              groupValue:_radioValue,
-              onChanged: _emiteNotaChange,
-              activeColor: Colors.red[300],
-
+          Text('Emite ',style: TextStyle(color: Theme.of(context).accentColor ),),
+          Text('Nota fiscal: ',style: TextStyle(
+              color: Theme.of(context).accentColor,
+              fontWeight: FontWeight.bold),
           ),
+
+          new Radio(
+            value: 0,
+            groupValue:_radioValue,
+            onChanged: _emiteNotaChange,
+            activeColor: Theme.of(context).primaryColor,
+          ),
+
           Text('Não'),
 
           new Radio(
             value: 1,
             groupValue: _radioValue,
             onChanged: _emiteNotaChange,
-            activeColor: Colors.red[300],
+            activeColor: Theme.of(context).primaryColor,
           ),
-          Text('Sim')
+          Text('Sim'),
         ],
       ),
     );
@@ -111,9 +120,8 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
     final nextButton = NextButton(
       text: '[3/3] Finalizar Cadastro',
       textColor: Colors.white,
-      buttonColor: Colors.green[300],
+      buttonColor: Colors.green,
       callback: () {
-
         widget._bloc.currentData.emissorNotaFiscal = _emiteNota;
         widget._bloc.currentData.formasPagamento = _formasDePagamentoChipSelecionado;
         _finishRegister();
@@ -164,12 +172,9 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
 
     var scaffold = Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: Text( 'Formas de Pagamento',
-          style: TextStyle(color: Colors.blueGrey),
-        ),
-        iconTheme: IconThemeData(color: Colors.red[300]), ),
-
+        title: Text( 'Formas de Pagamento'),
+        brightness: Brightness.dark,
+      ),
         body: _buildForm(),
       );
 

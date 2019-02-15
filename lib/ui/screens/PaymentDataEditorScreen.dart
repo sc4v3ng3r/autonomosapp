@@ -7,7 +7,7 @@ import 'package:autonomosapp/ui/widget/NiftyRowDivisorWidget.dart';
 class PaymentDataEditorScreen extends StatefulWidget {
   final List<String> _paymentAlreadySelected;
   final bool _emissorData;
-  final _activeColor = Colors.green[200];
+  //final _activeColor = Colors.green[200];
   final _NOT_VALUE = 0;
   final _YES_VALUE = 1;
 
@@ -45,7 +45,7 @@ class _PaymentDataEditorScreenState extends State<PaymentDataEditorScreen> {
         children: <Widget>[
           Text('Emite ',style: TextStyle(color: Colors.black),),
           Text('Nota fiscal: ', style: TextStyle(
-              color:Colors.black,
+              color: Theme.of(context).accentColor,
               fontWeight: FontWeight.bold),
           ),
 
@@ -53,7 +53,7 @@ class _PaymentDataEditorScreenState extends State<PaymentDataEditorScreen> {
             value: widget._NOT_VALUE,
             groupValue: _radioGroupValue,
             onChanged: _onRadioClicked,
-            activeColor: widget._activeColor,
+            activeColor: Theme.of(context).primaryColor,
 
           ), Text('Não'),
 
@@ -61,7 +61,7 @@ class _PaymentDataEditorScreenState extends State<PaymentDataEditorScreen> {
             value: widget._YES_VALUE,
             groupValue: _radioGroupValue,
             onChanged: _onRadioClicked,
-            activeColor: widget._activeColor,
+            activeColor: Theme.of(context).primaryColor,
           ), Text('Sim')
         ],
       );
@@ -78,7 +78,8 @@ class _PaymentDataEditorScreenState extends State<PaymentDataEditorScreen> {
               spacing: 2.0,
             ),
             SizedBox(height: 8.0,),
-            NiftyRowDivisorWidget(title: "Nota Fiscal"),
+            NiftyRowDivisorWidget(
+                title: "Nota Fiscal"),
             radioGroup,
 
           ],
@@ -89,11 +90,12 @@ class _PaymentDataEditorScreenState extends State<PaymentDataEditorScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Editar Opções de Pagamento"),
+        brightness: Brightness.dark,
       ),
 
       floatingActionButton: FloatingActionButton(
-          backgroundColor: Colors.green,
-          child: Icon(Icons.done, color: Colors.white,),
+          backgroundColor: Theme.of(context).primaryColor,
+          child: Icon(Icons.done, color: Theme.of(context).accentColor ),
           onPressed: () {
             _saveData();
             print("PAYMENT OPTIONS: ");
@@ -114,9 +116,10 @@ class _PaymentDataEditorScreenState extends State<PaymentDataEditorScreen> {
     for(String paymentOption in widget._PAYMENT_OPTIONS){
       chipList.add(
           FilterChip(
-            label: Text(paymentOption),
+            label: Text(paymentOption,
+                style: TextStyle()),
             selected: (_selectedData.contains( paymentOption ) ),
-            selectedColor: Colors.green[200],
+            selectedColor: Colors.green,
             onSelected: (selected){
               (selected) ? _selectedData.add( paymentOption ) :
               _selectedData.removeWhere( (option) => (option == paymentOption) );

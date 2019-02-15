@@ -18,8 +18,8 @@ class ChipPanelWidget<T> extends StatefulWidget {
     List<String> data,
     Observable<List<T>> dataStream,
     bool editable = false,
-    Color itemTextColor = Colors.black,
-    Color editIconColor = Colors.blue,
+    Color itemTextColor,
+    Color editIconColor,
     } )
       : _title = title,
         _onEditClicked = onEditCallback,
@@ -77,7 +77,7 @@ class _ChipPanelWidgetState extends State<ChipPanelWidget> {
     for (String data in widget._data)
       chipList.add( Chip(
         label: Text(data,
-          style: TextStyle( color: widget._itemTextColor),
+          style: TextStyle( color: widget._itemTextColor ?? Theme.of(context).accentColor ),
         ),
       ) );
 
@@ -94,7 +94,21 @@ class _ChipPanelWidgetState extends State<ChipPanelWidget> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
           InkWell(
-            child: Icon(Icons.edit, color: widget._iconColor,),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Icon(Icons.edit, color: widget._iconColor ?? Theme.of(context).accentColor,),
+                Flexible(
+                    child: Text("Editar",
+                      style: TextStyle(
+                        color: Theme.of(context).accentColor,
+                        fontSize: 12.0,
+                      ),
+                    ),
+                ),
+              ],
+            ),
             onTap: _onEditCallbackCall,
           ),
         ],

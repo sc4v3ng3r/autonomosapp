@@ -16,6 +16,7 @@ class ProfessionalPerfilScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(_userProData.name ),
+        brightness: Brightness.dark,
       ),
 
       body: PerfilDetailsWidget(

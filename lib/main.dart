@@ -46,8 +46,17 @@ class MyApp extends StatelessWidget{
             repo.currentUser = snapshot.data;
             return MaterialApp(
               debugShowCheckedModeBanner: false,
-
+              title: "Autônomos",
               home: (repo.currentUser == null) ? LoginScreen() : MainScreen(),
+              theme: ThemeData(
+                primaryColor: Colors.amber,
+                accentColor: Colors.black,
+                errorColor: Colors.red,
+                cursorColor: Colors.black,
+                textSelectionHandleColor: Colors.black,
+
+              ),
+
             );
             break;
         }

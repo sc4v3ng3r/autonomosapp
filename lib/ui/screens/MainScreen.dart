@@ -8,13 +8,14 @@ import 'package:autonomosapp/model/Location.dart';
 import 'package:autonomosapp/model/Service.dart';
 import 'package:autonomosapp/ui/screens/LoginScreen.dart';
 import 'package:autonomosapp/ui/screens/ProfessionalsMapScreen.dart';
-import 'package:autonomosapp/ui/screens/UsersViewWidget.dart';
-import 'package:autonomosapp/ui/screens/ui_cadastro_autonomo/ProfessionalRegisterBasicInfoScreen.dart';
+import 'package:autonomosapp/ui/screens/ui_cadastro_autonomo/ProfessionalPersonalInfoRegisterScreen.dart';
 import 'package:autonomosapp/ui/widget/ModalRoundedProgressBar.dart';
 import 'package:autonomosapp/ui/widget/NetworkFailWidget.dart';
 import 'package:autonomosapp/ui/widget/RatingBar.dart';
 import 'package:autonomosapp/model/User.dart';
 import 'package:autonomosapp/ui/widget/ServiceListWidget.dart';
+import 'package:autonomosapp/ui/widget/UsersViewWidget.dart';
+import 'package:autonomosapp/utility/Constants.dart';
 import 'package:autonomosapp/utility/PermissionUtiliy.dart';
 import 'package:autonomosapp/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
@@ -41,7 +42,7 @@ import 'dart:io' show Platform;
 //necessário para evitar problemas internos no ServiceListWidget e suas Streams.
 
 
-enum  DrawerOption { PERFIL, SERVICES, VIEWS, AUTONOMOS, EXIT, DELETE_ACCOUNT }
+enum  DrawerOption { PERFIL, SERVICES, VIEWS, FAVORITE, AUTONOMOS, EXIT, DELETE_ACCOUNT }
 //TODO transformar essa tela em stateless
 class MainScreen extends StatefulWidget {
 
@@ -57,15 +58,18 @@ class _MainScreenState extends State<MainScreen> {
 
   final bool sair = false;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
-  /*static const _platform =
-      const MethodChannel("autonomos.com.br.jopeb.autonosapp");*/
+  
+  static const Map<DrawerOption, String> _mapOptionTitle = {
+    DrawerOption.PERFIL : "Perfil",
+    DrawerOption.SERVICES : "Serviços",
+    DrawerOption.VIEWS : "Visualizações",
+    DrawerOption.FAVORITE : "Meus Favoritos",
+    DrawerOption.AUTONOMOS : "Seja um Autônomo",
+    DrawerOption.EXIT : "Sair",
+    DrawerOption.DELETE_ACCOUNT : "Remover Conta"
+  };
 
   DrawerOption _drawerCurrentOption;
-  String appBarName = 'Serviços';
-  Color appBarColor = Colors.red[300];
-  Color appBarNameColor = Colors.white;
-  Color appBarIconMenuColor = Colors.white;
   double _elevation = .0;
   User _user;
 
@@ -118,17 +122,17 @@ class _MainScreenState extends State<MainScreen> {
     var scaffold= Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
+        brightness: Brightness.dark,
         leading: IconButton(
           onPressed: () {
             _scaffoldKey.currentState.openDrawer();
           },
-          icon: Icon(Icons.menu,color: appBarIconMenuColor,),
+          icon: Icon(Icons.menu,),
         ),
 
-        title: Text(appBarName, style: TextStyle(color: appBarNameColor),),
+        title: Text( _mapOptionTitle[ _drawerCurrentOption] ),
         automaticallyImplyLeading: false,
-        backgroundColor: appBarColor,
-        elevation: _elevation,
+        elevation: (_drawerCurrentOption == DrawerOption.SERVICES) ? .0 : 4.0,
       ),
 
       drawer: _drawerMenuBuild(context),
@@ -155,7 +159,7 @@ class _MainScreenState extends State<MainScreen> {
     if (_drawerCurrentOption == DrawerOption.SERVICES)
       return true;
 
-    _setCurrentPosition(DrawerOption.SERVICES);
+    _setCurrentDrawerOption(DrawerOption.SERVICES);
     return false;
   }
 
@@ -163,7 +167,7 @@ class _MainScreenState extends State<MainScreen> {
     Navigator.pop(context);
 
     Navigator.of(context).push(MaterialPageRoute(
-      builder: (BuildContext context) => ProfessionalRegisterBasicInfoScreen(),
+      builder: (BuildContext context) => ProfessionalPersonalInfoRegisterScreen(),
     ));
   }
 
@@ -180,7 +184,7 @@ class _MainScreenState extends State<MainScreen> {
       ),
       currentAccountPicture: CircleAvatar(
         backgroundImage: (_repository.currentUser.picturePath == null) ?
-        AssetImage("assets/usuario.png") :
+        AssetImage(Constants.ASSETS_LOGO_USER_PROFILE_FILE_NAME ) :
         CachedNetworkImageProvider(_repository.currentUser.picturePath ),
       ),
     );
@@ -189,17 +193,17 @@ class _MainScreenState extends State<MainScreen> {
     final optionPerfil = ListTile(
       selected: _drawerCurrentOption == DrawerOption.PERFIL,
       leading: Icon(Icons.person),
-      title: Text('Perfil'),
-      onTap: () => _setCurrentPosition(DrawerOption.PERFIL),
+      title: Text( _mapOptionTitle[DrawerOption.PERFIL] ),
+      onTap: () => _setCurrentDrawerOption(DrawerOption.PERFIL),
     );
     drawerOptions.add(optionPerfil);
 
     final optionServices = ListTile(
       selected: _drawerCurrentOption == DrawerOption.SERVICES,
       leading: Icon(Icons.work),
-      title: Text('Serviços'),
+      title: Text(_mapOptionTitle[DrawerOption.SERVICES]),
       onTap: () {
-        _setCurrentPosition(DrawerOption.SERVICES);
+        _setCurrentDrawerOption(DrawerOption.SERVICES);
       },
     );
 
@@ -218,28 +222,27 @@ class _MainScreenState extends State<MainScreen> {
     final optionViews = ListTile(
       selected: _drawerCurrentOption == DrawerOption.VIEWS,
       leading: Icon(Icons.remove_red_eye),
-      title: Text('Visualizações'),
-      onTap: () => _setCurrentPosition(DrawerOption.VIEWS),
+      title: Text(_mapOptionTitle[DrawerOption.VIEWS]),
+      onTap: () => _setCurrentDrawerOption(DrawerOption.VIEWS),
     );
     drawerOptions.add(optionViews);
 
-    /*final optionFavorites = ListTile(
+    final optionFavorites = ListTile(
+      selected: _drawerCurrentOption == DrawerOption.FAVORITE,
       leading: Icon(Icons.favorite),
-      title: Text('Favoritos'),
-      onTap: () => _setCurrentPosition(4),
+      title: Text( _mapOptionTitle[DrawerOption.FAVORITE] ),
+      onTap: () => _setCurrentDrawerOption(DrawerOption.FAVORITE),
     );
     drawerOptions.add(optionFavorites);
-    */
+
     if (_user.professionalData == null) {
       print("MainScreen User is not a professional!!!");
       final optionRegister = ListTile(
         leading: Icon(
           Icons.directions_walk,
-          color: Colors.red[500],
         ),
-        title: Text('Seja Um Autônomo!!!',
-            style:
-                TextStyle(color: Colors.red[500], fontWeight: FontWeight.bold)),
+        title: Text(_mapOptionTitle[DrawerOption.AUTONOMOS],
+            style:  TextStyle(fontWeight: FontWeight.bold)),
         onTap: () => _NavegaCadastroAutonomo(context),
       );
       drawerOptions.add(optionRegister);
@@ -248,7 +251,7 @@ class _MainScreenState extends State<MainScreen> {
     drawerOptions.add(Divider());
     final optionLogout = ListTile(
       leading: Icon(Icons.navigate_before),
-      title: Text('Sair'),
+      title: Text( _mapOptionTitle[DrawerOption.EXIT]),
       onTap: () {
         _logout();
       },
@@ -257,7 +260,7 @@ class _MainScreenState extends State<MainScreen> {
 
     final removeAccount = ListTile(
       leading: Icon(Icons.delete),
-      title: Text("Remover conta"),
+      title: Text(_mapOptionTitle[DrawerOption.DELETE_ACCOUNT] ),
 
       onTap: () async {
         var response = await showDialog(context: context,
@@ -311,48 +314,12 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-  void _changeAppBarName(DrawerOption option) {
-    switch(option){
-      case DrawerOption.PERFIL:
-        appBarColor = Colors.white;
-        appBarName = 'Perfil';
-        appBarNameColor = Colors.blueGrey;
-        appBarIconMenuColor = Colors.red[300];
-        _elevation = 4.0;
-        break;
-
-      case DrawerOption.SERVICES:
-        appBarColor = Colors.red[300];
-        appBarName = 'Serviços';
-        appBarNameColor = Colors.white;
-        appBarIconMenuColor = Colors.white;
-        _elevation = .0;
-        break;
-
-      ///case DrawerOption.HISTORY:
-      ///  break;
-      case DrawerOption.VIEWS:
-        appBarColor = Colors.white;
-        appBarName = 'Visualizações';
-        _elevation = .0;
-        appBarNameColor = Colors.blueGrey;
-        appBarIconMenuColor = Colors.red[300];
-        _elevation = 4.0;
-        break;
-
-      default:
-        break;
-    }
-  }
-
-  void _setCurrentPosition(DrawerOption option) {
+  void _setCurrentDrawerOption(DrawerOption option) {
 
     if (option != _drawerCurrentOption){
       setState(() {
         if (_serviceListFragment == null)
           _initServicesListFragment();
-
-        _changeAppBarName(option);
         _drawerCurrentOption = option;
       });
     }
@@ -370,9 +337,7 @@ class _MainScreenState extends State<MainScreen> {
     switch (option) {
       case  DrawerOption.PERFIL:
         _serviceListFragment = null;
-        return PerfilDetailsWidget(
-            user: _user
-        );
+        return PerfilDetailsWidget( user: _user );
 
       case DrawerOption.SERVICES:
         return _serviceListFragment;
@@ -387,12 +352,12 @@ class _MainScreenState extends State<MainScreen> {
       case DrawerOption.VIEWS:
         _serviceListFragment = null;
         return UsersViewWidget();
-      /*
-      case 4: // TODO Breve
+      
+      case DrawerOption.FAVORITE: // TODO Breve
         _serviceListFragment = null;
         return Center(
           child: Text("Favoritos"),
-        );*/
+        );
       //NUNCA DEVE VIM AQUI!!
       default:
         break;
@@ -517,7 +482,6 @@ class _MainScreenState extends State<MainScreen> {
                     (exception) {
                   if(exception.runtimeType == TimeoutException){
                     _showNetworkFailDialog();
-
                   }
 
                   else print("capturei excessao na main screen");

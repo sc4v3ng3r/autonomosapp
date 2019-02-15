@@ -52,14 +52,17 @@ class _ServiceEditorScreenState extends State<ServiceEditorScreen>{
       appBar: AppBar(
         title: Text("Editar Serviços Atuantes"),
         elevation: .0,
-        backgroundColor: Colors.red[300],
+        brightness: Brightness.dark,
       ),
 
       body: _body,
 
       floatingActionButton: FloatingActionButton(
-          backgroundColor: Colors.green,
-          child: Icon(Icons.done , color: Colors.white,),
+          backgroundColor: Theme.of(context).primaryColor,
+          child: Icon(
+            Icons.done,
+            color: Theme.of(context).accentColor
+          ),
           onPressed: _saveData),
     );
   }
