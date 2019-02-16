@@ -1,12 +1,18 @@
+import 'package:autonomosapp/bloc/ProfessionalPerfilScreenBloc.dart';
 import 'package:autonomosapp/model/User.dart';
+import 'package:autonomosapp/ui/widget/FavoriteButtonWidget.dart';
 import 'package:autonomosapp/ui/widget/PerfilDetailsWidget.dart';
 import 'package:autonomosapp/utility/Constants.dart';
+import 'package:autonomosapp/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ProfessionalPerfilScreen extends StatelessWidget {
 
   final User _userProData;
+  final GlobalKey<FavoriteButtonWidgetState> _favoriteKey = GlobalKey();
+  final ProfessionalPerfilScreenBloc _bloc = ProfessionalPerfilScreenBloc();
+
   ProfessionalPerfilScreen(
       { @required User userProData} ) :
         _userProData = userProData;
@@ -15,6 +21,17 @@ class ProfessionalPerfilScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        actions: <Widget>[
+          Tooltip(
+            message: Constants.TOOLTIP_FAVORITE,
+            child: FavoriteButtonWidget(
+              favorite: _bloc.isFavorite( _userProData ),
+              key: _favoriteKey,
+              color: Theme.of(context).accentColor,
+              callback: _favoriteButtonCallback,
+            ),
+          ),
+        ],
         title: Text(_userProData.name ),
         brightness: Brightness.dark,
       ),
@@ -70,6 +87,27 @@ class ProfessionalPerfilScreen extends StatelessWidget {
           );
         }
     );
+  }
+
+  void _favoriteButtonCallback(final FavoriteAction action){
+    switch(action){
+      case FavoriteAction.FAVORITE:
+        if (_userProData.uid == UserRepository.instance.currentUser.uid )
+          _favoriteKey.currentState.changeAction(FavoriteAction.UNFAVOURITE);
+        else {
+          _bloc.addToFavorite(
+              UserRepository.instance.currentUser.uid,
+              _userProData);
+        }
+        break;
+
+      case FavoriteAction.UNFAVOURITE:
+        _bloc.removeFromFavorites(
+            UserRepository.instance.currentUser.uid,
+            _userProData);
+        break;
+    }
+
   }
 
 }

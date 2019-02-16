@@ -9,6 +9,7 @@ class FirebaseReferences {
   static final REFERENCE_VISUALZACOES = "visualizacoes";
   static final REFERENCE_HISTORICO = "historico";
   static final REFERENCE_ESTADOS = "estados";
+  static final REFERENCE_FAVORITOS = "favoritos";
   static final REFERENCE_ESTADOS_CIDADES = "estados_cidades";
   static final REFERENCE_UF_CIDADES_SERVICOS_PROFISSIONAIS = "uf_cidades_servicos_profissionais";
 

@@ -1,4 +1,5 @@
 import 'package:autonomosapp/firebase/FirebaseAuthHelper.dart';
+import 'package:autonomosapp/firebase/FirebaseFavoritesHelper.dart';
 import 'package:autonomosapp/firebase/FirebaseStorageHelper.dart';
 import 'package:autonomosapp/firebase/FirebaseUfCidadesServicosProfissionaisHelper.dart';
 import 'package:autonomosapp/firebase/FirebaseUserViewsHelper.dart';
@@ -33,7 +34,11 @@ class FirebaseUserHelper {
         print("readUserAccountData:: ${snapshot.value.toString()}");
         user = User.fromDataSnapshot(snapshot);
         //var url = fbUser.photoUrl;
-
+        FirebaseFavoritesHelper.getUserFavorites(uid: fbUser.uid)
+            .then( (snapshot){
+          if (snapshot.value != null)
+            UserRepository.instance.favorites = Map.from( snapshot.value);
+        } ).catchError( (error) {print("FirebaseUserHelper::currentLoggedUse() $error"); } );
       }
     }
 
@@ -122,11 +127,10 @@ class FirebaseUserHelper {
     DatabaseReference userRef = db.reference()
         .child(FirebaseReferences.REFERENCE_USERS);
 
-    /*DatabaseReference proRef = db.reference()
-        .child(FirebaseReferences.REFERENCE_PROFISSIONAIS);
-    */
     DatabaseReference relationshipRef = db.reference()
         .child(FirebaseReferences.REFERENCE_UF_CIDADES_SERVICOS_PROFISSIONAIS);
+
+    FirebaseFavoritesHelper.removeUserFavorites(uid: user.uid);
 
     //esse pequeno trecho de codigo se repete na classe helper do relacionamento
     // estado -> cidade -> servico -> usuario

@@ -80,13 +80,16 @@ class _LocationEditorScreenState extends State<LocationEditorScreen> {
           body: _cityListWidget,
 
           floatingActionButton: FloatingActionButton(
-              child: Icon(Icons.done),
+              child: Icon(
+                  Icons.done,
+                  color: Theme.of(context).accentColor
+              ),
               tooltip: Constants.TOOLTIP_CONFIRM,
               backgroundColor: Theme.of(context).primaryColor,
               onPressed: _saveData),
         ),
         ModalRoundedProgressBar(
-          handleCallback:(handler){_handler = handler;} ,
+          handleCallback:(handler){_handler = handler;},
         )
       ],
     );

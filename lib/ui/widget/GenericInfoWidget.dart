@@ -19,7 +19,7 @@ class GenericInfoWidget extends StatelessWidget {
   final Color _actionButtonIconColor;
 
   GenericInfoWidget( {@required String title, Color titleColor,
-    @required String subtitle, Color subtitleColor, @required IconData icon,
+    String subtitle="", Color subtitleColor, @required IconData icon,
     double iconSize = 120, Color iconColor, bool actionButton = false,
     String actionTitle="", Color actionTitleColor, Color actionButtonBackground,
     IconData actionIcon = Icons.refresh, Color actionIconColor, Function actionCallback } ) :
@@ -58,6 +58,7 @@ class GenericInfoWidget extends StatelessWidget {
         children: <Widget>[
           Flexible(
             child:Text(_title,
+              textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.clip,
               style: TextStyle(

@@ -1,6 +1,7 @@
 import 'package:autonomosapp/bloc/UsersViewWidgetBloc.dart';
 import 'package:autonomosapp/model/User.dart';
 import 'package:autonomosapp/model/UserView.dart';
+import 'package:autonomosapp/ui/widget/GenericInfoWidget.dart';
 import 'package:autonomosapp/ui/widget/UserVisualizationListItemWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:autonomosapp/ui/widget/NetworkFailWidget.dart';
@@ -64,8 +65,18 @@ class _UsersViewWidgetState extends State<UsersViewWidget> {
                     });
               }
               else {
-                return Center(
-                  child: Text("Não há visualizações!"),
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.max,
+                  children: <Widget>[
+                    Center(
+                      child: GenericInfoWidget(
+                        icon: Icons.sentiment_dissatisfied,
+                        title: "Não há visualizações",
+                        subtitle: "Seu perfil ainda não possui visualizações",
+                      ),
+                    ),
+                  ],
                 );
               }
             }

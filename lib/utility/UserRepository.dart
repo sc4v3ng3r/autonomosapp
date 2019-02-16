@@ -11,7 +11,7 @@ class UserRepository {
   static UserRepository get instance => _instance;
   User currentUser;
   Location currentLocation;
-
+  Map<String,String> favorites;
   SharedPreferences preferences;
   String fbPassword="";/// password se a conta for de algum provider do firebase
   String fbLogin=""; /// login se a conta for de algum provier do firebase
@@ -26,6 +26,8 @@ class UserRepository {
       fbPassword = preferences.getString(ApplicationState.KEY_PASSWORD );
       fbLogin = preferences.getString(ApplicationState.KEY_EMAIL);
     });
+
+    favorites = Map();
   }
 
   void clearPreferences(){
