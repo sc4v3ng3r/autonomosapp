@@ -120,9 +120,7 @@ class FirebaseAuthHelper {
             email: repository.fbLogin,
             password: repository.fbPassword)
     );
-
     return fbUser;
-
   }
 
   static Future<bool> _userProviderIsFacebook() async {

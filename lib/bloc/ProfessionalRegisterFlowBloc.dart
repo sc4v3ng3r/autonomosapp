@@ -38,10 +38,12 @@ class ProfessionalRegisterFlowBloc {
       _professionalData.latitude = currentLocation?.latitude;
       _professionalData.longitude = currentLocation?.longitude;
 
+      yourCities.clear();
       yourCities.forEach( (cidade) {
         _professionalData.cidadesAtuantes.add( cidade.nome );
       });
 
+      yourServices.clear();
       yourServices.forEach( (service) {
         _professionalData.servicosAtuantes.add( service.id );
       });

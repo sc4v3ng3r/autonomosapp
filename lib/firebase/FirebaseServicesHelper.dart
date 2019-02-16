@@ -19,7 +19,7 @@ class FirebaseServicesHelper {
     return services;
   }
 
-  static /*Future< List<Service> >*/ Future<DataSnapshot> getAllServices( /*void onData( List<Service> data)*/ ) async {
+  static Future<DataSnapshot> getAllServices() async {
     DatabaseReference servicesReference = FirebaseDatabase.instance
         .reference().child(FirebaseReferences.REFERENCE_SERVICOS);
     return servicesReference.orderByKey().once();

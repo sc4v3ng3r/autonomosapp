@@ -267,7 +267,7 @@ class ProfessionalPersonalInfoRegisterScreenState extends State<ProfessionalPers
       textColor: Colors.white,
       callback: (){
 
-        if( true /*_inputValidation()*/ ){
+        if( _inputValidation() ){
           _bloc.insertBasicProfessionalInformation(
                 typePeople: _tipoPessoa,
                 documentNumber: _typeCpfOrCnpj().text,

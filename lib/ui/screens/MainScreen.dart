@@ -26,7 +26,6 @@ import 'package:autonomosapp/utility/LocationUtility.dart';
 import 'package:autonomosapp/ui/widget/GenericAlertDialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:autonomosapp/ui/widget/PerfilDetailsWidget.dart';
-//import 'package:permission_handler/permission_handler.dart';
 import 'dart:io' show Platform;
 
 //FIXME BUG build method é sempre chamado até mesmo quando clicamos Ok no teclado
@@ -70,11 +69,8 @@ class _MainScreenState extends State<MainScreen> {
   };
 
   DrawerOption _drawerCurrentOption;
-  double _elevation = .0;
   User _user;
-
   Placemark _placemark;
-
   ProgressBarHandler _progressBarHandler;
   UserRepository _repository;
   var _serviceListFragment;
@@ -383,7 +379,7 @@ class _MainScreenState extends State<MainScreen> {
   Future<bool> _updateUserCurrentPosition() async {
 
     if (Platform.isAndroid){
-      var permission = await _handleLocationPermissionForAndroid();
+      var permission = await PermissionUtility.handleLocationPermissionForAndroid(context);
       print("permission is $permission");
 
       if (permission){
@@ -514,69 +510,4 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  Future<bool> _handleLocationPermissionForAndroid() async {
-    var hasPermission =  await PermissionUtility.hasLocationPermission();
-
-    if (!hasPermission){
-
-      var shouldShowDialog = await PermissionUtility.shouldShowReasonableDialog();
-      if (shouldShowDialog){ // devemos exibir uma razao?
-        var shouldShowReasonResults = await _showLocationPermissionReasonDialog();
-        if (shouldShowReasonResults)
-          return await PermissionUtility.requestAndroidLocationPermission();
-        //usuario nao concorda com as razoes para conceder a permissao
-        return false;
-      }
-
-      else {
-        // nao devemos exibir uma razao...
-        // else never ask again was marked
-        //necessario dar as permissoes na tela de configurações do OS
-        print("Never ask again marked, user must give a permition in application settings");
-        var goToSettings = await showDialog(
-            barrierDismissible: false,
-            context: context,
-            builder: (BuildContext context){
-              return GenericAlertDialog(
-                title: "Permissões",
-                positiveButtonContent: Text("Ir para configurações"),
-                negativeButtonContent: Text("Cancelar"),
-                content: Column(
-                  children: <Widget>[
-                    Text("Você precisa conceder a permissão de localização "
-                        "nas configurações do seu dispositivo."),
-                    Text("Deseja ir a tela de configurações?"),
-                  ],
-                ),
-
-              );
-            }
-        );
-        if (goToSettings!= null && goToSettings)
-          await PermissionUtility.openPermissionSettings();
-        return false;
-      }
-    } // end of if(!hasPermission)
-
-    // realizar a operacao!!!
-    else {
-      print("JA tem permissao para realizar operação");
-      return true;
-    }
-  }
-
-  /// Exibe dialog de razão para usuário conceder premissão de localização
-  Future<bool> _showLocationPermissionReasonDialog() async {
-    return await showDialog(context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context){
-          return GenericAlertDialog(
-            title: "Permissão de Localização",
-            content: Text("Autônomos precisa acessar a localização do dispositivo"),
-            positiveButtonContent: Text("Conceder Permissão"),
-            negativeButtonContent: Text("Cancelar"),
-          );
-        }
-    );
-  }
 } // end of class

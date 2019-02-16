@@ -1,12 +1,18 @@
+import 'dart:io';
+
 import 'package:autonomosapp/bloc/ProfessionalRegisterFlowBloc.dart';
 import 'package:autonomosapp/model/Cidade.dart';
+import 'package:autonomosapp/model/Location.dart';
 import 'package:autonomosapp/ui/screens/ui_cadastro_autonomo/ListagemCidadesScreen.dart';
 import 'package:autonomosapp/ui/screens/ui_cadastro_autonomo/ProfessionalRegisterPaymentScreen.dart';
 import 'package:autonomosapp/model/Service.dart';
 import 'package:autonomosapp/model/Estado.dart';
 import 'package:autonomosapp/ui/screens/ui_cadastro_autonomo/ListagemServicosScreen.dart';
 import 'package:autonomosapp/ui/widget/CityChipContainer.dart';
+import 'package:autonomosapp/ui/widget/GenericInfoWidget.dart';
 import 'package:autonomosapp/utility/Constants.dart';
+import 'package:autonomosapp/utility/LocationUtility.dart';
+import 'package:autonomosapp/utility/PermissionUtiliy.dart';
 import 'package:autonomosapp/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
 import 'package:autonomosapp/ui/widget/NextButton.dart';
@@ -14,6 +20,7 @@ import 'package:autonomosapp/ui/widget/ServiceChipContainer.dart';
 import 'package:autonomosapp/ui/widget/ChipContainerController.dart';
 import 'package:autonomosapp/ui/widget/StateDropDownWidget.dart';
 import 'package:autonomosapp/ui/widget/EditableButton.dart';
+import 'package:geolocator/geolocator.dart';
 
 class ProfessionalRegisterLocationAndServiceScreen extends StatefulWidget {
 
@@ -43,12 +50,12 @@ class ProfessionalRegisterLocationAndServiceScreenState
   List<Service> _servicosSelecionados = new List();
   Estado _selectedState;
   String _dropdownCurrentOption;
-
-  final _VERTICAL_SEPARATOR = SizedBox( height: 8.0,);
-
+  Placemark _placemark;
+  List<String> _stateList = DROPDOWN_MENU_OPTIONS.values.toList();
   @override
   void initState() {
     super.initState();
+    _stateList.removeAt(0);
   }
 
   String _getStateKey(String stateName){
@@ -84,10 +91,13 @@ class ProfessionalRegisterLocationAndServiceScreenState
       if (_cidadesSelecionadas == null) {
         print("CIDADES SELECIONADAS E NULL!! AUXILIA IS ${cidadesSelecionadasAux.length}");
         _cidadesSelecionadas = cidadesSelecionadasAux;
-      } else
+      }
+      else{
         print("retornou ${_cidadesSelecionadas.length} cidades");
-      _cityChipController.clear();
-      _cityChipController.addAll( _cidadesSelecionadas );
+        _cityChipController.clear();
+        _cityChipController.addAll( _cidadesSelecionadas );
+      }
+
     }
 
     else {
@@ -109,8 +119,11 @@ class ProfessionalRegisterLocationAndServiceScreenState
     if (_servicosSelecionados == null) {
       _servicosSelecionados = servicosSelecionadoAux;
     }
-    _serviceChipController.clear();
-    _serviceChipController.addAll( _servicosSelecionados);
+    else {
+      _serviceChipController.clear();
+      _serviceChipController.addAll( _servicosSelecionados);
+    }
+
   }
 
   Widget _buildForm(BuildContext context) {
@@ -121,13 +134,12 @@ class ProfessionalRegisterLocationAndServiceScreenState
       ),
     );
 
-    List<String> stateList = DROPDOWN_MENU_OPTIONS.values.toList();
     final dropDownButton = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         StateDropDownWidget(
-          items: stateList,
-          initialValue: stateList[0],
+          items: _stateList,
+          initialValue: _dropdownCurrentOption,
           onItemSelected: (String item) {
             _cityChipController.clear();
             _cidadesSelecionadas.clear();
@@ -227,17 +239,17 @@ class ProfessionalRegisterLocationAndServiceScreenState
         estadoLabel,
         dropDownButton,
         Divider(),
-        _VERTICAL_SEPARATOR,
+        Constants.VERTICAL_SEPARATOR_8,
         cidadeLabel,
         cityButton,
         cityChipContainer,
         Divider(),
-        _VERTICAL_SEPARATOR,
+        Constants.VERTICAL_SEPARATOR_8,
         areasDeAtuacaoLabel,
         buttonListServico,
         serviceChipContainer,
         Divider(),
-        _VERTICAL_SEPARATOR,
+        Constants.VERTICAL_SEPARATOR_8,
         nextButton,
       ],
     );
@@ -256,16 +268,135 @@ class ProfessionalRegisterLocationAndServiceScreenState
 
   @override
   Widget build(BuildContext context) {
+    /*var body = Padding(
+      padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, .0),
+      child: _buildForm(context),
+    );*/
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Localização & Serviços',),
         brightness: Brightness.dark,
       ),
-      body: Padding(
-        padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, .0),
-        child: _buildForm(context),
-      ),
+      body: (_placemark == null) ? FutureBuilder<bool>(
+          future: _getUserCurrentPosition(context),
+          builder: (BuildContext context, AsyncSnapshot<bool> snapshot){
+            print("Current state ${snapshot.connectionState}");
+            switch(snapshot.connectionState){
+
+              case ConnectionState.none:
+                return GenericInfoWidget(
+                  title: "Falha ao obter localização",
+                  titleColor: Colors.black,
+                  subtitle: "É necessário sua localização para continuar o cadastro.",
+                  icon: Icons.location_off,
+                  iconColor: Theme.of(context).errorColor,
+                );
+
+              case ConnectionState.active:
+              case ConnectionState.waiting:
+                return Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                    Constants.VERTICAL_SEPARATOR_8,
+                    Center(
+                      child: Text("Obtendo sua Localização..."),
+                    ),
+                  ],
+                );
+
+              case ConnectionState.done:
+                if (snapshot.hasData){
+                  if (snapshot.data){
+                    _dropdownCurrentOption = _placemark.administrativeArea;
+                    return Padding(
+                      padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, .0),
+                      child: _buildForm(context),
+                    );
+                  }
+                }
+
+                return Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Center(
+                      child: GenericInfoWidget(
+                        title: "Falha ao obter localização",
+                        titleColor: Colors.black,
+                        subtitle: "É necessário sua localização para continuar o cadastro.",
+                        icon: Icons.location_off,
+                        iconColor: Theme.of(context).errorColor,
+                      ),
+                    ),
+                  ],
+                );
+                break;
+            }
+          }
+
+      ) : Padding(
+            padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, .0),
+            child: _buildForm(context)
+          ),
     );
   }
 
+  Future<bool> _getUserCurrentPosition(final BuildContext context) async {
+
+    if (Platform.isAndroid){
+      var permission = await PermissionUtility.handleLocationPermissionForAndroid(context);
+      print("permission is $permission");
+
+      if (permission){
+        Position position;
+        try{
+          position = await LocationUtility.getCurrentPosition(
+              desiredAccuracy: LocationAccuracy.medium );
+          print("position is: $position");
+
+        }
+        catch(ex){
+          print("_updateUserCurrentPosition $ex");
+          return false;
+        }
+
+        if (position != null){
+          print("geocoding");
+          List<Placemark> placeMarks;
+          try{
+            placeMarks = await LocationUtility.doGeoCoding( position );
+            _placemark = placeMarks[0];
+            var location = Location(
+                latitude: position.latitude,
+                longitude: position.longitude);
+            UserRepository.instance.currentLocation = location;
+
+            return true;
+          }
+
+          catch (ex){
+            print("_updateUserCurrentPosition error geocoding... $ex");
+            return false;
+          }
+
+        }
+        else {
+          print("GPS deligado?:");
+          return false;
+        }
+      }
+
+      return false;
+    }
+
+    else {
+      //TODO iOS implementation
+      return false;
+    }
+  }
 }

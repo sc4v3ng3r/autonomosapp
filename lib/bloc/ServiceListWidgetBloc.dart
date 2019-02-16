@@ -38,7 +38,7 @@ class ServiceListWidgetBloc {
 
   List<Service> _parseData(DataSnapshot dataSnapshot) {
     List<Service> services =new List();
-    Map<String, dynamic> mapOfMaps = Map.from( dataSnapshot.value);
+    Map<String, dynamic> mapOfMaps = Map.from( dataSnapshot.value );
     //print(event.snapshot.key);
     mapOfMaps.values.forEach( (value) {
       services.add( Service.fromJson( Map.from(value) ));
@@ -121,3 +121,4 @@ class ServiceListWidgetBlocProvider extends InheritedWidget {
         .bloc;
   }
 }
+
