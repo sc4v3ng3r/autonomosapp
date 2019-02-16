@@ -172,9 +172,10 @@ class _MainScreenState extends State<MainScreen> {
 
     print("drawer menu build");
     final drawerHeader = UserAccountsHackedDrawerHeader(
-      accountEmail: Text('${_user.email}'),
-      accountName: Text('${_user.name}'),
+      accountEmail: Text('${_user.email}', style: TextStyle(color: Colors.white),),
+      accountName: Text('${_user.name}', style: TextStyle(color: Colors.white), ),
       ratingBar: RatingBar(
+        cor: Theme.of(context).primaryColor,
         starCount: 5,
         rating: _user.rating,
       ),

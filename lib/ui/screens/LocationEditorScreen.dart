@@ -5,6 +5,7 @@ import 'package:autonomosapp/model/Service.dart';
 import 'package:autonomosapp/model/User.dart';
 import 'package:autonomosapp/ui/widget/CityListWidget.dart';
 import 'package:autonomosapp/ui/widget/ModalRoundedProgressBar.dart';
+import 'package:autonomosapp/utility/Constants.dart';
 import 'package:autonomosapp/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
 import 'package:autonomosapp/firebase/FirebaseUserHelper.dart';
@@ -70,7 +71,7 @@ class _LocationEditorScreenState extends State<LocationEditorScreen> {
                   ),
                 ),
 
-                data: ThemeData.dark(),
+                data: ThemeData.light(),
 
               ),
             ],
@@ -80,7 +81,8 @@ class _LocationEditorScreenState extends State<LocationEditorScreen> {
 
           floatingActionButton: FloatingActionButton(
               child: Icon(Icons.done),
-              backgroundColor: Colors.green,
+              tooltip: Constants.TOOLTIP_CONFIRM,
+              backgroundColor: Theme.of(context).primaryColor,
               onPressed: _saveData),
         ),
         ModalRoundedProgressBar(

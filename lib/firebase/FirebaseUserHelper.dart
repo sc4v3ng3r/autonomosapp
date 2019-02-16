@@ -30,16 +30,15 @@ class FirebaseUserHelper {
       DataSnapshot snapshot = await USERS_REFERENCE.child(uid).once();
       if (snapshot.value != null) {
         print("FirebaseUserHelper user $uid exist in DB!");
+        print("readUserAccountData:: ${snapshot.value.toString()}");
         user = User.fromDataSnapshot(snapshot);
-        var url = fbUser.photoUrl;
+        //var url = fbUser.photoUrl;
 
-        if (url != null)
-          CachedNetworkImageProvider( url );
       }
     }
 
     catch (ex) {
-      print("FirebaseUserHelper ${ex.toString()}");
+      print("FirebaseUserHelper::readUserAccountData ${ex.toString()}");
       throw ex;
     }
 

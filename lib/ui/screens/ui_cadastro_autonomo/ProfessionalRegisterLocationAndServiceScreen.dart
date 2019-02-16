@@ -67,12 +67,11 @@ class ProfessionalRegisterLocationAndServiceScreenState
 
   _gotoCityListScreen() async {
     var key = _getStateKey(_dropdownCurrentOption);
-    print("$key $_dropdownCurrentOption selecionado");
 
-    // SE o cara selecionou 1 estado!
-    if (key.compareTo(KEY_NONE) != 0) {
-      _selectedState = Estado(_dropdownCurrentOption);
-      _selectedState.sigla = key;
+    print("SIGLA: $key ESTADO: $_dropdownCurrentOption selecionado");
+    // SEMPRE VAI EXISTIR UM ESTADO SELECIONADO!
+    _selectedState = Estado(_dropdownCurrentOption);
+    _selectedState.sigla = key;
 
       List<Cidade> cidadesSelecionadasAux = List.from(_cidadesSelecionadas);
 
@@ -97,12 +96,6 @@ class ProfessionalRegisterLocationAndServiceScreenState
         _cityChipController.clear();
         _cityChipController.addAll( _cidadesSelecionadas );
       }
-
-    }
-
-    else {
-      // EH pq ele nao selecinou estado algum!
-    }
   }
 
   _gotoServiceListScreen() async {
@@ -331,6 +324,14 @@ class ProfessionalRegisterLocationAndServiceScreenState
                         subtitle: "É necessário sua localização para continuar o cadastro.",
                         icon: Icons.location_off,
                         iconColor: Theme.of(context).errorColor,
+                        actionButton: true,
+                        actionButtonBackground: Theme.of(context).primaryColor,
+                        actionIcon: Icons.refresh,
+                        actionIconColor: Theme.of(context).accentColor,
+                        actionTitle: "Tentar novamente",
+                        actionTitleColor: Theme.of(context).accentColor,
+                        actionCallback: (){ setState(() {});},
+
                       ),
                     ),
                   ],

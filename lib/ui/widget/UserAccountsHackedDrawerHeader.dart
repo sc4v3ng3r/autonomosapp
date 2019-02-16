@@ -344,7 +344,7 @@ class _UserAccountsHackedDrawerHeaderState extends State<UserAccountsHackedDrawe
       label: MaterialLocalizations.of(context).signedInLabel,
       child: DrawerHeader(
         decoration: widget.decoration ?? BoxDecoration(
-          color: Colors.blueGrey,
+          color: Theme.of(context).accentColor,
         ),
         margin: widget.margin,
         padding: const EdgeInsetsDirectional.only(top: 16.0, start: 16.0),

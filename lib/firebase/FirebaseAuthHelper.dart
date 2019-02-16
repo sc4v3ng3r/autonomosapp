@@ -27,10 +27,10 @@ class FirebaseAuthHelper {
     }
 
     return FirebaseUserHelper.readUserAccountData(firebaseUser).then( (user) {
-        print("LIDO ${user.name}  ${user.email}");
+        //print("LIDO ${user.name}  ${user.email}");
 
         // TODO REPO INIT WORKAROUND
-        UserRepository rep = new UserRepository();
+        UserRepository rep = UserRepository.instance;
         rep.currentUser = user;
         rep.fbPassword = password;
         rep.fbLogin = email;
@@ -104,7 +104,7 @@ class FirebaseAuthHelper {
   }
 
   static Future<FirebaseUser> reauthCurrentUser() async {
-    UserRepository repository = UserRepository();
+    UserRepository repository = UserRepository.instance;
     FirebaseUser fbUser = await FirebaseAuth.instance.currentUser();
     var isFacebook = await _userProviderIsFacebook();
 

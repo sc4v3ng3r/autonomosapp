@@ -1,5 +1,6 @@
 import 'package:autonomosapp/firebase/FirebaseUserHelper.dart';
 import 'package:autonomosapp/model/User.dart';
+import 'package:autonomosapp/utility/Constants.dart';
 import 'package:autonomosapp/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
 import 'package:autonomosapp/ui/widget/NiftyRowDivisorWidget.dart';
@@ -95,6 +96,7 @@ class _PaymentDataEditorScreenState extends State<PaymentDataEditorScreen> {
 
       floatingActionButton: FloatingActionButton(
           backgroundColor: Theme.of(context).primaryColor,
+          tooltip: Constants.TOOLTIP_CONFIRM,
           child: Icon(Icons.done, color: Theme.of(context).accentColor ),
           onPressed: () {
             _saveData();
@@ -117,9 +119,12 @@ class _PaymentDataEditorScreenState extends State<PaymentDataEditorScreen> {
       chipList.add(
           FilterChip(
             label: Text(paymentOption,
-                style: TextStyle()),
+                style: TextStyle(
+                  color: Theme.of(context).accentColor
+                )
+            ),
             selected: (_selectedData.contains( paymentOption ) ),
-            selectedColor: Colors.green,
+            selectedColor: Theme.of(context).primaryColor,
             onSelected: (selected){
               (selected) ? _selectedData.add( paymentOption ) :
               _selectedData.removeWhere( (option) => (option == paymentOption) );

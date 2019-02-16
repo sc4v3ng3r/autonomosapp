@@ -1,6 +1,7 @@
 import 'package:autonomosapp/model/Service.dart';
 import 'package:autonomosapp/bloc/ServiceListWidgetBloc.dart';
 import 'package:autonomosapp/model/User.dart';
+import 'package:autonomosapp/utility/Constants.dart';
 import 'package:autonomosapp/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
 import 'package:autonomosapp/firebase/FirebaseUserHelper.dart';
@@ -59,6 +60,7 @@ class _ServiceEditorScreenState extends State<ServiceEditorScreen>{
 
       floatingActionButton: FloatingActionButton(
           backgroundColor: Theme.of(context).primaryColor,
+          tooltip: Constants.TOOLTIP_CONFIRM,
           child: Icon(
             Icons.done,
             color: Theme.of(context).accentColor

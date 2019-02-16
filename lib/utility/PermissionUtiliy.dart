@@ -79,9 +79,12 @@ class PermissionUtility {
                 negativeButtonContent: Text("Cancelar"),
                 content: Column(
                   children: <Widget>[
-                    Text("Você precisa conceder a permissão de localização "
-                        "nas configurações do seu dispositivo."),
-                    Text("Deseja ir a tela de configurações?"),
+                    Text("Você precisa ligar seu GPS ou conceder a permissão de localização "
+                        "nas configurações do seu dispositivo.",
+                      textAlign: TextAlign.justify,
+                      style: TextStyle(
+                      ),
+                    ),
                   ],
                 ),
 

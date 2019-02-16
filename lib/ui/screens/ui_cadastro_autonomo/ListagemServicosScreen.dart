@@ -42,6 +42,7 @@ class ListagemServicosState extends State<ListagemServicos> {
       appBar: AppBar(
         elevation: 0.0,
         title: Text('Serviços'),
+        brightness: Brightness.dark,
       ),
 
       floatingActionButton: FloatingActionButton(

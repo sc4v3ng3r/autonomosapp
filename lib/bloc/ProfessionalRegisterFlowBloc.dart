@@ -28,22 +28,22 @@ class ProfessionalRegisterFlowBloc {
   }
 
   void insertLocationsAndServices( {
-    @required Estado state,
-    @required List<Cidade> yourCities,
-    @required List<Service> yourServices,
-    @required String professionalName,
-    @required Location currentLocation} ){
+    @required final Estado state,
+    @required final List<Cidade> yourCities,
+    @required final List<Service> yourServices,
+    @required final String professionalName,
+    @required final Location currentLocation} ){
 
-      _professionalData.estadoAtuante =  state.sigla;
+      _professionalData.estadoAtuante =  state?.sigla;
       _professionalData.latitude = currentLocation?.latitude;
       _professionalData.longitude = currentLocation?.longitude;
 
-      yourCities.clear();
+      _professionalData.cidadesAtuantes.clear();
       yourCities.forEach( (cidade) {
         _professionalData.cidadesAtuantes.add( cidade.nome );
       });
 
-      yourServices.clear();
+      _professionalData.servicosAtuantes.clear();
       yourServices.forEach( (service) {
         _professionalData.servicosAtuantes.add( service.id );
       });
