@@ -34,7 +34,7 @@ class FirebaseUserHelper {
         print("readUserAccountData:: ${snapshot.value.toString()}");
         user = User.fromDataSnapshot(snapshot);
         //var url = fbUser.photoUrl;
-        FirebaseFavoritesHelper.getUserFavorites(uid: fbUser.uid)
+        FirebaseFavouritesHelper.getUserFavourites(uid: fbUser.uid)
             .then( (snapshot){
           if (snapshot.value != null)
             UserRepository.instance.favorites = Map.from( snapshot.value);
@@ -130,7 +130,7 @@ class FirebaseUserHelper {
     DatabaseReference relationshipRef = db.reference()
         .child(FirebaseReferences.REFERENCE_UF_CIDADES_SERVICOS_PROFISSIONAIS);
 
-    FirebaseFavoritesHelper.removeUserFavorites(uid: user.uid);
+    FirebaseFavouritesHelper.removeFavoriteUser(favouriteUid: user.uid);
 
     //esse pequeno trecho de codigo se repete na classe helper do relacionamento
     // estado -> cidade -> servico -> usuario
@@ -151,6 +151,7 @@ class FirebaseUserHelper {
   static Future<bool> _removeUserAccountFromAuthSystem() async {
     UserRepository repository = UserRepository();
     FirebaseUser fbUser =  await FirebaseAuthHelper.reauthCurrentUser();
+
 
     await FirebaseStorageHelper.removeUserProfilePicture(
         userUid: repository.currentUser.uid);

@@ -9,6 +9,7 @@ import 'package:autonomosapp/model/Service.dart';
 import 'package:autonomosapp/ui/screens/LoginScreen.dart';
 import 'package:autonomosapp/ui/screens/ProfessionalsMapScreen.dart';
 import 'package:autonomosapp/ui/screens/ui_cadastro_autonomo/ProfessionalPersonalInfoRegisterScreen.dart';
+import 'package:autonomosapp/ui/widget/FavouritesWidget.dart';
 import 'package:autonomosapp/ui/widget/ModalRoundedProgressBar.dart';
 import 'package:autonomosapp/ui/widget/NetworkFailWidget.dart';
 import 'package:autonomosapp/ui/widget/RatingBar.dart';
@@ -86,7 +87,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
-    _repository = UserRepository();
+    _repository = UserRepository.instance;
     _user = _repository.currentUser;
 
     _drawerCurrentOption = DrawerOption.SERVICES;
@@ -109,7 +110,7 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-
+    print("mainscreen build");
     var modal = ModalRoundedProgressBar(
         handleCallback: (handler){
           _progressBarHandler = handler;
@@ -226,7 +227,7 @@ class _MainScreenState extends State<MainScreen> {
 
     final optionFavorites = ListTile(
       selected: _drawerCurrentOption == DrawerOption.FAVORITE,
-      leading: Icon(Icons.favorite),
+      leading: Icon(Icons.star),
       title: Text( _mapOptionTitle[DrawerOption.FAVORITE] ),
       onTap: () => _setCurrentDrawerOption(DrawerOption.FAVORITE),
     );
@@ -350,10 +351,10 @@ class _MainScreenState extends State<MainScreen> {
         _serviceListFragment = null;
         return UsersViewWidget();
       
-      case DrawerOption.FAVORITE: // TODO Breve
+      case DrawerOption.FAVORITE:
         _serviceListFragment = null;
         return Center(
-          child: Text("Favoritos"),
+          child: FavouritesWidget(),
         );
       //NUNCA DEVE VIM AQUI!!
       default:

@@ -7,13 +7,13 @@ class ProfessionalPerfilScreenBloc {
   Map<String, String> _userFavorites = UserRepository.instance.favorites;
 
   void addToFavorite(String uid, User professional){
-    FirebaseFavoritesHelper.favoriteProfessional(uid: uid,
+    FirebaseFavouritesHelper.favoriteProfessional(uid: uid,
         professionalUid: professional.uid);
     _userFavorites.putIfAbsent(professional.uid, ()=> professional.uid);
   }
 
   void removeFromFavorites(String uid, User professional){
-    FirebaseFavoritesHelper.unFavouriteProfessional(
+    FirebaseFavouritesHelper.unFavouriteProfessional(
         uid: uid, professionalUid: professional.uid);
     _userFavorites.remove(professional.uid);
   }

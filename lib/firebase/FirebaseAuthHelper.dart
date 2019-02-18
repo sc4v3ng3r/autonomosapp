@@ -104,22 +104,27 @@ class FirebaseAuthHelper {
   }
 
   static Future<FirebaseUser> reauthCurrentUser() async {
-    UserRepository repository = UserRepository.instance;
     FirebaseUser fbUser = await FirebaseAuth.instance.currentUser();
+    UserRepository repository = UserRepository.instance;
+    AuthCredential credential;
+
     var isFacebook = await _userProviderIsFacebook();
 
     if (isFacebook) {
+
       FacebookAccessToken accessToken = await FacebookLogin().currentAccessToken;
-      fbUser.reauthenticateWithCredential( FacebookAuthProvider
-          .getCredential(accessToken: accessToken.token));
+      credential = FacebookAuthProvider
+          .getCredential(accessToken: accessToken.token);
+
+      fbUser.reauthenticateWithCredential( credential );
       return fbUser;
     }
 
-    fbUser = await fbUser.reauthenticateWithCredential(
-        EmailAuthProvider.getCredential(
-            email: repository.fbLogin,
-            password: repository.fbPassword)
-    );
+     credential = EmailAuthProvider.getCredential(
+        email: repository.fbLogin,
+        password: repository.fbPassword);
+
+    fbUser = await fbUser.reauthenticateWithCredential( credential );
     return fbUser;
   }
 
