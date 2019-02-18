@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:autonomosapp/ui/screens/LoginScreen.dart';
 import 'package:autonomosapp/utility/Constants.dart';
 import 'package:autonomosapp/utility/UserRepository.dart';
@@ -54,7 +53,6 @@ class MyApp extends StatelessWidget{
                 errorColor: Colors.red,
                 cursorColor: Colors.black,
                 textSelectionHandleColor: Colors.black,
-
               ),
 
             );

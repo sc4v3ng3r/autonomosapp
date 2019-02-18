@@ -38,7 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
     child: DecoratedBox(
       decoration: BoxDecoration(
         image: DecorationImage(
-            image: AssetImage(Constants.ASSETS_LOGIN_LOGO_FILE_NAME),
+            image: AssetImage(Constants.ASSETS_LOGIN_LOGO ),
             fit: BoxFit.scaleDown),
       ),
     ),
@@ -301,8 +301,9 @@ class _LoginScreenState extends State<LoginScreen> {
       return Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.0),
         child: MaterialButton(
+          color: Theme.of(context).primaryColor,
           padding: EdgeInsets.fromLTRB(.0, 14.0, .0, 14.0),
-          splashColor: Colors.redAccent,
+          //splashColor: Colors.amberAccent,
           onPressed: () async {
             if (validate()) {
               _handler.show(message: "Aguarde...");
@@ -333,7 +334,6 @@ class _LoginScreenState extends State<LoginScreen> {
               }
             }
           },
-          color: Colors.red,
           child: Text(
             "Entrar",
             style: TextStyle(fontSize: 16.0, color: Colors.white),

@@ -68,6 +68,7 @@ flutter:
   - assets/autonomos.png
   - assets/background.png
   - assets/splash_logo.png
+  - assets/login_logo.png
   - login_logo_name.png
   - login_logo_name2.png
 

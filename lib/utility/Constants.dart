@@ -6,6 +6,7 @@ class Constants {
   static const String MASK_PHONE = '(00) 00000-0000';
   static const String ASSETS_LOGIN_LOGO_FILE_NAME = "assets/login_logo_name.png";
   static const String ASSETS_LOGO_USER_PROFILE_FILE_NAME = "assets/usuario.png";
+  static const String ASSETS_LOGIN_LOGO = "assets/login_logo.png";
   static const String STORAGE_USER_PICTURE_FILE_NAME = "_profilePicture.jpg";
   static const String PROVIDER_ID_FACEBOOK = "facebook.com";
   static const String PROVIDER_ID_PASSWORD = "password";
