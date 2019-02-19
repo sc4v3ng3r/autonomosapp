@@ -29,8 +29,8 @@ class FirebaseStorageHelper {
 
   static Future<void> removeUserProfilePicture({@required String userUid }) async {
     try{
-
       print("REMOVING PICTURE $userUid/${Constants.STORAGE_USER_PICTURE_FILE_NAME}");
+
       await FirebaseStorage.instance.ref()
           .child("$userUid/${Constants.STORAGE_USER_PICTURE_FILE_NAME}").delete();
     }

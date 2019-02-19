@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget{
     return FutureBuilder<User>(
       future: FirebaseUserHelper.currentLoggedUser()
           .timeout(Duration(seconds: Constants.NETWORK_TIMEOUT_SECONDS),
-          onTimeout: (){ throw TimeoutException("timeout!!");}),
+          onTimeout: (){ throw TimeoutException("timeout!!");} ),
 
       builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
         switch (snapshot.connectionState) {

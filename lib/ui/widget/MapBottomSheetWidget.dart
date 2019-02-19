@@ -71,7 +71,9 @@ class MapBottomSheetWidget extends StatelessWidget {
             ClipOval(
               child: CachedNetworkImage(
                 imageUrl: _proUser.picturePath,
-                placeholder: CircularProgressIndicator(),
+                placeholder: (BuildContext context, String imageUrl){
+                  return CircularProgressIndicator();
+                },
               ),
             ) :
             CircleAvatar(

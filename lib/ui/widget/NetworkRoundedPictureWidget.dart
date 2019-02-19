@@ -21,7 +21,9 @@ class NetworkRoundedPictureWidget extends StatelessWidget {
       ClipOval(
         child: CachedNetworkImage(
           imageUrl: _networkImage,
-          placeholder: CircularProgressIndicator(),
+          placeholder: (BuildContext context, String str){
+            return CircularProgressIndicator();
+          },
         ),
       ) :
       CircleAvatar(

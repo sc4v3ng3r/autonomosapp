@@ -111,12 +111,14 @@ class FirebaseAuthHelper {
     var isFacebook = await _userProviderIsFacebook();
 
     if (isFacebook) {
-
+      print("Facebook reauth");
       FacebookAccessToken accessToken = await FacebookLogin().currentAccessToken;
       credential = FacebookAuthProvider
           .getCredential(accessToken: accessToken.token);
 
-      fbUser.reauthenticateWithCredential( credential );
+      fbUser = await fbUser.reauthenticateWithCredential( credential )
+          .catchError((error){ print("FirebaseAuthHelper::reauthCurrentUser $error"); });
+      await fbUser.reload();
       return fbUser;
     }
 
@@ -124,7 +126,9 @@ class FirebaseAuthHelper {
         email: repository.fbLogin,
         password: repository.fbPassword);
 
-    fbUser = await fbUser.reauthenticateWithCredential( credential );
+    fbUser = await fbUser.reauthenticateWithCredential( credential )
+        .catchError((error){ print("FirebaseAuthHelper::reauthCurrentUser $error"); });
+    await fbUser.reload();
     return fbUser;
   }
 

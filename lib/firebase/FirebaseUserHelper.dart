@@ -130,7 +130,7 @@ class FirebaseUserHelper {
     DatabaseReference relationshipRef = db.reference()
         .child(FirebaseReferences.REFERENCE_UF_CIDADES_SERVICOS_PROFISSIONAIS);
 
-    FirebaseFavouritesHelper.removeFavoriteUser(favouriteUid: user.uid);
+    FirebaseFavouritesHelper.removeFavoriteUser( uid: user.uid,favouriteUid: user.uid);
 
     //esse pequeno trecho de codigo se repete na classe helper do relacionamento
     // estado -> cidade -> servico -> usuario
