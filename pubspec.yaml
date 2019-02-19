@@ -63,15 +63,12 @@ flutter:
 
   assets:
   - assets/usuario.png
-  - assets/face_icon.ttf
-  - assets/autonomos_logo.jpeg
-  - assets/autonomos.png
-  - assets/background.png
-  - assets/splash_logo.png
+  - assets/icons/appicon.png
+  - assets/icons/1.5x/appicon.png
+  - assets/icons/2.0x/appicon.png
+  - assets/icons/3.0x/appicon.png
+  - assets/icons/4.0x/appicon.png
   - assets/login_logo.png
-  - login_logo_name.png
-  - login_logo_name2.png
-
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.
 

@@ -236,8 +236,15 @@ class _MainScreenState extends State<MainScreen> {
     if (_user.professionalData == null) {
       print("MainScreen User is not a professional!!!");
       final optionRegister = ListTile(
-        leading: Icon(
-          Icons.directions_walk,
+        leading: Container(
+          width: 32,
+          height: 32,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage(Constants.ASSETS_APP_ICON, ),
+                fit: BoxFit.scaleDown,
+            ),
+          ),
         ),
         title: Text(_mapOptionTitle[DrawerOption.AUTONOMOS],
             style:  TextStyle(fontWeight: FontWeight.bold)),

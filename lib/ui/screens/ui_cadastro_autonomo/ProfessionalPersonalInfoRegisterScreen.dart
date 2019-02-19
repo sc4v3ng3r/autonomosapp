@@ -34,11 +34,10 @@ class ProfessionalPersonalInfoRegisterScreenState extends State<ProfessionalPers
   bool _autoValidade = false;
   bool _contextChanged = false;
 
-  static const SizedBox _VERTICAL_SEPARATOR = SizedBox(height: 16.0,);
   static const SizedBox _FIELD_SEPARATOR = SizedBox(height: 10.0);
   static const String _CPF = 'CPF';
   static const String _CNPJ = 'CNPJ';
-  final UserRepository _repository = UserRepository();
+  final UserRepository _repository = UserRepository.instance;
   void _handleRadioValueChange(int i) {
     _radioValue = i;
     print("handling radio value: $i");
@@ -97,7 +96,10 @@ class ProfessionalPersonalInfoRegisterScreenState extends State<ProfessionalPers
           title: Text( 'Informações Pessoais',),
           brightness: Brightness.dark,
         ),
-        body: _buildLayout(),
+        body: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: _buildLayout(),
+        )
 
     );
   }
@@ -288,19 +290,21 @@ class ProfessionalPersonalInfoRegisterScreenState extends State<ProfessionalPers
       },
     );
 
-    return ListView(
+    return Padding(
       padding: EdgeInsets.fromLTRB(10.0, .0 , 10.0, 0.0),
-      children: <Widget>[
-        _VERTICAL_SEPARATOR,
-        personalForm,
-        _VERTICAL_SEPARATOR,
-        documentsButton,
-        _VERTICAL_SEPARATOR,
-        tellMeAboutYouField,
-        _FIELD_SEPARATOR,
-        nextButton,
-      ],
-      shrinkWrap: true,
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        children: <Widget>[
+          Constants.VERTICAL_SEPARATOR_16,
+          personalForm,
+          Constants.VERTICAL_SEPARATOR_16,
+          documentsButton,
+          Constants.VERTICAL_SEPARATOR_16,
+          tellMeAboutYouField,
+          _FIELD_SEPARATOR,
+          nextButton,
+        ],
+      ),
     );
   }
 

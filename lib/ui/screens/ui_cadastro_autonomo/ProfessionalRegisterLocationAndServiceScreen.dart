@@ -119,7 +119,7 @@ class ProfessionalRegisterLocationAndServiceScreenState
 
   }
 
-  Widget _buildForm(BuildContext context) {
+  Widget _buildLayout(BuildContext context) {
 
     final estadoLabel = Center(
       child: Text( 'Selecione seu estado:',
@@ -183,14 +183,21 @@ class ProfessionalRegisterLocationAndServiceScreenState
       textAlign: TextAlign.center,
     );
 
-    final buttonListServico = RaisedButton(
-      child: Text( 'Serviços',
-        style: TextStyle(color: Theme.of(context).primaryColor),
-      ),
-      color: Theme.of(context).accentColor,
-      onPressed: () {
-        _gotoServiceListScreen();
-      },
+    final buttonListServico = Row(
+      mainAxisSize: MainAxisSize.max,
+      children: <Widget>[
+        Expanded(
+            child: RaisedButton(
+              child: Text( 'Serviços',
+                style: TextStyle(color: Theme.of(context).primaryColor),
+              ),
+              color: Theme.of(context).accentColor,
+              onPressed: () {
+                _gotoServiceListScreen();
+              },
+            ),
+        ),
+      ],
     );
 
     final serviceChipContainer = ServiceChipContainer(
@@ -225,8 +232,8 @@ class ProfessionalRegisterLocationAndServiceScreenState
       },
     );
 
-    return ListView(
-      shrinkWrap: true,
+    return Column(
+      mainAxisSize: MainAxisSize.max,
       children: <Widget>[
         Constants.VERTICAL_SEPARATOR_16,
         estadoLabel,
@@ -261,10 +268,6 @@ class ProfessionalRegisterLocationAndServiceScreenState
 
   @override
   Widget build(BuildContext context) {
-    /*var body = Padding(
-      padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, .0),
-      child: _buildForm(context),
-    );*/
 
     return Scaffold(
       appBar: AppBar(
@@ -308,7 +311,7 @@ class ProfessionalRegisterLocationAndServiceScreenState
                     _dropdownCurrentOption = _placemark.administrativeArea;
                     return Padding(
                       padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, .0),
-                      child: _buildForm(context),
+                      child: _buildLayout(context),
                     );
                   }
                 }
@@ -331,7 +334,6 @@ class ProfessionalRegisterLocationAndServiceScreenState
                         actionTitle: "Tentar novamente",
                         actionTitleColor: Theme.of(context).accentColor,
                         actionCallback: (){ setState(() {});},
-
                       ),
                     ),
                   ],
@@ -342,7 +344,7 @@ class ProfessionalRegisterLocationAndServiceScreenState
 
       ) : Padding(
             padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, .0),
-            child: _buildForm(context)
+            child: SingleChildScrollView( child: _buildLayout(context),),
           ),
     );
   }

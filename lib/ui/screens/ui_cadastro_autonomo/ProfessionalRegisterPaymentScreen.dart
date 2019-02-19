@@ -68,7 +68,7 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
     });
   }
 
-  Widget _buildForm() {
+  Widget _buildLayout() {
 
     final formasDePagamentoLabel = Center(
       child: Padding(
@@ -129,7 +129,8 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
     );
 
     final form = Form(
-      child: ListView(
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
         children: <Widget>[
           formasDePagamentoLabel,
           chipList,
@@ -141,9 +142,10 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
       ),
     );
 
-    return form;
+    return SingleChildScrollView(
+      child: form,
+    );
   }
-
 
   Future<void> _finishRegister() async {
     _handler.show(message: "Registrando...");
@@ -175,13 +177,13 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
         title: Text( 'Formas de Pagamento'),
         brightness: Brightness.dark,
       ),
-        body: _buildForm(),
+        body: _buildLayout(),
       );
 
       return Stack(
         children: <Widget>[
           scaffold,
-          modal
+          modal,
         ],
       );
 
