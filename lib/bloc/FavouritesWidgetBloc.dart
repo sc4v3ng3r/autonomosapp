@@ -32,7 +32,7 @@ class FavouritesWidgetBloc {
           _addFavouriteUserToList(user);
 
         }).catchError( (error){
-          print("FavouritesWidgetBloc ${error.toString()}");
+          print("FavouritesWidgetBloc ${ error.toString() }");
           _addFavoriteListToSink(null);
         } );
 

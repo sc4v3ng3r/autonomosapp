@@ -41,7 +41,6 @@ import 'dart:io' show Platform;
 // widget toma seu lugar e criar um novo ServiceListWidget quando for necessário mostrar-lo. Isso é
 //necessário para evitar problemas internos no ServiceListWidget e suas Streams.
 
-
 enum  DrawerOption { PERFIL, SERVICES, VIEWS, FAVORITE, AUTONOMOS, EXIT, DELETE_ACCOUNT }
 //TODO transformar essa tela em stateless
 class MainScreen extends StatefulWidget {
@@ -111,12 +110,12 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     print("mainscreen build");
-    var modal = ModalRoundedProgressBar(
+    final modal = ModalRoundedProgressBar(
         handleCallback: (handler){
           _progressBarHandler = handler;
         });
 
-    var scaffold= Scaffold(
+    final scaffold= Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
         brightness: Brightness.dark,
@@ -296,13 +295,15 @@ class _MainScreenState extends State<MainScreen> {
 
     drawerOptions.add( removeAccount);
 
-    return new Drawer(
+    final drawer = Drawer(
       key: _drawerKey,
       child: ListView(
         padding: EdgeInsets.all(.0),
         children: drawerOptions,
       ),
     );
+
+    return drawer;
   }
 
   _logout() {
@@ -428,7 +429,6 @@ class _MainScreenState extends State<MainScreen> {
           return false;
         }
       }
-
       return false;
     }
 

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:autonomosapp/bloc/ProfessionalRegisterFlowBloc.dart';
 import 'package:autonomosapp/model/Cidade.dart';
 import 'package:autonomosapp/model/Location.dart';
@@ -21,6 +19,7 @@ import 'package:autonomosapp/ui/widget/ChipContainerController.dart';
 import 'package:autonomosapp/ui/widget/StateDropDownWidget.dart';
 import 'package:autonomosapp/ui/widget/EditableButton.dart';
 import 'package:geolocator/geolocator.dart';
+import 'dart:io' show Platform;
 
 class ProfessionalRegisterLocationAndServiceScreen extends StatefulWidget {
 
@@ -52,6 +51,7 @@ class ProfessionalRegisterLocationAndServiceScreenState
   String _dropdownCurrentOption;
   Placemark _placemark;
   List<String> _stateList = DROPDOWN_MENU_OPTIONS.values.toList();
+
   @override
   void initState() {
     super.initState();
@@ -122,7 +122,7 @@ class ProfessionalRegisterLocationAndServiceScreenState
   Widget _buildLayout(BuildContext context) {
 
     final estadoLabel = Center(
-      child: Text( 'Selecione seu estado:',
+      child: Text( 'Estado em que trabalho:',
         style: TextStyle(color: Theme.of(context).accentColor),
       ),
     );
@@ -156,7 +156,7 @@ class ProfessionalRegisterLocationAndServiceScreenState
     final cityButton = EditableButton(
       backgroundColor: Theme.of(context).primaryColor,
       textColor: Theme.of(context).accentColor,
-      primaryText: "Cidades",
+      primaryText: "Selecionar Cidades em",
       secondaryText: "$_dropdownCurrentOption",
       controllerCallback: (controller) {
         _buttonController = controller;
@@ -177,7 +177,7 @@ class ProfessionalRegisterLocationAndServiceScreenState
       },
     );
 
-    final areasDeAtuacaoLabel = Text( 'Areas de atuação:',
+    final areasDeAtuacaoLabel = Text( 'Selecione os Serviços',
       style: TextStyle( color: Theme.of(context).accentColor, ),
       maxLines: 1,
       textAlign: TextAlign.center,
@@ -188,7 +188,7 @@ class ProfessionalRegisterLocationAndServiceScreenState
       children: <Widget>[
         Expanded(
             child: RaisedButton(
-              child: Text( 'Serviços',
+              child: Text(' Meus serviços',
                 style: TextStyle(color: Theme.of(context).primaryColor),
               ),
               color: Theme.of(context).accentColor,
