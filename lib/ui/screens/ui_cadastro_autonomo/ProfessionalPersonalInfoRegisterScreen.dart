@@ -22,7 +22,7 @@ class ProfessionalPersonalInfoRegisterScreenState extends State<ProfessionalPers
   var typeCnpjMask;
 
   MaskedTextController _typeTelefoneMask;
-  TextEditingController _tellMeAboutYouController;
+  TextEditingController _userDescriptionController;
 
   FocusNode _tipoPessoaFocus;
   FocusNode _descricaoFocus;
@@ -38,6 +38,7 @@ class ProfessionalPersonalInfoRegisterScreenState extends State<ProfessionalPers
   static const String _CPF = 'CPF';
   static const String _CNPJ = 'CNPJ';
   final UserRepository _repository = UserRepository.instance;
+
   void _handleRadioValueChange(int i) {
     _radioValue = i;
     print("handling radio value: $i");
@@ -65,7 +66,7 @@ class ProfessionalPersonalInfoRegisterScreenState extends State<ProfessionalPers
     typeCpfMask = new MaskedTextController(mask: '000.000.000-00', text: _CPF);
     typeCnpjMask = new MaskedTextController(mask: '00.000.000/0000-00', text: _CNPJ);
     _typeTelefoneMask = new MaskedTextController(mask: '(00) 00000-0000');
-    _tellMeAboutYouController = TextEditingController();
+    _userDescriptionController = TextEditingController();
 
     _tipoPessoaFocus = new FocusNode();
     _descricaoFocus = new FocusNode();
@@ -78,7 +79,7 @@ class ProfessionalPersonalInfoRegisterScreenState extends State<ProfessionalPers
     _tipoPessoaFocus.dispose();
     _descricaoFocus.dispose();
     _telefoneFocus.dispose();
-    _tellMeAboutYouController.dispose();
+    _userDescriptionController.dispose();
     super.dispose();
   }
 
@@ -105,7 +106,7 @@ class ProfessionalPersonalInfoRegisterScreenState extends State<ProfessionalPers
   }
 
   Widget _buildLayout(){
-    var userPicture = Row(
+    final userPicture = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         //TODO opção de trocar a foto!
@@ -118,7 +119,7 @@ class ProfessionalPersonalInfoRegisterScreenState extends State<ProfessionalPers
       ],
     );
 
-    var radioGroup = Row(
+    final radioGroup = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         new Radio(
@@ -138,7 +139,7 @@ class ProfessionalPersonalInfoRegisterScreenState extends State<ProfessionalPers
       ],
     );
 
-    var cpfAndCnpjField = TextFormField(
+    final cpfAndCnpjField = TextFormField(
           maxLines: 1,
           autofocus: false,
           controller: _typeCpfOrCnpj(),
@@ -178,7 +179,7 @@ class ProfessionalPersonalInfoRegisterScreenState extends State<ProfessionalPers
           ),
     );
 
-    var phoneField = Material(
+    final phoneField = Material(
       child: TextFormField(
         focusNode: _telefoneFocus,
         controller: _typeTelefoneMask,
@@ -207,23 +208,7 @@ class ProfessionalPersonalInfoRegisterScreenState extends State<ProfessionalPers
       ),
     );
 
-    var personalForm = Form(
-      key: _formKey,
-      autovalidate: _autoValidade,
-      child: Column(
-        children: <Widget>[
-          userPicture,
-          radioGroup,
-          _FIELD_SEPARATOR,
-           cpfAndCnpjField,
-          _FIELD_SEPARATOR,
-          phoneField,
-        ],
-      ),
-    );
-
-
-    var documentsButton = RaisedButton(
+    final documentsButton = RaisedButton(
           color: Colors.white,
           padding: EdgeInsets.fromLTRB(.0, 8.0, .0, 8.0),
           onPressed: (){},
@@ -243,12 +228,13 @@ class ProfessionalPersonalInfoRegisterScreenState extends State<ProfessionalPers
         //)
     );
 
-    var tellMeAboutYouField = TextFormField(
+    final userDescriptionField = TextFormField(
       autofocus: false,
       focusNode: _descricaoFocus,
-      controller: _tellMeAboutYouController,
+      controller: _userDescriptionController,
       maxLength: 48,
       maxLines: 4,
+      validator: InputValidator.descriptionValidation,
       textInputAction: TextInputAction.done,
       onFieldSubmitted: (dataTyped) {
         setState(() {
@@ -263,7 +249,27 @@ class ProfessionalPersonalInfoRegisterScreenState extends State<ProfessionalPers
       ),
     );
 
-    var nextButton = NextButton(
+    final personalForm = Form(
+      key: _formKey,
+      autovalidate: _autoValidade,
+      child: Column(
+        children: <Widget>[
+          userPicture,
+          radioGroup,
+          _FIELD_SEPARATOR,
+          cpfAndCnpjField,
+          _FIELD_SEPARATOR,
+          phoneField,
+          Constants.VERTICAL_SEPARATOR_16,
+          documentsButton,
+          Constants.VERTICAL_SEPARATOR_16,
+          userDescriptionField,
+        ],
+      ),
+    );
+
+
+    final nextButton = NextButton(
       buttonColor: Colors.green,
       text: '[1/3]   Próximo Passo',
       textColor: Colors.white,
@@ -274,7 +280,7 @@ class ProfessionalPersonalInfoRegisterScreenState extends State<ProfessionalPers
                 typePeople: _tipoPessoa,
                 documentNumber: _typeCpfOrCnpj().text,
                 phone: _typeTelefoneMask.text,
-                description: _tellMeAboutYouController.text);
+                description: _userDescriptionController.text);
 
           //TODO falta as referencias aos documentos "fotos"
 
@@ -290,22 +296,20 @@ class ProfessionalPersonalInfoRegisterScreenState extends State<ProfessionalPers
       },
     );
 
-    return Padding(
+    final padding = Padding(
       padding: EdgeInsets.fromLTRB(10.0, .0 , 10.0, 0.0),
       child: Column(
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
           Constants.VERTICAL_SEPARATOR_16,
           personalForm,
-          Constants.VERTICAL_SEPARATOR_16,
-          documentsButton,
-          Constants.VERTICAL_SEPARATOR_16,
-          tellMeAboutYouField,
           _FIELD_SEPARATOR,
           nextButton,
         ],
       ),
     );
+
+    return padding;
   }
 
   bool _inputValidation(){

@@ -38,7 +38,7 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       title: "Autônomos",
 
-      home: (UserRepository.instance.currentUser == null) ? StreamBuilder<User>(
+      home: /*(UserRepository.instance.currentUser == null) ?*/ StreamBuilder<User>(
         stream: _bloc.getCurrentUser,
         builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
           switch (snapshot.connectionState) {
@@ -64,7 +64,7 @@ class _MyAppState extends State<MyApp> {
               //break;
           }
         },
-      ) : MainScreen(),
+      ) /*: MainScreen()*/,
 
       theme: ThemeData(
         primaryColor: Colors.amber,

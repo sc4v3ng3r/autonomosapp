@@ -56,11 +56,22 @@ class InputValidator {
 
   }
 
+  static String descriptionValidation(String description){
+    print("descriptionValidation:: $description");
+    if (description.isEmpty)
+      return "A descrição não pode ser vazia";
+
+    if (description.length < 20)
+      return "A descrição deve conter pelo menos 20 caracteres";
+
+    return null;
+  }
+
   static String cnpjValidation(String cnpj){
     if ( cnpj == null || cnpj.isEmpty )
       return "CNPJ não pode ser vazio";
 
-    else if ( _validadeCNPJ( _removingMask(cnpj)  ))
+    else if ( _validadeCNPJ( _removingMask(cnpj) ) )
       return null;
 
     return "CNPJ inválido";

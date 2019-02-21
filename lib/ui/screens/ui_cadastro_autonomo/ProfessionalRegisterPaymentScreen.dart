@@ -27,8 +27,8 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
   ProgressBarHandler _handler;
   int _radioValue = 0;
   bool _emiteNota = false;
-  //Color _colorChip = Colors.blueGrey[200];
   List<String> _formasDePagamentoChipSelecionado = <String>[];
+  final GlobalKey<ScaffoldState> _scaffoldKey =  GlobalKey();
 
   Iterable<Widget> get _transformaFormasDePagamentoEmChip sync* {
     for (String nomePagamento in _formasDePagamento) {
@@ -122,9 +122,15 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
       textColor: Colors.white,
       buttonColor: Colors.green,
       callback: () {
-        widget._bloc.currentData.emissorNotaFiscal = _emiteNota;
-        widget._bloc.currentData.formasPagamento = _formasDePagamentoChipSelecionado;
-        _finishRegister();
+        // validar os dados
+
+        if (_validade() ){
+          widget._bloc.currentData.emissorNotaFiscal = _emiteNota;
+          widget._bloc.currentData.formasPagamento = _formasDePagamentoChipSelecionado;
+
+          _finishRegister();
+        }
+
       },
     );
 
@@ -144,6 +150,30 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
 
     return SingleChildScrollView(
       child: form,
+    );
+  }
+
+  bool _validade(){
+    final bool flag = false;
+    if (_formasDePagamentoChipSelecionado.isEmpty){
+      _showSnackBarWarning("Selecione pelo menos uma forma de pagamento");
+      return flag;
+    }
+
+    return !flag;
+
+  }
+
+  void _showSnackBarWarning(String msg){
+    _scaffoldKey.currentState
+        .showSnackBar(
+          SnackBar(
+            backgroundColor: Theme.of(context).errorColor,
+            duration: Duration(milliseconds: 1900),
+            content: Text(msg, style: TextStyle(
+                color: Colors.white),
+            ),
+          ),
     );
   }
 
@@ -173,6 +203,7 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
         handleCallback: (handler){ _handler = handler; },);
 
     var scaffold = Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text( 'Formas de Pagamento'),
         brightness: Brightness.dark,

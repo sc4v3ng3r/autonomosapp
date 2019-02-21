@@ -51,6 +51,7 @@ class ProfessionalRegisterLocationAndServiceScreenState
   String _dropdownCurrentOption;
   Placemark _placemark;
   List<String> _stateList = DROPDOWN_MENU_OPTIONS.values.toList();
+  final GlobalKey<ScaffoldState> _scaffoldKey =GlobalKey();
 
   @override
   void initState() {
@@ -161,6 +162,7 @@ class ProfessionalRegisterLocationAndServiceScreenState
       controllerCallback: (controller) {
         _buttonController = controller;
       },
+
       onPressed: (){
         _gotoCityListScreen();
       },
@@ -220,15 +222,15 @@ class ProfessionalRegisterLocationAndServiceScreenState
       textColor: Colors.white,
       callback: () {
 
-        _gettingInputData();
-
-        Navigator.of(context).push(MaterialPageRoute(
+        if ( _validateData() ){
+          _gettingInputData();
+          Navigator.of(context).push(MaterialPageRoute(
             builder: (BuildContext context) =>
-                 ProfessionalRegisterPaymentScreen(
-                   bloc: widget._bloc,
-                 ),
-        )
-        );
+                ProfessionalRegisterPaymentScreen(
+                  bloc: widget._bloc,
+                ),
+          ), );
+        }
       },
     );
 
@@ -256,20 +258,37 @@ class ProfessionalRegisterLocationAndServiceScreenState
   }
 
   //TODO tem que validar os dados!
-  void
-  _gettingInputData(){
+  void _gettingInputData(){
+
     widget._bloc.insertLocationsAndServices(
         state: _selectedState,
         yourCities: _cidadesSelecionadas,
         yourServices: _servicosSelecionados,
         currentLocation: UserRepository().currentLocation,
-        professionalName: UserRepository().currentUser.name );
+        professionalName: UserRepository().currentUser.name
+    );
+  }
+
+  bool _validateData(){
+    bool flag = false;
+    if (_cidadesSelecionadas.isEmpty){
+      _showSnackWarning("Você deve selecionar uma cidade pelo menos");
+      return flag;
+    }
+
+    if (_servicosSelecionados.isEmpty){
+      _showSnackWarning("Você deve selecionar um serviço pelo menos");
+      return flag;
+    }
+
+    return !flag;
   }
 
   @override
   Widget build(BuildContext context) {
 
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text('Localização & Serviços',),
         brightness: Brightness.dark,
@@ -341,7 +360,6 @@ class ProfessionalRegisterLocationAndServiceScreenState
                 break;
             }
           }
-
       ) : Padding(
             padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, .0),
             child: SingleChildScrollView( child: _buildLayout(context),),
@@ -349,6 +367,21 @@ class ProfessionalRegisterLocationAndServiceScreenState
     );
   }
 
+  void _showSnackWarning(String msg){
+    _scaffoldKey.currentState.showSnackBar(
+        SnackBar(
+          duration: Duration(milliseconds: 1900),
+          backgroundColor: Theme.of(context).errorColor,
+            content: Text(msg,
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+        )
+    );
+  }
+
+  // TODO esse metodo deve vazar dessa classe
   Future<bool> _getUserCurrentPosition(final BuildContext context) async {
 
     if (Platform.isAndroid){
