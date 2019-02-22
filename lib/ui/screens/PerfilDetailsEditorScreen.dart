@@ -109,7 +109,7 @@ class _PerfilDetailsEditorScreenState extends State<PerfilDetailsEditorScreen> {
   Widget _createBody() {
     List<Widget> widgetList = List();
 
-    var userPicture = Column(
+    final userPicture = Column(
       children: <Widget>[
         Container(
           width: 140,
@@ -125,7 +125,7 @@ class _PerfilDetailsEditorScreenState extends State<PerfilDetailsEditorScreen> {
       ],
     );
 
-    var nameEditField = TextInputWidget(
+    final nameEditField = TextInputWidget(
       hint: "Nome",
       focusNode: _nameInputFocus,
       validator: InputValidator.nameValidation,
@@ -140,7 +140,7 @@ class _PerfilDetailsEditorScreenState extends State<PerfilDetailsEditorScreen> {
     widgetList.add(nameEditField);
 
     if (widget._repository.currentUser.professionalData != null) {
-      var phoneField = TextInputWidget(
+      final phoneField = TextInputWidget(
         hint: "Telefone",
         focusNode: _phoneFieldFocus,
         validator: InputValidator.phoneValidation,
@@ -156,11 +156,11 @@ class _PerfilDetailsEditorScreenState extends State<PerfilDetailsEditorScreen> {
       widgetList.add(phoneField);
       widgetList.add(widget._verticalSeparator);
 
-      var descriptionField = TextInputWidget(
+      final descriptionField = TextInputWidget(
         focusNode: _descriptionFieldFocus,
         maxLength: 48,
         maxLines: 4,
-        validator: InputValidator.textDescription,
+        validator: InputValidator.descriptionValidation,
         controller: _descriptionFieldController,
         textInputType: TextInputType.text,
         inputAction: TextInputAction.done,

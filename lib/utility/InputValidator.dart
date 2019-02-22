@@ -31,13 +31,6 @@ class InputValidator {
     return null;
   }
 
-  static String textDescription(String text){
-    if (text == null || text.isEmpty){
-      return "O texto não pode ser vazio";
-    }
-    return null;
-  }
-
   static String cpfValidation(String cpf){
     if (cpf == null || cpf.isEmpty)
       return "CPF não pode ser vazio";

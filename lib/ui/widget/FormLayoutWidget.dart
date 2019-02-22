@@ -25,6 +25,7 @@ class _FormLayoutWidgetState extends State<FormLayoutWidget> {
 
     return Form(
       key: widget._key,
+      //autovalidate: ,
       child: Column(
         children: widget._widgetList,
       ),

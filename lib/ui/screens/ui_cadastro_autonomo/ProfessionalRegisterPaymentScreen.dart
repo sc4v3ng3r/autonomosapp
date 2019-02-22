@@ -9,7 +9,8 @@ import 'package:autonomosapp/ui/widget/ModalRoundedProgressBar.dart';
 class ProfessionalRegisterPaymentScreen extends StatefulWidget {
 
   final ProfessionalRegisterFlowBloc _bloc;
-  ProfessionalRegisterPaymentScreen({@required ProfessionalRegisterFlowBloc bloc}) :
+
+  ProfessionalRegisterPaymentScreen( { @required ProfessionalRegisterFlowBloc bloc } ) :
         _bloc = bloc;
 
   @override
@@ -112,6 +113,7 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
             onChanged: _emiteNotaChange,
             activeColor: Theme.of(context).primaryColor,
           ),
+
           Text('Sim'),
         ],
       ),
@@ -159,9 +161,7 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
       _showSnackBarWarning("Selecione pelo menos uma forma de pagamento");
       return flag;
     }
-
     return !flag;
-
   }
 
   void _showSnackBarWarning(String msg){
@@ -199,10 +199,10 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
   @override
   Widget build(BuildContext context) {
 
-    var modal = ModalRoundedProgressBar(
+    final modal = ModalRoundedProgressBar(
         handleCallback: (handler){ _handler = handler; },);
 
-    var scaffold = Scaffold(
+    final scaffold = Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
         title: Text( 'Formas de Pagamento'),
