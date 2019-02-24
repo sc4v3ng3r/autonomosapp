@@ -29,6 +29,7 @@ class _PaymentDataEditorScreenState extends State<PaymentDataEditorScreen> {
 
   List<String> _selectedData;
   int _radioGroupValue;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   @override
   void initState() {
@@ -89,6 +90,7 @@ class _PaymentDataEditorScreenState extends State<PaymentDataEditorScreen> {
     );
 
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text("Editar Opções de Pagamento"),
         brightness: Brightness.dark,
@@ -99,12 +101,22 @@ class _PaymentDataEditorScreenState extends State<PaymentDataEditorScreen> {
           tooltip: Constants.TOOLTIP_CONFIRM,
           child: Icon(Icons.done, color: Theme.of(context).accentColor ),
           onPressed: () {
-            _saveData();
-            print("PAYMENT OPTIONS: ");
-            print("NOTA FISCAL: $_radioGroupValue");
-            for(String str in _selectedData)
-              print(str);
-            Navigator.pop(this.context);
+            if (_validade()){
+              _saveData();
+              Navigator.pop(this.context);
+            }
+            else {
+              _scaffoldKey.currentState
+                  .showSnackBar(
+                    SnackBar(
+                      duration: Duration(milliseconds: 1900),
+                      backgroundColor: Theme.of(context).errorColor,
+                      content: Text("Selecione pelo menos uma forma de pagamento",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    )
+              );
+            }
           }),
 
       body: body,
@@ -136,6 +148,8 @@ class _PaymentDataEditorScreenState extends State<PaymentDataEditorScreen> {
     } // end for loop
     return chipList;
   }
+
+  bool _validade() => _selectedData?.isNotEmpty ?? false;
 
   void _saveData(){
     User user = UserRepository().currentUser;

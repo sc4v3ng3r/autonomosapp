@@ -7,6 +7,8 @@ class Constants {
   static const String ASSETS_LOGO_USER_PROFILE_FILE_NAME = "assets/usuario.png";
   static const String ASSETS_LOGIN_LOGO = "assets/login_logo.png";
   static const String ASSETS_APP_ICON = "assets/icons/appicon.png";
+  static const String ASSETS_ANIMATION_LOGO = "assets/splash_logo.png";
+  static const String ASSETS_ANIMATION_BACKGROUND = "assets/splash_background.png";
   static const String STORAGE_USER_PICTURE_FILE_NAME = "_profilePicture.jpg";
   static const String PROVIDER_ID_FACEBOOK = "facebook.com";
   static const String PROVIDER_ID_PASSWORD = "password";

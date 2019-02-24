@@ -1,6 +1,7 @@
 import 'package:autonomosapp/ui/screens/LoginScreen.dart';
 import 'package:autonomosapp/utility/Constants.dart';
 import 'package:autonomosapp/utility/UserRepository.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:autonomosapp/firebase/FirebaseUserHelper.dart';
 import 'package:autonomosapp/model/User.dart';
@@ -38,20 +39,23 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       title: "Autônomos",
 
-      home: /*(UserRepository.instance.currentUser == null) ?*/ StreamBuilder<User>(
+      home: StreamBuilder<User>(
         stream: _bloc.getCurrentUser,
         builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
             case ConnectionState.waiting:
-              return Material(
-                color: Colors.grey[350],
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    CircularProgressIndicator(),
-                  ],
+              return Container(
+                child: Center(
+                  child: ImageRotateAnimation(
+                    imagePath: Constants.ASSETS_ANIMATION_LOGO,
+                  ),
+                ),
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage( Constants.ASSETS_ANIMATION_BACKGROUND ),
+                    fit: BoxFit.fill,
+                  ),
                 ),
               );
 
@@ -64,7 +68,7 @@ class _MyAppState extends State<MyApp> {
               //break;
           }
         },
-      ) /*: MainScreen()*/,
+      ),
 
       theme: ThemeData(
         primaryColor: Colors.amber,
@@ -74,7 +78,9 @@ class _MyAppState extends State<MyApp> {
         textSelectionHandleColor: Colors.black,
       ),
     );
+
   }
+
 }
 
 
@@ -106,5 +112,58 @@ class MyAppBloc {
 
   dispose(){
     _userSubject?.close();
+  }
+}
+
+class ImageRotateAnimation extends StatefulWidget {
+
+  final String _imagePath;
+  ImageRotateAnimation( {@required String imagePath} ) : _imagePath = imagePath;
+
+  @override
+  _ImageRotateAnimationState createState() => new _ImageRotateAnimationState();
+}
+
+class _ImageRotateAnimationState extends State<ImageRotateAnimation>
+    with SingleTickerProviderStateMixin {
+  AnimationController animationController;
+
+  @override
+  void initState() {
+    super.initState();
+    animationController = new AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 3),
+    );
+
+    animationController.repeat();
+  }
+
+
+  @override
+  void dispose() {
+    animationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.transparent,
+      child: new AnimatedBuilder(
+        animation: animationController,
+        child: Container(
+          width: 280.0,
+          height: 288.0,
+          child: Image.asset(widget._imagePath ),
+        ),
+        builder: (BuildContext context, Widget _widget) {
+          return Transform.rotate(
+            angle: animationController.value * 6.3,
+            child: _widget,
+          );
+        },
+      ),
+    );
   }
 }

@@ -69,6 +69,8 @@ flutter:
   - assets/icons/3.0x/appicon.png
   - assets/icons/4.0x/appicon.png
   - assets/login_logo.png
+  - assets/splash_logo.png
+  - assets/splash_background.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.
 

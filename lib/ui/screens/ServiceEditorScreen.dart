@@ -25,6 +25,8 @@ class _ServiceEditorScreenState extends State<ServiceEditorScreen>{
 
   List<Service> _selectedServices;
   var _body;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+
   ProgressBarHandler _handler;
   @override
   void initState() {
@@ -50,6 +52,7 @@ class _ServiceEditorScreenState extends State<ServiceEditorScreen>{
     print("statefull builder");
 
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text("Editar Serviços Atuantes"),
         elevation: .0,
@@ -65,14 +68,29 @@ class _ServiceEditorScreenState extends State<ServiceEditorScreen>{
             Icons.done,
             color: Theme.of(context).accentColor
           ),
-          onPressed: _saveData),
+          onPressed: (){
+            if (_validate())
+              _saveData();
+            else {
+              _scaffoldKey.currentState
+                  .showSnackBar(
+                  SnackBar(
+                    duration: Duration(milliseconds: 1900),
+                    backgroundColor: Theme.of(context).errorColor,
+                    content: Text("Selecione pelo menos um serviço",
+                      style: TextStyle( color: Colors.white ),
+                    ),
+                  ),
+              );
+            }
+          }),
     );
   }
 
   void _saveData(){
     _handler.show(message: "Registrando...");
     print("TOTAL SERVICOS SELECIONADOS: ${_selectedServices.length}");
-    User user =UserRepository().currentUser;
+    User user =UserRepository.instance.currentUser;
     user.professionalData.servicosAtuantes.clear();
 
     List<Service> servicesToRemove = List.from(widget._currentUserServices);
@@ -80,10 +98,6 @@ class _ServiceEditorScreenState extends State<ServiceEditorScreen>{
     for (Service srv in _selectedServices){
       user.professionalData.servicosAtuantes.add( srv.id );
       servicesToRemove.remove( srv );
-    }
-
-    for(Service s in servicesToRemove){
-      print("will be removed ${s.name}");
     }
 
     FirebaseUfCidadesServicosProfissionaisHelper.removeServicesFromProfessionalUser(
@@ -97,4 +111,5 @@ class _ServiceEditorScreenState extends State<ServiceEditorScreen>{
     Navigator.pop(context);
   }
 
+  bool _validate() => _selectedServices.isNotEmpty;
 }
