@@ -40,7 +40,7 @@ class UserVisualizationListItemWidget extends StatelessWidget {
               starCount: 5,
               onRatingChanged: null,
               rating: _user?.rating ?? 5.0,
-              cor: (_user == null) ? Colors.grey[400] : Colors.amber,
+              color: (_user == null) ? Colors.grey[400] : Colors.amber,
             ),
           ],
       ),

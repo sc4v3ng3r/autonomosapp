@@ -43,7 +43,7 @@ class FavouriteItemListWidget extends StatelessWidget {
               starCount: 5,
               onRatingChanged: null,
               rating: favoriteUser?.rating ?? 5.0,
-              cor: (favoriteUser == null) ? Colors.grey[400] : Theme.of(context).primaryColor,
+              color: (favoriteUser == null) ? Colors.grey[400] : Theme.of(context).primaryColor,
             ),
           ],
         ),

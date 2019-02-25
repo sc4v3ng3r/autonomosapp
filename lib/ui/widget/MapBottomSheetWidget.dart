@@ -99,7 +99,7 @@ class MapBottomSheetWidget extends StatelessWidget {
           Center(
             child: RatingBar(
               starCount: 5,
-              cor: Colors.amberAccent,
+              color: Theme.of(context).primaryColor,
               rating: _proUser.rating,
             ),
           ),

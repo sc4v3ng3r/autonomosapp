@@ -2,6 +2,7 @@ import 'package:autonomosapp/bloc/ProfessionalPerfilScreenBloc.dart';
 import 'package:autonomosapp/model/User.dart';
 import 'package:autonomosapp/ui/widget/FavoriteButtonWidget.dart';
 import 'package:autonomosapp/ui/widget/PerfilDetailsWidget.dart';
+import 'package:autonomosapp/ui/widget/RateProfessionalDialogWidget.dart';
 import 'package:autonomosapp/utility/Constants.dart';
 import 'package:autonomosapp/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
@@ -19,39 +20,48 @@ class ProfessionalPerfilScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        actions: <Widget>[
-          Tooltip(
-            message: Constants.TOOLTIP_FAVORITE,
-            child: FavoriteButtonWidget(
-              favorite: _bloc.isFavorite( _userProData ),
-              key: _favoriteKey,
-              color: Theme.of(context).accentColor,
-              callback: _favoriteButtonCallback,
-            ),
-          ),
-        ],
-        title: Text(_userProData.name ),
-        brightness: Brightness.dark,
+    final actionTrialProfessional = Tooltip(
+      message: "Avaliar Profisisonal",
+      child: IconButton(
+          icon: Icon(Icons.star_half,
+            color: Theme.of(context).accentColor,),
+          onPressed: (){
+            _showQualiticationDialog(context);
+          }
       ),
+    );
 
-      body: PerfilDetailsWidget(
-        editable: false,
-        user: _userProData,
-      ),
+    final actionFavourite = FavoriteButtonWidget(
+      favorite: _bloc.isFavorite( _userProData ),
+      key: _favoriteKey,
+      color: Theme.of(context).accentColor,
+      callback: _favoriteButtonCallback,
+    );
 
-      bottomNavigationBar: Row(
-        mainAxisSize: MainAxisSize.max,
+    final appBar = AppBar(
+      actions: <Widget>[
+        actionTrialProfessional,
+        actionFavourite,
+      ],
 
-        children: <Widget>[
-          Expanded(
-            child: RaisedButton(
-              child: Text("Contactar no Whatsapp",
+      title: Text(_userProData.name ),
+      brightness: Brightness.dark,
+    );
+
+    final scaffoldBody = PerfilDetailsWidget(
+      editable: false,
+      user: _userProData,
+    );
+
+    final bottomWidget = Row(
+      mainAxisSize: MainAxisSize.max,
+      children: <Widget>[
+        Expanded(
+          child: RaisedButton(
+            child: Text("Contactar no Whatsapp",
                 style: TextStyle(color: Colors.white)
-              ),
+            ),
             onPressed: () async {
-
               var whatsUrl =
                   "whatsapp://send?phone=55${_userProData.professionalData.telefone}"
                   "&text=${Constants.getDefaultWhatsappMessage(
@@ -63,11 +73,18 @@ class ProfessionalPerfilScreen extends StatelessWidget {
             },
             color: Colors.green,
           ),
-          ),
+        ),
 
-        ],
-      ),
+      ],
     );
+
+    final scaffold = Scaffold(
+      appBar: appBar,
+      body: scaffoldBody,
+      bottomNavigationBar: bottomWidget,
+    );
+
+    return scaffold;
   }
 
 
@@ -89,6 +106,18 @@ class ProfessionalPerfilScreen extends StatelessWidget {
     );
   }
 
+  void _showQualiticationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context){
+          return RateProfessionalDialogWidget(
+            onConfirm: (rate){
+              print("RATE WAS $rate");
+            },
+          );
+      }
+    );
+  }
   void _favoriteButtonCallback(final FavoriteAction action){
     switch(action){
       case FavoriteAction.FAVORITE:

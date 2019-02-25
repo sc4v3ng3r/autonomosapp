@@ -5,48 +5,81 @@ import 'package:flutter/material.dart';
 // ou utilizar a tecnica ninja mostrada pelos caras da google
 typedef void RatingChangeCallBack(double rating);
 
-class RatingBar extends StatelessWidget{
+class RatingBar extends StatelessWidget {
   final int starCount;
   final double rating;
+  final bool editable;
   final RatingChangeCallBack onRatingChanged;
-  final Color cor;
+  final Color color;
+  final Color borderColor;
+  final double size;
+  final bool allowHalfRating;
 
-  RatingBar({
-    this.starCount = 5, this.rating = .0,
-    this.onRatingChanged, this.cor}
-    );
+  RatingBar(
+      {this.starCount = 5,
+        this.rating = 0.0,
+        this.editable = false,
+        this.onRatingChanged,
+        this.color,
+        this.borderColor,
+        this.size,
+        this.allowHalfRating = true});
 
-  Widget construirEstrelas(BuildContext context,int index){
-
-    Icon icone;
-    if(index>=rating){
-      icone = new Icon(
+  Widget buildStar(BuildContext context, int index) {
+    Icon icon;
+    if (index >= rating) {
+      icon = new Icon(
         Icons.star_border,
-        color: Theme.of(context).buttonColor,
+        color: borderColor ?? Theme.of(context).primaryColor,
+        size: size ?? 25.0,
       );
-    }//ex:  Se index = 2,5 e rating = 3
-    else if(index> rating -1 && index<rating){
-      icone = new Icon(
+    } else if (index > rating - (allowHalfRating ? 0.5 : 1.0) &&
+        index < rating) {
+      icon = new Icon(
         Icons.star_half,
-        color: cor ?? Colors.yellow,
+        color: color ?? Theme.of(context).primaryColor,
+        size: size ?? 25.0,
       );
-    }else{
-      icone = new Icon(
+    } else {
+      icon = new Icon(
         Icons.star,
-        color: cor ?? Colors.yellow,
+        color: color ?? Theme.of(context).primaryColor,
+        size: size ?? 25.0,
       );
     }
-    return new InkResponse(
-      onTap: onRatingChanged == null ? null : () => onRatingChanged(index + 1.0),
-      child: icone,
+
+    if (!editable)
+      return icon;
+
+    return new GestureDetector(
+      onTap: () {
+        if (this.onRatingChanged != null) onRatingChanged(index + 1.0);
+      },
+      onHorizontalDragUpdate: (dragDetails) {
+        RenderBox box = context.findRenderObject();
+        var _pos = box.globalToLocal(dragDetails.globalPosition);
+        var i = _pos.dx / size;
+        var newRating = allowHalfRating ? i : i.round().toDouble();
+        if (newRating > starCount) {
+          newRating = starCount.toDouble();
+        }
+        if (newRating < 0) {
+          newRating = 0.0;
+        }
+        if (this.onRatingChanged != null) onRatingChanged(newRating);
+      },
+      child: icon,
     );
   }
+
   @override
   Widget build(BuildContext context) {
-    return new Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      mainAxisSize: MainAxisSize.min,
-      children: new List.generate(starCount, (index) => construirEstrelas(context, index))
+    return new Material(
+      color: Colors.transparent,
+      child: new Wrap(
+          alignment: WrapAlignment.start,
+          children: new List.generate(
+              starCount, (index) => buildStar(context, index))),
     );
   }
 }

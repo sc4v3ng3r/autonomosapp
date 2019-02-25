@@ -175,7 +175,7 @@ class _MainScreenState extends State<MainScreen> {
       accountEmail: Text('${_user.email}', style: TextStyle(color: Colors.white),),
       accountName: Text('${_user.name}', style: TextStyle(color: Colors.white), ),
       ratingBar: RatingBar(
-        cor: Theme.of(context).primaryColor,
+        color: Theme.of(context).primaryColor,
         starCount: 5,
         rating: _user.rating,
       ),
@@ -226,7 +226,7 @@ class _MainScreenState extends State<MainScreen> {
 
     final optionFavorites = ListTile(
       selected: _drawerCurrentOption == DrawerOption.FAVORITE,
-      leading: Icon(Icons.star),
+      leading: Icon(Icons.favorite),
       title: Text( _mapOptionTitle[DrawerOption.FAVORITE] ),
       onTap: () => _setCurrentDrawerOption(DrawerOption.FAVORITE),
     );

@@ -1,3 +1,4 @@
+import 'package:autonomosapp/utility/Constants.dart';
 import 'package:flutter/material.dart';
 
 
@@ -34,21 +35,29 @@ class FavoriteButtonWidgetState extends State<FavoriteButtonWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-        icon: (_state == FavoriteAction.FAVORITE) ? Icon(
-          Icons.star, color: widget._color,)
-            : Icon(Icons.star_border, color: widget._color,),
-        onPressed: () {
-          setState(() {
-            _state =
-            (_state == FavoriteAction.FAVORITE) ? FavoriteAction.UNFAVOURITE
-                : FavoriteAction.FAVORITE;
-          });
+    return Tooltip(
+      message: _toolTipMessage(),
+      child: IconButton(
+          icon: (_state == FavoriteAction.FAVORITE) ? Icon(
+            Icons.favorite, color: widget._color,)
+              : Icon(Icons.favorite_border, color: widget._color,),
+          onPressed: () {
+            setState(() {
+              _state =
+              (_state == FavoriteAction.FAVORITE) ? FavoriteAction.UNFAVOURITE
+                  : FavoriteAction.FAVORITE;
+            });
 
-          if (widget._onStateChange != null)
-            widget._onStateChange(_state);
-        }
+            if (widget._onStateChange != null)
+              widget._onStateChange(_state);
+          }
+      ),
     );
+  }
+
+  String _toolTipMessage(){
+    return _state == FavoriteAction.FAVORITE ? Constants.TOOLTIP_REMOVE_FROM_FAVOURITES
+      : Constants.TOOLTIP_ADD_TO_FAVOURITES;
   }
 
   void changeAction(final FavoriteAction action) {
