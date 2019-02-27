@@ -44,7 +44,10 @@ class _PerfilDetailsWidgetState extends State<PerfilDetailsWidget> {
 
     var userRatingBar = Row(
       children: <Widget>[
-        RatingBar( rating: user.rating, ),
+        RatingBar(
+          editable: false,
+          allowHalfRating: true,
+          rating: user.rating, ),
         Text("(${user.rating})",
           style: TextStyle(
           fontSize: 16.0,),

@@ -38,7 +38,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
   File _selectedUserImageFile;
 
   DatabaseReference _userReference;
-  static const RATING_INIT_VALUE = 5.0;
+  static const double RATING_INIT_VALUE = 5.0;
 
   static final SizedBox _verticalSeparator = new SizedBox(height: 16.0);
   bool iconVisibility = false;
@@ -113,9 +113,6 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
       //_name = _nameController.text;
       _email = _emailController.text;
       _password = _passwordController.text;
-      //_passwordConfirmation = _passwordConfirmController.text;
-      /*nao vou usaro onsave, vou para uma abordagem manual!*/
-      //formKey.currentState.save();
       return true;
       // REALIZA O CADASTRO!
     }

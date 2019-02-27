@@ -1,4 +1,5 @@
 import 'package:autonomosapp/bloc/ProfessionalPerfilScreenBloc.dart';
+import 'package:autonomosapp/model/ProfessionalRating.dart';
 import 'package:autonomosapp/model/User.dart';
 import 'package:autonomosapp/ui/widget/FavoriteButtonWidget.dart';
 import 'package:autonomosapp/ui/widget/PerfilDetailsWidget.dart';
@@ -26,6 +27,9 @@ class ProfessionalPerfilScreen extends StatelessWidget {
           icon: Icon(Icons.star_half,
             color: Theme.of(context).accentColor,),
           onPressed: (){
+            if (_userProData.uid == UserRepository.instance.currentUser.uid)
+              return;
+
             _showQualiticationDialog(context);
           }
       ),
@@ -112,6 +116,14 @@ class ProfessionalPerfilScreen extends StatelessWidget {
       builder: (BuildContext context){
           return RateProfessionalDialogWidget(
             onConfirm: (rate){
+              _bloc.rateProfessional(
+                ProfessionalRating(
+                  proUid: _userProData.uid,
+                  userUid: UserRepository.instance.currentUser.uid,
+                  rating: rate
+                ),
+              );
+              Navigator.pop(context);
               print("RATE WAS $rate");
             },
           );

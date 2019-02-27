@@ -1,3 +1,5 @@
+import 'package:autonomosapp/firebase/FirebaseProfessionalRatingHelper.dart';
+import 'package:autonomosapp/model/ProfessionalRating.dart';
 import 'package:autonomosapp/model/User.dart';
 import 'package:autonomosapp/firebase/FirebaseFavoritesHelper.dart';
 import 'package:autonomosapp/utility/UserRepository.dart';
@@ -21,4 +23,8 @@ class ProfessionalPerfilScreenBloc {
   bool isFavorite(User professional){
     return _userFavorites.containsKey(professional.uid);
   }
+
+  void rateProfessional(final ProfessionalRating rating) =>
+    FirebaseProfessionalRatingHelper.ratingProfessional(proRating: rating);
+
 }

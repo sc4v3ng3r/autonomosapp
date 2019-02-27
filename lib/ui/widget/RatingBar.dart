@@ -33,8 +33,8 @@ class RatingBar extends StatelessWidget {
         color: borderColor ?? Theme.of(context).primaryColor,
         size: size ?? 25.0,
       );
-    } else if (index > rating - (allowHalfRating ? 0.5 : 1.0) &&
-        index < rating) {
+    } else if (index >= rating - (allowHalfRating ? 0.5 : 1.0) &&
+        index <= rating) {
       icon = new Icon(
         Icons.star_half,
         color: color ?? Theme.of(context).primaryColor,
@@ -79,7 +79,7 @@ class RatingBar extends StatelessWidget {
       child: new Wrap(
           alignment: WrapAlignment.start,
           children: new List.generate(
-              starCount, (index) => buildStar(context, index))),
+              starCount, (index) => buildStar(context, index ))),
     );
   }
 }
