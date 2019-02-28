@@ -14,6 +14,7 @@ class ProfessionalPerfilScreen extends StatelessWidget {
   final User _userProData;
   final GlobalKey<FavoriteButtonWidgetState> _favoriteKey = GlobalKey();
   final ProfessionalPerfilScreenBloc _bloc = ProfessionalPerfilScreenBloc();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   ProfessionalPerfilScreen(
       { @required User userProData} ) :
@@ -21,16 +22,17 @@ class ProfessionalPerfilScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final actionTrialProfessional = Tooltip(
+    final actionRatingProfessional = Tooltip(
       message: "Avaliar Profisisonal",
       child: IconButton(
           icon: Icon(Icons.star_half,
             color: Theme.of(context).accentColor,),
           onPressed: (){
-            if (_userProData.uid == UserRepository.instance.currentUser.uid)
-              return;
-
-            _showQualiticationDialog(context);
+            if (_userProData.uid == UserRepository.instance.currentUser.uid){
+              _showSnackbarMessage("Você não pode avaliar a sí próprio!", context);
+            }
+            else
+            _showRatingDialog(context);
           }
       ),
     );
@@ -39,12 +41,14 @@ class ProfessionalPerfilScreen extends StatelessWidget {
       favorite: _bloc.isFavorite( _userProData ),
       key: _favoriteKey,
       color: Theme.of(context).accentColor,
-      callback: _favoriteButtonCallback,
+      callback: (action){
+        _favoriteButtonCallback(action, context);
+      },
     );
 
     final appBar = AppBar(
       actions: <Widget>[
-        actionTrialProfessional,
+        actionRatingProfessional,
         actionFavourite,
       ],
 
@@ -72,25 +76,22 @@ class ProfessionalPerfilScreen extends StatelessWidget {
                   professionalName: _userProData.name)}";
 
               await canLaunch(whatsUrl) ?
-              launch(whatsUrl):
-              _showNoWhatsappDialog(context);
+              launch(whatsUrl) : _showNoWhatsappDialog(context);
             },
             color: Colors.green,
           ),
         ),
-
       ],
     );
 
     final scaffold = Scaffold(
       appBar: appBar,
+      key: _scaffoldKey,
       body: scaffoldBody,
       bottomNavigationBar: bottomWidget,
     );
-
     return scaffold;
   }
-
 
   //TODO transformar em metodo generico
   void _showNoWhatsappDialog(BuildContext context){
@@ -110,12 +111,13 @@ class ProfessionalPerfilScreen extends StatelessWidget {
     );
   }
 
-  void _showQualiticationDialog(BuildContext context) {
+  void _showRatingDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (BuildContext context){
+      builder: (BuildContext context) {
           return RateProfessionalDialogWidget(
-            onConfirm: (rate){
+            professional: _userProData,
+            onConfirm: (rate) {
               _bloc.rateProfessional(
                 ProfessionalRating(
                   proUid: _userProData.uid,
@@ -123,23 +125,27 @@ class ProfessionalPerfilScreen extends StatelessWidget {
                   rating: rate
                 ),
               );
-              Navigator.pop(context);
               print("RATE WAS $rate");
             },
           );
       }
     );
   }
-  void _favoriteButtonCallback(final FavoriteAction action){
+
+  void _favoriteButtonCallback(final FavoriteAction action, BuildContext context){
     switch(action){
       case FavoriteAction.FAVORITE:
-        if (_userProData.uid == UserRepository.instance.currentUser.uid )
+        if (_userProData.uid == UserRepository.instance.currentUser.uid ){
           _favoriteKey.currentState.changeAction(FavoriteAction.UNFAVOURITE);
+          _showSnackbarMessage("Você não pode favoritar a sí próprio!", context);
+        }
+          
         else {
           _bloc.addToFavorite(
               UserRepository.instance.currentUser.uid,
               _userProData);
         }
+
         break;
 
       case FavoriteAction.UNFAVOURITE:
@@ -149,6 +155,20 @@ class ProfessionalPerfilScreen extends StatelessWidget {
         break;
     }
 
+  }
+
+  void _showSnackbarMessage(String msg, BuildContext context){
+    _scaffoldKey.currentState.showSnackBar(
+      SnackBar(
+        duration: Duration(milliseconds: 1800 ),
+        backgroundColor: Theme.of(context).errorColor,
+        content: Text('$msg',
+          style: TextStyle(
+            color: Colors.white
+          ),
+        ),
+      ),
+    );
   }
 
 }

@@ -48,7 +48,7 @@ class _PerfilDetailsWidgetState extends State<PerfilDetailsWidget> {
           editable: false,
           allowHalfRating: true,
           rating: user.rating, ),
-        Text("(${user.rating})",
+        Text("(${user.rating.toStringAsFixed(1)})",
           style: TextStyle(
           fontSize: 16.0,),
         ),
@@ -100,7 +100,7 @@ class _PerfilDetailsWidgetState extends State<PerfilDetailsWidget> {
                 );
               })
           );
-        } ,
+        },
       );
 
       widgetList.add( cityChipContainer );
@@ -166,7 +166,7 @@ class _PerfilDetailsWidgetState extends State<PerfilDetailsWidget> {
     Color color = Colors.black, Icon preIcon, Icon afterIcon } ){
     List<Widget> widgets = List();
 
-    var textWidget =  Flexible(
+    var textWidget = Flexible(
         child: Text(
           text,
           overflow: TextOverflow.ellipsis,
