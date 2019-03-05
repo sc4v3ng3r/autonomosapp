@@ -114,7 +114,7 @@ class _PerfilDetailsEditorScreenState extends State<PerfilDetailsEditorScreen> {
         Container(
           width: 140,
           height: 140,
-          child: CircularEditablePictureWidget(
+          child: CircularPictureWidget(
             bloc: _circularWidgetBloc,
             onClickCallback: () {
               _showModalBottomSheet();

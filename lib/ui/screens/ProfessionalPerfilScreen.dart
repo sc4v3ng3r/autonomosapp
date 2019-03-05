@@ -90,11 +90,12 @@ class ProfessionalPerfilScreen extends StatelessWidget {
       body: scaffoldBody,
       bottomNavigationBar: bottomWidget,
     );
+
     return scaffold;
   }
 
   //TODO transformar em metodo generico
-  void _showNoWhatsappDialog(BuildContext context){
+  void _showNoWhatsappDialog(BuildContext context) {
     showDialog(
         context: context,
         builder: (BuildContext context){
@@ -131,6 +132,7 @@ class ProfessionalPerfilScreen extends StatelessWidget {
       }
     );
   }
+
 
   void _favoriteButtonCallback(final FavoriteAction action, BuildContext context){
     switch(action){

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+
+
+enum PictureTypeCode {NONE, NETWORK_PICTURE, LOCAL_FILE_PICTURE }
+
 class Constants {
   static const String CPF = 'CPF';
   static const String CNPJ = 'CNPJ';

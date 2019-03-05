@@ -120,7 +120,7 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
     );
 
     final nextButton = NextButton(
-      text: '[3/3] Finalizar Cadastro',
+      text: '[4/4] Finalizar Cadastro',
       textColor: Colors.white,
       buttonColor: Colors.green,
       callback: () {
@@ -178,12 +178,15 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
   }
 
   Future<void> _finishRegister() async {
+    
     _handler.show(message: "Registrando...");
+
     FirebaseUserHelper.setUserProfessionalData(
         data: widget._bloc.currentData,
         uid: UserRepository().currentUser.uid ).then( (_) {
           _handler.dismiss();
           UserRepository().currentUser.professionalData = widget._bloc.currentData;
+
           Navigator.pushAndRemoveUntil(context,
               MaterialPageRoute(
                   builder: (BuildContext context) =>

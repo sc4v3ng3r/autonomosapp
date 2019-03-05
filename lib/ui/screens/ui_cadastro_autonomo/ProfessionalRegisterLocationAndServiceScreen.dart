@@ -218,7 +218,7 @@ class ProfessionalRegisterLocationAndServiceScreenState
 
     final nextButton = NextButton(
       buttonColor: Colors.green,
-      text: '[2/3] Próximo Passo',
+      text: '[3/4] Próximo Passo',
       textColor: Colors.white,
       callback: () {
 

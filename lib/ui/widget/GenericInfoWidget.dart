@@ -73,6 +73,8 @@ class GenericInfoWidget extends StatelessWidget {
       ),
     );
 
+    widgets.add(Constants.VERTICAL_SEPARATOR_8);
+
     //subtitle
     widgets.add(
       Container(
@@ -123,6 +125,9 @@ class GenericInfoWidget extends StatelessWidget {
       );
     }
 
-    return Column( children: widgets );
+    return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: widgets
+    );
   }
 }

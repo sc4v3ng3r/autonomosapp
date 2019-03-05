@@ -2,21 +2,25 @@ import 'package:autonomosapp/utility/Constants.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 
-class CircularEditablePictureWidget extends StatefulWidget {
+/// Uma widget circular que possibilita a visualização como também
+/// a seeção de uma nova imagem.
+///
+class CircularPictureWidget extends StatefulWidget {
 
   final Function _onClickCallback;
   final CircularPictureWidgetBloc _bloc;
+  final double size;
 
-  CircularEditablePictureWidget({ Function onClickCallback,
+  CircularPictureWidget({ Function onClickCallback, this.size = 160,
     @required CircularPictureWidgetBloc bloc}) :
         _bloc = bloc,
         _onClickCallback = onClickCallback;
 
   @override
-  _CircularEditablePictureWidgetState createState() => _CircularEditablePictureWidgetState();
+  _CircularPictureWidgetState createState() => _CircularPictureWidgetState();
 }
 
-class _CircularEditablePictureWidgetState extends State<CircularEditablePictureWidget> {
+class _CircularPictureWidgetState extends State<CircularPictureWidget> {
   @override
   void initState() {
     super.initState();
@@ -51,8 +55,8 @@ class _CircularEditablePictureWidgetState extends State<CircularEditablePictureW
         elevation: 8.0,
         color: Colors.transparent,
         child: Ink.image(
-          width: 160.0,
-          height: 160.0,
+          width: widget.size,
+          height: widget.size,
           image: imageProvider,
           fit: BoxFit.cover,
           child: InkWell(

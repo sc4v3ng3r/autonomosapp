@@ -10,6 +10,7 @@ import 'package:autonomosapp/ui/screens/LoginScreen.dart';
 import 'package:autonomosapp/ui/screens/ProfessionalsMapScreen.dart';
 import 'package:autonomosapp/ui/screens/ui_cadastro_autonomo/ProfessionalPersonalInfoRegisterScreen.dart';
 import 'package:autonomosapp/ui/widget/FavouritesWidget.dart';
+import 'package:autonomosapp/ui/widget/GenericInfoWidget.dart';
 import 'package:autonomosapp/ui/widget/ModalRoundedProgressBar.dart';
 import 'package:autonomosapp/ui/widget/NetworkFailWidget.dart';
 import 'package:autonomosapp/ui/widget/RatingBar.dart';
@@ -206,16 +207,6 @@ class _MainScreenState extends State<MainScreen> {
 
     drawerOptions.add(optionServices);
 
-    /*
-    final optionHistory = ListTile(
-      selected: _drawerCurrentOption == 2,
-      leading: Icon(Icons.history),
-      title: Text('Histórico'),
-      onTap: () => _setCurrentPosition(2),
-    );
-    drawerOptions.add(optionHistory);
-     */
-
     final optionViews = ListTile(
       selected: _drawerCurrentOption == DrawerOption.VIEWS,
       leading: Icon(Icons.remove_red_eye),
@@ -348,13 +339,6 @@ class _MainScreenState extends State<MainScreen> {
       case DrawerOption.SERVICES:
         return _serviceListFragment;
 
-        /*
-      case : TODO historico em breve
-        _serviceListFragment = null;
-        return Center(
-          child: Text("Histórico vai sair"),
-        );*/
-
       case DrawerOption.VIEWS:
         _serviceListFragment = null;
         return UsersViewWidget();
@@ -408,7 +392,9 @@ class _MainScreenState extends State<MainScreen> {
         if (position != null){
           print("geocoding");
           List<Placemark> placeMarks;
-          try{
+
+          try {
+
             placeMarks = await LocationUtility.doGeoCoding( position );
             _placemark = placeMarks[0];
             var location = Location(
@@ -420,6 +406,22 @@ class _MainScreenState extends State<MainScreen> {
 
           catch (ex){
             print("_updateUserCurrentPosition error geocoding... $ex");
+            showDialog(context: context,
+                builder: (BuildContext context){
+                 return AlertDialog(
+                   content: SingleChildScrollView(
+                     child: GenericInfoWidget(
+                       icon: Icons.info,
+                       iconSize: 90,
+                       iconColor: Theme.of(context).errorColor,
+                       title: "Não foi possível obter Profissionais",
+                       titleColor: Theme.of(context).accentColor,
+                       subtitle: "Verifique sua conexão com a internet."
+                     ),
+                   ),
+                 );
+                }
+            );
             return false;
           }
 
@@ -450,6 +452,7 @@ class _MainScreenState extends State<MainScreen> {
       }
     );
   }
+
 
   void _fetchProfessionalsAndGoToMapScreen(Service serviceItem)  async {
     String sigla = Estado.keyOfState(_placemark.administrativeArea);
@@ -498,6 +501,7 @@ class _MainScreenState extends State<MainScreen> {
           else {
             // EH PQ NAO HA PROFISISONAIS PARA TAL SERVICO EM TAL CIDADE!
             //desbloquear tela
+            print("Nao ha profissionais");
             _progressBarHandler.dismiss();
             _showWarningSnackbar(serviceItem.name, _placemark.subAdministrativeArea);
 
