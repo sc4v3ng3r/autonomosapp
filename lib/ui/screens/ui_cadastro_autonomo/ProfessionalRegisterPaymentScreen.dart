@@ -1,6 +1,7 @@
 import 'package:autonomosapp/bloc/ProfessionalRegisterFlowBloc.dart';
 import 'package:autonomosapp/ui/screens/MainScreen.dart';
 import 'package:autonomosapp/ui/widget/NextButton.dart';
+import 'package:autonomosapp/utility/Constants.dart';
 import 'package:autonomosapp/utility/UserRepository.dart';
 import 'package:flutter/material.dart';
 import 'package:autonomosapp/firebase/FirebaseUserHelper.dart';
@@ -124,7 +125,6 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
       textColor: Colors.white,
       buttonColor: Colors.green,
       callback: () {
-        // validar os dados
 
         if (_validade() ){
           widget._bloc.currentData.emissorNotaFiscal = _emiteNota;
@@ -178,14 +178,22 @@ class ProfessionalRegisterPaymentScreenState extends State<ProfessionalRegisterP
   }
 
   Future<void> _finishRegister() async {
-    
+
     _handler.show(message: "Registrando...");
+    String uid = UserRepository.instance.currentUser.uid;
+
+    if ( widget._bloc.hasDocuments() ){
+      widget._bloc.insertEstadoValidacao(Constants.ESTADO_AVALIACAO);
+      widget._bloc.uploadDocuments(uid);
+    }
+    else  widget._bloc.insertEstadoValidacao(Constants.ESTADO_INDEFINIDO);
 
     FirebaseUserHelper.setUserProfessionalData(
         data: widget._bloc.currentData,
         uid: UserRepository().currentUser.uid ).then( (_) {
           _handler.dismiss();
-          UserRepository().currentUser.professionalData = widget._bloc.currentData;
+          UserRepository.instance.currentUser.professionalData
+            = widget._bloc.currentData;
 
           Navigator.pushAndRemoveUntil(context,
               MaterialPageRoute(

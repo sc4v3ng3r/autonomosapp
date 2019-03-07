@@ -10,6 +10,7 @@ class ProfessionalData {
   String telefone;
   String descricao;
   String estadoAtuante;
+  String estadoValidacao;
   List<String> cidadesAtuantes = new List();
   List<String> servicosAtuantes = new List();
   List<String> formasPagamento = new List();
@@ -29,6 +30,7 @@ class ProfessionalData {
   static final String _LONGITUDE = "longitude";
   static final String _FORMAS_PAGAMENTO = "formasPagamento"; // array
   static final String _ESTADO_ATUANTE = "estadoAtuante";
+  static final String _ESTADO_VALIDACAO = "estadoValidacao";
 
   ProfessionalData();
 
@@ -41,6 +43,7 @@ class ProfessionalData {
     _CIDADES : cidadesAtuantes,
     _SERVICOS : servicosAtuantes,
     _NOTA_FISCAL : emissorNotaFiscal,
+    _ESTADO_VALIDACAO : estadoValidacao,
     _FORMAS_PAGAMENTO : formasPagamento,
 
     //TODO ambos podem virar um objeto especifico LOCALIZACAO, facilitara o rastreio!
@@ -56,6 +59,7 @@ class ProfessionalData {
       latitude = json[_LATITUDE],
       longitude = json[_LONGITUDE],
       estadoAtuante = json[_ESTADO_ATUANTE],
+      estadoValidacao = json[_ESTADO_VALIDACAO],
       emissorNotaFiscal = json[_NOTA_FISCAL],
       servicosAtuantes = List.from( json[_SERVICOS] ),
       formasPagamento = List.from( json[_FORMAS_PAGAMENTO] ),
@@ -68,6 +72,7 @@ class ProfessionalData {
       descricao = snapshot.value[_DESCRICAO],
       emissorNotaFiscal = snapshot?.value[_NOTA_FISCAL],
       estadoAtuante = snapshot?.value[_ESTADO_ATUANTE],
+      estadoValidacao = snapshot?.value[_ESTADO_VALIDACAO],
       latitude = double.parse( snapshot?.value[_LATITUDE].toString() ),
       longitude = double.parse(snapshot.value[_LONGITUDE].toString() ),
       servicosAtuantes = List.from( snapshot?.value[_SERVICOS] ),
