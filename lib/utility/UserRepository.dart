@@ -21,11 +21,18 @@ class UserRepository {
   }
 
   UserRepository._internal( ){
-    SharedPreferences.getInstance().then((value) {
-      preferences = value;
-      fbPassword = preferences.getString(ApplicationState.KEY_PASSWORD );
-      fbLogin = preferences.getString(ApplicationState.KEY_EMAIL);
-    });
+    if (Platform.isAndroid){
+
+      SharedPreferences.getInstance().then((value) {
+        preferences = value;
+        fbPassword = preferences.getString(ApplicationState.KEY_PASSWORD );
+        fbLogin = preferences.getString(ApplicationState.KEY_EMAIL);
+      });
+    }
+    /// provavel iOS
+    else {
+
+    }
 
     favorites = Map();
   }

@@ -372,72 +372,73 @@ class _MainScreenState extends State<MainScreen> {
 
   Future<bool> _updateUserCurrentPosition() async {
 
-    if (Platform.isAndroid){
-      var permission = await PermissionUtility.handleLocationPermissionForAndroid(context);
-      print("permission is $permission");
+    var permission = await PermissionUtility.hasLocationPermission();
 
-      if (permission){
-        Position position;
-        try{
-          position = await LocationUtility.getCurrentPosition(
-              desiredAccuracy: LocationAccuracy.medium );
-          print("position is: $position");
+    if (!permission)
+      permission = await PermissionUtility.requestLocationPermission();
 
+    if (permission){
+      Position position;
+      try{
+        position = await LocationUtility.getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.high );
+        print("position is: $position");
+
+      }
+      catch(ex){
+        print("_updateUserCurrentPosition $ex");
+        return false;
+      }
+
+      if (position != null){
+        print("geocoding");
+        List<Placemark> placeMarks;
+        try {
+
+          placeMarks = await LocationUtility.doGeoCoding( position );
+          _placemark = placeMarks[0];
+          print("placemark ${_placemark.isoCountryCode}");
+          print("placemark ${_placemark.locality}");
+          print("placemark ${_placemark.administrativeArea}");
+          var location = Location(
+              latitude: position.latitude,
+              longitude: position.longitude);
+          UserRepository().currentLocation = location;
+          return true;
         }
-        catch(ex){
-         print("_updateUserCurrentPosition $ex");
-         return false;
-        }
 
-        if (position != null){
-          print("geocoding");
-          List<Placemark> placeMarks;
-
-          try {
-
-            placeMarks = await LocationUtility.doGeoCoding( position );
-            _placemark = placeMarks[0];
-            var location = Location(
-                latitude: position.latitude,
-                longitude: position.longitude);
-            UserRepository().currentLocation = location;
-            return true;
-          }
-
-          catch (ex){
-            print("_updateUserCurrentPosition error geocoding... $ex");
-            showDialog(context: context,
-                builder: (BuildContext context){
-                 return AlertDialog(
-                   content: SingleChildScrollView(
-                     child: GenericInfoWidget(
-                       icon: Icons.info,
-                       iconSize: 90,
-                       iconColor: Theme.of(context).errorColor,
-                       title: "Não foi possível obter Profissionais",
-                       titleColor: Theme.of(context).accentColor,
-                       subtitle: "Verifique sua conexão com a internet."
-                     ),
-                   ),
-                 );
-                }
-            );
-            return false;
-          }
-
-        }
-        else {
-          print("GPS deligado?:");
+        catch (ex){
+          print("_updateUserCurrentPosition error geocoding... $ex");
+          showDialog(context: context,
+              builder: (BuildContext context){
+                return AlertDialog(
+                  content: SingleChildScrollView(
+                    child: GenericInfoWidget(
+                        icon: Icons.info,
+                        iconSize: 90,
+                        iconColor: Theme.of(context).errorColor,
+                        title: "Não foi possível obter Profissionais",
+                        titleColor: Theme.of(context).accentColor,
+                        subtitle: "Verifique sua conexão com a internet."
+                    ),
+                  ),
+                );
+              }
+          );
           return false;
         }
+
       }
-      return false;
+
+      else {
+        print("GPS deligado?:");
+        return false;
+      }
+
     }
 
-    else {
-      //TODO iOS implementation
-      return false;
-    }
+    return permission;
+
   }
 
   void _showNetworkFailDialog(){
@@ -456,10 +457,10 @@ class _MainScreenState extends State<MainScreen> {
 
   void _fetchProfessionalsAndGoToMapScreen(Service serviceItem)  async {
     String sigla = Estado.keyOfState(_placemark.administrativeArea);
-
+    print("estado selecionado $sigla");
     FirebaseUfCidadesServicosProfissionaisHelper
-        .getProfessionalsIdsFromCityAndService( estadoSigla: sigla,
-        cidadeNome: _placemark.subAdministrativeArea,
+        .getProfessionalsIdsFromCityAndService( estadoSigla: _placemark.administrativeArea,
+        cidadeNome: _placemark.locality,
         serviceId: serviceItem.id).then(
             (snapshotProfIds) {
           if (snapshotProfIds.value != null) {
