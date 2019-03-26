@@ -7,8 +7,9 @@ import 'package:autonomosapp/firebase/FirebaseUserHelper.dart';
 import 'package:autonomosapp/model/User.dart';
 import 'package:autonomosapp/ui/screens/MainScreen.dart';
 import 'package:rxdart/rxdart.dart';
-// Marcelo
-/*(71)991259223*/
+
+
+
 void main() {
   runApp( new MyApp() );
 }

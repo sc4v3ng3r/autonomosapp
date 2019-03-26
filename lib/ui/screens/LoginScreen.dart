@@ -12,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:autonomosapp/utility/SharedPreferencesUtility.dart';
 import 'package:autonomosapp/firebase/FirebaseAuthHelper.dart';
 import 'package:autonomosapp/utility/Constants.dart';
+import 'dart:io';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -23,7 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool iconVisibility = false;
   Icon icon = Icon(Icons.visibility_off);
   bool _obscureText = true;
-  bool _rememberMe;
+  bool _rememberMe = false;
   FocusNode _emailFocus;
   FocusNode _passwordFocus;
   TextEditingController _emailController;
@@ -52,15 +53,26 @@ class _LoginScreenState extends State<LoginScreen> {
     _emailFocus = FocusNode();
     _passwordFocus = FocusNode();
 
-      SharedPreferences prefs = UserRepository().preferences;
-    _rememberMe = prefs.getBool(ApplicationState.KEY_REMEMBER_ME)?? false;
-    if (_rememberMe) {
-      _email = prefs.getString(ApplicationState.KEY_EMAIL);
-      _password = prefs.getString(ApplicationState.KEY_PASSWORD);
-    }
+    _initRememberMe();
 
     _emailController = TextEditingController(text: _email);
     _passwordController = TextEditingController(text: _password);
+  }
+
+  void _initRememberMe(){
+    if (Platform.isAndroid){
+      SharedPreferences prefs = UserRepository().preferences;
+
+      _rememberMe = prefs.getBool(ApplicationState.KEY_REMEMBER_ME)?? false;
+      if (_rememberMe) {
+        _email = prefs.getString(ApplicationState.KEY_EMAIL);
+        _password = prefs.getString(ApplicationState.KEY_PASSWORD);
+      }
+    }
+
+    else {
+
+    }
   }
 
   void initiateFacebookLogin(BuildContext context) async {
