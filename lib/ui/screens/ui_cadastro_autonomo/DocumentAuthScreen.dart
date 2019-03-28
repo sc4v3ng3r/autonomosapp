@@ -15,7 +15,8 @@ class DocumentsAuthScreen extends StatelessWidget {
   Widget build(BuildContext context) {
 
     final logoImage = Container(
-      child: Image.asset( Constants.ASSETS_LOGIN_LOGO, fit: BoxFit.cover,),
+      width: 320,
+      child: Image.asset( Constants.ASSETS_NOME_LOGO, fit: BoxFit.fitWidth),
     );
 
     final imageRow = Row(

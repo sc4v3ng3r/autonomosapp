@@ -55,9 +55,7 @@ class ProfessionalListScreen extends StatelessWidget {
     _registerVisualization( user.uid );
     Navigator.push(  context, MaterialPageRoute(
         builder: (buildContext){
-          return ProfessionalPerfilScreen(
-            userProData: user,
-          );
+          return ProfessionalPerfilScreen( userProData: user, );
         }),
     );
   }

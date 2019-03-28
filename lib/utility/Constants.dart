@@ -13,6 +13,7 @@ class Constants {
   static const String ASSETS_APP_ICON = "assets/icons/appicon.png";
   static const String ASSETS_ANIMATION_LOGO = "assets/splash_logo.png";
   static const String ASSETS_ANIMATION_BACKGROUND = "assets/splash_background.png";
+  static const String ASSETS_NOME_LOGO = "assets/nome_logo.png";
   static const String STORAGE_USER_PICTURE_FILE_NAME = "_profilePicture.jpg";
   static const String PROVIDER_ID_FACEBOOK = "facebook.com";
   static const String PROVIDER_ID_PASSWORD = "password";
@@ -23,6 +24,15 @@ class Constants {
 
   static const String LABEL_KM = "Kilômetros";
   static const String LABEM_M = "Metros";
+
+  static const String ESTADO_INDEFINIDO = "indefinido";
+  static const String ESTADO_AVALIACAO = "avaliacao";
+  static const String ESTADO_AUTENTICO = "autentico";
+
+  static const String STORAGE_DOCUMENTS = "documentos";
+  static const String STORAGE_FRENTE_RG = "FRENTE_RG.jpg";
+  static const String STORAGE_VERSO_RG = "VERSO_RG.jpg";
+  static const String STORAGE_PESSOA_RG = "PESSOA_RG.jpg";
 
   static const String USER_DELETED = "Usuário removido";
   static const String TOOLTIP_MAP_TYPE = "Tipo do mapa";

@@ -73,6 +73,7 @@ class FirebaseUserHelper {
   static Future<void> updateUser({@required User user}) async{
     USERS_REFERENCE.child( user.uid).set( user.toJson() );
   }
+
   /// Registra no database os dados profissionais de um usuário específico.
   static Future<void> setUserProfessionalData( {
     @required String uid, @required ProfessionalData data}) {
@@ -89,16 +90,19 @@ class FirebaseUserHelper {
   ///Obtpem o usuário atualmente logado.
   static Future<User> currentLoggedUser() async {
     var user;
+
     try {
       FirebaseUser fbUser = await AUTH.currentUser();
       if (fbUser == null)
         return null;
       user = await readUserAccountData(fbUser);
     }
+
     catch (ex) {
       print("FirebaseUserHelper::" + ex.toString());
       throw ex;
     }
+
     return user;
   }
 
@@ -154,9 +158,13 @@ class FirebaseUserHelper {
     UserRepository repository = UserRepository();
     FirebaseUser fbUser =  await FirebaseAuthHelper.reauthCurrentUser();
 
+    try {
+      FirebaseStorageHelper.removeUserFiles(
+          userUid: repository.currentUser.uid);
 
-    await FirebaseStorageHelper.removeUserProfilePicture(
-        userUid: repository.currentUser.uid);
+    } catch (ex) {
+      print("Nao ha arquivos para serem deletados");
+    }
 
     return fbUser.delete()
         .then((_){

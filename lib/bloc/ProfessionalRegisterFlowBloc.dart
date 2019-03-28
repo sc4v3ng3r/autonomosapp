@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:autonomosapp/firebase/FirebaseStorageHelper.dart';
 import 'package:autonomosapp/model/Cidade.dart';
 import 'package:autonomosapp/model/Estado.dart';
 import 'package:autonomosapp/model/Location.dart';
@@ -50,6 +51,8 @@ class ProfessionalRegisterFlowBloc {
   void insertRgFrenteFoto(File rgFrente) => _rgFrente = rgFrente;
   void insertRgVersoFoto(File rgVerso) => _rgVerso = rgVerso;
   void insertFotoPessoalComRg(File fotoComRg) => _fotoComRg = fotoComRg;
+  void insertEstadoValidacao(String state) =>
+      _professionalData.estadoValidacao = state;
 
   void insertLocationsAndServices( {
     @required final Estado state,
@@ -82,7 +85,48 @@ class ProfessionalRegisterFlowBloc {
     _professionalData.emissorNotaFiscal = emissorNotaFiscal;
   }
 
+  Future<String> _uploadFrenteRG(String uid){
+    return FirebaseStorageHelper.saveDocumentPictureIntoStorage(
+        name: "FRENTE_RG.jpg",
+        picture: _rgFrente,
+        userUid: uid,
+    );
+  }
+
+  Future<String> _uploadVersoRG(String uid){
+    return FirebaseStorageHelper.saveDocumentPictureIntoStorage(
+      name: "VERSO_RG.jpg",
+      picture: _rgVerso,
+      userUid: uid,
+    );
+  }
+
+  Future<String> _uploadPessoaRG(String uid){
+    return FirebaseStorageHelper.saveDocumentPictureIntoStorage(
+      name: "PESSOA_RG.jpg",
+      picture: _fotoComRg,
+      userUid: uid,
+    );
+  }
+
+  void uploadDocuments(final String uid){
+    _uploadFrenteRG(uid).then( (url) {
+      print("Uploaded FRENTE RG: $url");
+    } ).catchError((error){print("fail when uploading frente RG $error");});
+
+    _uploadVersoRG(uid).then( (url){
+      print("Uploaded VERSO RG: $url");
+    }).catchError( (error){ print("fail when upload verso RG $error"); } );
+
+    _uploadPessoaRG(uid).then( (url){
+      print("Uploaded PESSOA RG: $url");
+    } ).catchError( (error){ print("fail when upload pessao RG $error"); } );
+  }
+  
 }
+
+
+
 /*
 class ProfessionalRegisterFlowBlocProvider extends InheritedWidget {
   static final String BLOC_KEY = "ProfessionalRegisterFlowBloc_KEY";
