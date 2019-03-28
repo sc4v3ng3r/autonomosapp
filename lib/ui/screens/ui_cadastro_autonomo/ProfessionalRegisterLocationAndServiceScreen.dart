@@ -327,7 +327,13 @@ class ProfessionalRegisterLocationAndServiceScreenState
               case ConnectionState.done:
                 if (snapshot.hasData){
                   if (snapshot.data){
-                    _dropdownCurrentOption = _placemark.administrativeArea;
+
+                    if (Platform.isIOS)
+                      _dropdownCurrentOption = Estado.STATES_MAP[_placemark.administrativeArea];
+
+                    else
+                      _dropdownCurrentOption = _placemark.administrativeArea;
+
                     return Padding(
                       padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, .0),
                       child: _buildLayout(context),
@@ -382,57 +388,76 @@ class ProfessionalRegisterLocationAndServiceScreenState
   }
 
   // TODO esse metodo deve vazar dessa classe
-  Future<bool> _getUserCurrentPosition(final BuildContext context) async {
+  Future<bool> _getUserCurrentPosition(BuildContext context) async {
 
-    if (Platform.isAndroid){
-      var permission = await PermissionUtility.handleLocationPermissionForAndroid(context);
-      print("permission is $permission");
+    var permission = await PermissionUtility.hasLocationPermission();
+    print("$permission");
+    if (!permission)
+      permission = await PermissionUtility.requestLocationPermission();
 
-      if (permission){
-        Position position;
-        try{
-          position = await LocationUtility.getCurrentPosition(
-              desiredAccuracy: LocationAccuracy.medium );
-          print("position is: $position");
+    print("after request $permission");
+    if (permission){
+      Position position;
+      try{
+        position = await LocationUtility.getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.high );
+        print("position is: $position");
 
-        }
-        catch(ex){
-          print("_updateUserCurrentPosition $ex");
-          return false;
-        }
-
-        if (position != null){
-          print("geocoding");
-          List<Placemark> placeMarks;
-          try{
-            placeMarks = await LocationUtility.doGeoCoding( position );
-            _placemark = placeMarks[0];
-            var location = Location(
-                latitude: position.latitude,
-                longitude: position.longitude);
-            UserRepository.instance.currentLocation = location;
-
-            return true;
-          }
-
-          catch (ex){
-            print("_updateUserCurrentPosition error geocoding... $ex");
-            return false;
-          }
-
-        }
-        else {
-          print("GPS deligado?:");
-          return false;
-        }
+      }
+      catch(ex){
+        print("_updateUserCurrentPosition $ex");
+        return false;
       }
 
-      return false;
+      if (position != null){
+        print("geocoding");
+        List<Placemark> placeMarks;
+        try {
+
+          placeMarks = await LocationUtility.doGeoCoding( position );
+          _placemark = placeMarks[0];
+          print("placemark ${_placemark.isoCountryCode}");
+          print("placemark ${_placemark.locality}");
+          print("placemark ${_placemark.administrativeArea}");
+          print("placemark ${_placemark.subAdministrativeArea}");
+          var location = Location(
+              latitude: position.latitude,
+              longitude: position.longitude);
+          UserRepository.instance.currentLocation = location;
+          return true;
+        }
+
+        catch (ex){
+          print("_updateUserCurrentPosition error geocoding... $ex");
+          showDialog(context: context,
+              builder: (BuildContext context){
+                return AlertDialog(
+                  content: SingleChildScrollView(
+                    child: GenericInfoWidget(
+                        icon: Icons.info,
+                        iconSize: 90,
+                        iconColor: Theme.of(context).errorColor,
+                        title: "Não foi possível obter Profissionais",
+                        titleColor: Theme.of(context).accentColor,
+                        subtitle: "Verifique sua conexão com a internet."
+                    ),
+                  ),
+                );
+              }
+          );
+          return false;
+        }
+
+      }
+
+      else {
+        print("GPS deligado?:");
+        return false;
+      }
+
     }
 
-    else {
-      //TODO iOS implementation
-      return false;
-    }
+    return permission;
+
   }
 }

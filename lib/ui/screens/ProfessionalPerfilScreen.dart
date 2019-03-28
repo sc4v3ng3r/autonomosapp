@@ -17,7 +17,7 @@ class ProfessionalPerfilScreen extends StatelessWidget {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   ProfessionalPerfilScreen(
-      { @required User userProData} ) :
+      { @required User userProData } ) :
         _userProData = userProData;
 
   @override
@@ -88,7 +88,11 @@ class ProfessionalPerfilScreen extends StatelessWidget {
       appBar: appBar,
       key: _scaffoldKey,
       body: scaffoldBody,
-      bottomNavigationBar: bottomWidget,
+      bottomNavigationBar: SafeArea(
+          bottom: true,
+
+          child: bottomWidget
+      ),
     );
 
     return scaffold;

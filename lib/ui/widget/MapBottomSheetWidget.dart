@@ -51,7 +51,12 @@ class MapBottomSheetWidget extends StatelessWidget {
                 _contactCallback();
             },
             child: Text("Contactar Whatsapp",
-                style: TextStyle(color: Colors.white) ),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    color: Colors.white,
+                  fontSize: 14.0,
+                )
+            ),
             color: Colors.green,
           ),
         ),

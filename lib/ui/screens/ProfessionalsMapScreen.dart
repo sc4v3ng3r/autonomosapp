@@ -19,7 +19,7 @@ class ProfessionalsMapScreen extends StatefulWidget {
   final String _screenTitle;
 
   ProfessionalsMapScreen(
-      {@required double initialLatitude, @required initialLongitude,
+      { @required double initialLatitude, @required initialLongitude,
         @required List<User> professionalList, @required screenTitle}):
       _dataList = professionalList,
       _screenTitle = screenTitle,
@@ -161,6 +161,7 @@ class _ProfessionalsMapScreenState extends State<ProfessionalsMapScreen> {
             );
           });
   }
+
   // TEM QUE VIRAR UM MÈTODO GENERICO
   void _showNoWhatsappDialog(){
     showDialog(

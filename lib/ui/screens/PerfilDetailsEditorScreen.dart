@@ -84,18 +84,22 @@ class _PerfilDetailsEditorScreenState extends State<PerfilDetailsEditorScreen> {
             padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 22.0),
             child: _createBody(),
           ),
-          bottomNavigationBar: RaisedButton(
-              child: Text(
-                "Confirmar",
-                style: TextStyle(color: Colors.white),
-              ),
-              color: Colors.green,
-              onPressed: () async {
-                if (_validation()) {
-                  await _updateUserData();
-                  Navigator.pop(context);
-                }
-              }),
+
+          bottomNavigationBar: SafeArea(
+            bottom: true,
+              child: RaisedButton(
+                  child: Text(
+                    "Confirmar",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  color: Colors.green,
+                  onPressed: () async {
+                    if (_validation()) {
+                      await _updateUserData();
+                      Navigator.pop(context);
+                    }
+                  }),
+          ),
         ),
         ModalRoundedProgressBar(
           handleCallback: (handler) {
