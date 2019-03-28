@@ -373,10 +373,11 @@ class _MainScreenState extends State<MainScreen> {
   Future<bool> _updateUserCurrentPosition() async {
 
     var permission = await PermissionUtility.hasLocationPermission();
-
+    print("$permission");
     if (!permission)
       permission = await PermissionUtility.requestLocationPermission();
 
+    print("after request $permission");
     if (permission){
       Position position;
       try{
@@ -403,7 +404,7 @@ class _MainScreenState extends State<MainScreen> {
           var location = Location(
               latitude: position.latitude,
               longitude: position.longitude);
-          UserRepository().currentLocation = location;
+          UserRepository.instance.currentLocation = location;
           return true;
         }
 
@@ -456,10 +457,20 @@ class _MainScreenState extends State<MainScreen> {
 
 
   void _fetchProfessionalsAndGoToMapScreen(Service serviceItem)  async {
-    String sigla = Estado.keyOfState(_placemark.administrativeArea);
+    String sigla;
+
+    if (Platform.isIOS){
+      //No iOS : _placemark.administrativeArea retorna a sigla do estado
+      sigla = _placemark?.administrativeArea;
+    }
+
+    else
+     sigla = Estado.keyOfState(_placemark?.administrativeArea);
+
     print("estado selecionado $sigla");
+    print("Cidade atual: ${_placemark.locality}");
     FirebaseUfCidadesServicosProfissionaisHelper
-        .getProfessionalsIdsFromCityAndService( estadoSigla: _placemark.administrativeArea,
+        .getProfessionalsIdsFromCityAndService( estadoSigla: sigla,
         cidadeNome: _placemark.locality,
         serviceId: serviceItem.id).then(
             (snapshotProfIds) {
@@ -485,7 +496,7 @@ class _MainScreenState extends State<MainScreen> {
                           professionalList: professionalUsersList,
                         );
                       })
-                  ).then((_) => _progressBarHandler.dismiss()  );
+                  ).then( (_) => _progressBarHandler.dismiss()  );
 
                 }).catchError(
                     (exception) {
@@ -504,7 +515,7 @@ class _MainScreenState extends State<MainScreen> {
             //desbloquear tela
             print("Nao ha profissionais");
             _progressBarHandler.dismiss();
-            _showWarningSnackbar(serviceItem.name, _placemark.subAdministrativeArea);
+            _showWarningSnackbar(serviceItem.name, _placemark.locality);
 
           }
         }).catchError(

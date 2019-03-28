@@ -31,7 +31,7 @@ class Constants {
   static const String TOOLTIP_PRO_LIST = "Profissionais";
   static const String TOOLTIP_CONFIRM = "Confirmar";
   static const String PHONE_BRAZIL_PERFIX = "55";
-  static const int NETWORK_TIMEOUT_SECONDS = 14;
+  static const int NETWORK_TIMEOUT_SECONDS = 34;
 
 
   static String getDefaultWhatsappMessage({@required String professionalName }){

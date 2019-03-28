@@ -29,7 +29,7 @@ dependencies:
   flutter_facebook_login: ^2.0.0
   url_launcher: ^5.0.1
 
-  google_maps_flutter: ^0.2.0
+  google_maps_flutter: ^0.2.0+6
   firebase_database:
   firebase_core: ^0.3.0
   firebase_auth: ^0.8.1+1

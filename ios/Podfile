@@ -38,8 +38,8 @@ end
 
 target 'Runner' do
   use_frameworks!
-  pod 'FBSDKCoreKit'
-  pod 'FBSDKLoginKit'
+  #pod 'FBSDKCoreKit'
+  #pod 'FBSDKLoginKit'
   system('rm -rf .symlinks')
   system('mkdir -p .symlinks/plugins')
 

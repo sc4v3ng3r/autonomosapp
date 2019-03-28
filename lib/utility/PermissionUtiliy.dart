@@ -75,6 +75,7 @@ class PermissionUtility {
 
       results = await handler.requestPermissions( permissions );
       results.forEach( (key, value) {
+        print("android request $key = $value");
         if (value == PermissionStatus.granted)
           flag = true;
 

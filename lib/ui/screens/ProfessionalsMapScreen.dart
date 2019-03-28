@@ -145,6 +145,8 @@ class _ProfessionalsMapScreenState extends State<ProfessionalsMapScreen> {
               },
 
               perfilButtonCallback: (){
+                Navigator.of(context).pop();
+
                 Navigator.of(context).push( MaterialPageRoute(
                     builder: (BuildContext context){
                       return ProfessionalPerfilScreen(
@@ -200,7 +202,7 @@ class _ProfessionalsMapScreenState extends State<ProfessionalsMapScreen> {
       );
 
       FirebaseUserViewsHelper.pushUserVisualization( viewData: visualization );
-    } ).then((_) => print("Visualização Registrada"));
+    } ).then((_) => print("Visualização Registrada") );
   }
 
   void _mapChange(){

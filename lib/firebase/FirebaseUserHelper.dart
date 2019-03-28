@@ -33,9 +33,10 @@ class FirebaseUserHelper {
         print("FirebaseUserHelper user $uid exist in DB!");
         print("readUserAccountData:: ${snapshot.value.toString()}");
         user = User.fromDataSnapshot(snapshot);
+
         //var url = fbUser.photoUrl;
         FirebaseFavouritesHelper.getUserFavourites(uid: fbUser.uid)
-            .then( (snapshot){
+            .then( (snapshot) {
           if (snapshot.value != null)
             UserRepository.instance.favorites = Map.from( snapshot.value);
         } ).catchError( (error) {print("FirebaseUserHelper::currentLoggedUse() $error"); } );
@@ -142,6 +143,7 @@ class FirebaseUserHelper {
         }
       }
     }
+
     userRef.child(user.uid).remove();
   }
 

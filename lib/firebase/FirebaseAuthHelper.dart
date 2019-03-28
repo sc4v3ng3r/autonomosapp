@@ -122,7 +122,10 @@ class FirebaseAuthHelper {
       return fbUser;
     }
 
-     credential = EmailAuthProvider.getCredential(
+
+    //ISSO NAO VAI FUNCIONAR NO IOS pq o repository nao estar guardando o ID & a senha
+    // do usuario no IOS!
+    credential = EmailAuthProvider.getCredential(
         email: repository.fbLogin,
         password: repository.fbPassword);
 
@@ -134,7 +137,11 @@ class FirebaseAuthHelper {
 
   static Future<bool> _userProviderIsFacebook() async {
     FirebaseUser fbUser = await FirebaseAuth.instance.currentUser();
-    return (fbUser.providerData[1].providerId.compareTo( Constants.PROVIDER_ID_FACEBOOK ) == 0);
+    var providerIndex = 0; // ios provider index
+    if (Platform.isAndroid)
+      providerIndex = 1;
+
+    return (fbUser.providerData[providerIndex].providerId.compareTo( Constants.PROVIDER_ID_FACEBOOK ) == 0);
   }
 
   static AuthResult _errorHandler(PlatformException e){

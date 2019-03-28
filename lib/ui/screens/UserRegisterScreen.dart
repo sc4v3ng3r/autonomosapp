@@ -67,6 +67,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: new Stack(
         overflow: Overflow.clip,
         children: _buildForm(),
@@ -396,31 +397,31 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
       );
     });
 
-    final form = Form(
-      autovalidate: _autoValidate,
-      key: _formKey,
-      child: Container(
+    final form = Container(
         color: Colors.white,
         child: Padding(padding: EdgeInsetsDirectional.only(top: 16.0),
-        child: ListView(
-          shrinkWrap: true,
-          children: <Widget>[
-            userphoto,
-            _verticalSeparator,
-            nameField,
-            _verticalSeparator,
-            emailField,
-            _verticalSeparator,
-            passwordField,
-            _verticalSeparator,
-            passwordConfirm,
-            _verticalSeparator,
-            termosGroup,
-            registerButton,
-          ],
+        child: Form(
+          autovalidate: _autoValidate,
+          key: _formKey,
+          child: ListView(
+            shrinkWrap: true,
+            children: <Widget>[
+              userphoto,
+              _verticalSeparator,
+              nameField,
+              _verticalSeparator,
+              emailField,
+              _verticalSeparator,
+              passwordField,
+              _verticalSeparator,
+              passwordConfirm,
+              _verticalSeparator,
+              termosGroup,
+              registerButton,
+            ],
+          ),
         ),
         ),
-      ),
     );
 
     var list = new List<Widget>();
