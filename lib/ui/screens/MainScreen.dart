@@ -398,9 +398,12 @@ class _MainScreenState extends State<MainScreen> {
 
           placeMarks = await LocationUtility.doGeoCoding( position );
           _placemark = placeMarks[0];
+
           print("placemark ${_placemark.isoCountryCode}");
           print("placemark ${_placemark.locality}");
           print("placemark ${_placemark.administrativeArea}");
+          print("placemark ${_placemark.subAdministrativeArea}");
+
           var location = Location(
               latitude: position.latitude,
               longitude: position.longitude);
@@ -458,20 +461,24 @@ class _MainScreenState extends State<MainScreen> {
 
   void _fetchProfessionalsAndGoToMapScreen(Service serviceItem)  async {
     String sigla;
-
+    String currentCity;
     if (Platform.isIOS){
       //No iOS : _placemark.administrativeArea retorna a sigla do estado
       sigla = _placemark?.administrativeArea;
+      currentCity = _placemark?.locality;
     }
 
-    else
-     sigla = Estado.keyOfState(_placemark?.administrativeArea);
+    else{
+      sigla = Estado.keyOfState(_placemark?.administrativeArea);
+      currentCity = _placemark?.subAdministrativeArea;
+    }
+
 
     print("estado selecionado $sigla");
     print("Cidade atual: ${_placemark.locality}");
     FirebaseUfCidadesServicosProfissionaisHelper
         .getProfessionalsIdsFromCityAndService( estadoSigla: sigla,
-        cidadeNome: _placemark.locality,
+        cidadeNome: currentCity,
         serviceId: serviceItem.id).then(
             (snapshotProfIds) {
           if (snapshotProfIds.value != null) {
