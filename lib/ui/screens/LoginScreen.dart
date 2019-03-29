@@ -60,19 +60,14 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _initRememberMe(){
-    if (Platform.isAndroid){
-      SharedPreferences prefs = UserRepository().preferences;
+    SharedPreferences prefs = UserRepository().preferences;
 
-      _rememberMe = prefs.getBool(ApplicationState.KEY_REMEMBER_ME)?? false;
-      if (_rememberMe) {
-        _email = prefs.getString(ApplicationState.KEY_EMAIL);
-        _password = prefs.getString(ApplicationState.KEY_PASSWORD);
-      }
+    _rememberMe = prefs.getBool(ApplicationState.KEY_REMEMBER_ME)?? false;
+    if (_rememberMe) {
+      _email = prefs.getString(ApplicationState.KEY_EMAIL);
+      _password = prefs.getString(ApplicationState.KEY_PASSWORD);
     }
 
-    else {
-
-    }
   }
 
   void initiateFacebookLogin(BuildContext context) async {

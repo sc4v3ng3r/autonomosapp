@@ -18,7 +18,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 // TODO refatorar o layout
 // TODO Componentizar os text fields
 
-
 class UserRegisterScreen extends StatefulWidget {
   @override
   State createState() => UserRegisterScreenState();
@@ -51,6 +50,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
 
   @override
   void initState() {
+    super.initState();
     _nameFocus = new FocusNode();
     _emailFocus = new FocusNode();
     _passwordFocus = new FocusNode();
@@ -189,7 +189,9 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
             ),
           ),
         ),
+
         Constants.VERTICAL_SEPARATOR_8,
+
         Row(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -337,15 +339,18 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
           textInputAction: TextInputAction.done,
           focusNode: _passwordConfirmFocus,
           validator: _confirmPassword,
+
           onFieldSubmitted: (dataTyped) {
             setState(() {
               _passwordConfirmFocus.unfocus();
             });
           },
+
           style: TextStyle(
             fontSize: 20.0,
             color: Colors.black,
           ),
+
           decoration: InputDecoration(
               fillColor: Colors.white,
               filled: true,
@@ -382,12 +387,14 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
                                       MainScreen() ),
                                   (Route<dynamic> route)  => false);
                         }
+
                         else // o usuario pode ja estar registrado ou dar erro na hora do registro!
                           _showSnackBar(
                               context, "Registro não realizado!", Colors.redAccent);
                       });
             }
           },
+
           color: Colors.green,
           child: Text(
             "Confirmar",
@@ -396,6 +403,22 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
         ),
       );
     });
+
+    final backButton = Padding(
+      padding: EdgeInsets.fromLTRB(16.0, .0, 16.0, .0),
+      child: MaterialButton(
+        padding: EdgeInsets.fromLTRB(16.0, .0, 16.0, .0),
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        color: Colors.red,
+        splashColor: Colors.redAccent,
+        child: Text(
+          "Voltar",
+          style: TextStyle(fontSize: 16.0,color: Colors.white),
+        ),
+      ),
+    );
 
     final form = Container(
         color: Colors.white,
@@ -418,6 +441,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
               _verticalSeparator,
               termosGroup,
               registerButton,
+              backButton,
             ],
           ),
         ),

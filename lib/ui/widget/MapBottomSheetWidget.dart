@@ -63,7 +63,6 @@ class MapBottomSheetWidget extends StatelessWidget {
       ],
     );
 
-    print("bottomSheet builded");
     return Container(
       padding: EdgeInsets.all(16.0),
       child: Column(

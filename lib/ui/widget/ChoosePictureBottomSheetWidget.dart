@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:autonomosapp/utility/Constants.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -16,49 +17,82 @@ class ChoosePictureBottomSheetWidget extends StatelessWidget {
     File imageFile;
 
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 22.0),
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: <Widget>[
-          IconButton(
-              iconSize: 60.0,
-              icon: Column(
-                children: <Widget>[
-                  Icon( Icons.photo_camera),
-                  Flexible(
-                      child:  Text("Câmera")),
-                ],
-              ),
-              onPressed: () async {
-                imageFile = await ImagePicker.pickImage(
-                    source: ImageSource.camera );
-                File croppedImage = await _cropImage(imageFile);
-                if (_callback!=null)
-                  _callback(croppedImage);
-                print("Selected ${imageFile.path}");
-              }
-          ),
+          margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 22.0),
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              IconButton(
+                      iconSize: 70.0,
 
-          IconButton(
-              iconSize: 60.0,
-              icon: Column(
-                children: <Widget>[
-                  Icon( Icons.photo_library),
-                  Flexible(child:  Text("Galeria")),
-                ],
+                      icon: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+
+                        children: <Widget>[
+                          Flexible(
+                            child: Icon( Icons.photo_camera, size: 55, ),
+                          ),
+
+                          Flexible(
+                            child:  Text("Câmera",
+                              style: TextStyle(
+                                  fontSize: 16.0
+                              ),)
+                            ,
+                          ),
+                        ],
+                      ),
+                      onPressed: () async {
+                        imageFile = await ImagePicker.pickImage(
+                            source: ImageSource.camera);
+
+                        if (imageFile != null){
+                          File croppedImage = await _cropImage(imageFile);
+
+                          if (_callback != null && croppedImage !=null)
+                            _callback(croppedImage);
+
+                          print("Selected ${imageFile?.path}");
+                        }
+
+                      }
               ),
-              onPressed: () async {
-                imageFile = await ImagePicker.pickImage(
-                    source: ImageSource.gallery );
-                File croppedImage = await _cropImage(imageFile);
-                if (_callback!=null)
-                  _callback(croppedImage);
-                print("Selected ${imageFile.path}");
-              }
-          ),
-        ],
-      ),
+
+              IconButton(
+                  iconSize: 70.0,
+                  icon: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+
+                      Flexible(
+                        child: Icon( Icons.photo_library, size: 55,),
+                      ),
+
+                      Flexible(child:  Text("Galeria",
+                        style: TextStyle(
+                            fontSize: 16.0
+                        ),
+                      )),
+                    ],
+                  ),
+                  onPressed: () async {
+                    imageFile = await ImagePicker.pickImage(
+                        source: ImageSource.gallery );
+
+                    if (imageFile != null){
+                      File croppedImage = await _cropImage(imageFile);
+                      if (croppedImage != null){
+                        if (_callback!=null && croppedImage!= null)
+                          _callback(croppedImage);
+                        print("Selected ${imageFile.path}");
+                      }
+                    }
+                  }
+              ),
+            ],
+        ),
     );
   }
 
