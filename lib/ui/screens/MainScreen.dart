@@ -30,6 +30,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:autonomosapp/ui/widget/PerfilDetailsWidget.dart';
 import 'dart:io' show Platform;
 
+import 'package:permission_handler/permission_handler.dart';
+
 //FIXME BUG build method é sempre chamado até mesmo quando clicamos Ok no teclado
 // somente quando a MainScreen vem após a LoginScreen. Quando a aplicação já abre diretamente
 // na tela de login esse bug não se manifesta e eu não sei a razão. Isso é ruim porque toda vez
@@ -145,6 +147,8 @@ class _MainScreenState extends State<MainScreen> {
             ],
           ),
       );
+
+
   }
 
   Future<bool> _onWillPop() async {
@@ -374,6 +378,7 @@ class _MainScreenState extends State<MainScreen> {
 
     var permission = await PermissionUtility.hasLocationPermission();
     print("$permission");
+
     if (!permission)
       permission = await PermissionUtility.requestLocationPermission();
 
@@ -472,7 +477,6 @@ class _MainScreenState extends State<MainScreen> {
       sigla = Estado.keyOfState(_placemark?.administrativeArea);
       currentCity = _placemark?.subAdministrativeArea;
     }
-
 
     print("estado selecionado $sigla");
     print("Cidade atual: ${_placemark.locality}");

@@ -1,11 +1,14 @@
 import 'package:autonomosapp/ui/screens/LoginScreen.dart';
 import 'package:autonomosapp/utility/Constants.dart';
+import 'package:autonomosapp/utility/LocationUtility.dart';
+import 'package:autonomosapp/utility/PermissionUtiliy.dart';
 import 'package:autonomosapp/utility/UserRepository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:autonomosapp/firebase/FirebaseUserHelper.dart';
 import 'package:autonomosapp/model/User.dart';
 import 'package:autonomosapp/ui/screens/MainScreen.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:rxdart/rxdart.dart';
 
 
@@ -63,6 +66,8 @@ class _MyAppState extends State<MyApp> {
             case ConnectionState.active:
             case ConnectionState.done:
               if (snapshot.hasData){
+                
+                
                 return MainScreen();
               }
               return LoginScreen();
@@ -91,8 +96,30 @@ class MyAppBloc {
   final PublishSubject<User> _userSubject = PublishSubject();
   Observable<User> get getCurrentUser =>_userSubject.stream;
 
-  MyAppBloc(){
 
+  void _updateUserLocation(){
+    PermissionUtility.hasLocationPermission().then(
+            (status){
+
+              if (status){
+                LocationUtility.getCurrentPosition(
+                    desiredAccuracy: LocationAccuracy.high ).then(
+                        (position){
+                          User user = _repository.currentUser;
+                          print("USER: ${user.name}");
+                          user.professionalData.latitude = position.latitude;
+                          user.professionalData.longitude = position.longitude;
+                          print("updating location: LA: ${position.latitude} | LO: ${position.longitude}");
+                          FirebaseUserHelper.updateUser(user: user);
+
+                        } );
+              }
+        }
+    );
+  }
+
+
+  MyAppBloc(){
     if (UserRepository.instance.currentUser == null){
       FirebaseUserHelper.currentLoggedUser()
           .timeout( Duration(seconds: Constants.NETWORK_TIMEOUT_SECONDS),
@@ -105,8 +132,14 @@ class MyAppBloc {
             _repository = UserRepository.instance;
             _repository.currentUser = user;
             _addToSink(user);
+            
+            if (user.professionalData != null){
+              _updateUserLocation();
+            }
+
           } ).catchError((error) { print("MyAppBloc::Constructor $error"); _addToSink(null); });
     } else _addToSink( _repository.currentUser );
+    
   }
 
   void _addToSink(final User user) => _userSubject.add( user );

@@ -34,16 +34,30 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _autoValidate;
   var _email="", _password="";
 
-  static final logo = Container(
+  static final logo = Row(
+    mainAxisSize: MainAxisSize.max,
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: <Widget>[
+      Container(
+        width: 320,
+        height: 100,
+        child: Image.asset(
+          Constants.ASSETS_NOME_LOGO,
+          fit: BoxFit.fitWidth, width: 150, height: 140,),
+      ),
+    ],
+  );
+
+  /*Container(
     height: 140.0,
     child: DecoratedBox(
       decoration: BoxDecoration(
         image: DecorationImage(
-            image: AssetImage(Constants.ASSETS_LOGIN_LOGO ),
-            fit: BoxFit.scaleDown),
+            image: AssetImage(Constants.ASSETS_NOME_LOGO ),
+            fit: BoxFit.fitHeight),
       ),
     ),
-  );
+  );*/
 
   @override
   void initState() {
@@ -441,28 +455,32 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
 
-    var form = Form(
-      key: _globalKey,
-      autovalidate: _autoValidate,
-      child: ListView(
-        children: <Widget>[
-          Constants.VERTICAL_SEPARATOR_16,
-          logo,
-          Constants.VERTICAL_SEPARATOR_16,
-          emailField,
-          Constants.VERTICAL_SEPARATOR_16,
-          passwordField,
-          userSupportLayout,
-          Constants.VERTICAL_SEPARATOR_16,
-          loginButton,
-          Constants.VERTICAL_SEPARATOR_16,
-          divisiorOuGroup,
-          Constants.VERTICAL_SEPARATOR_16,
-          facebookLoginButton,
-          Constants.VERTICAL_SEPARATOR_16,
-          divisor,
-          registerTextGroup,
-        ],
+    var form = SafeArea(
+      top: true,
+      child: Form(
+        key: _globalKey,
+        autovalidate: _autoValidate,
+        child: ListView(
+          children: <Widget>[
+            Constants.VERTICAL_SEPARATOR_16,
+            Constants.VERTICAL_SEPARATOR_16,
+            logo,
+            Constants.VERTICAL_SEPARATOR_16,
+            emailField,
+            Constants.VERTICAL_SEPARATOR_16,
+            passwordField,
+            userSupportLayout,
+            Constants.VERTICAL_SEPARATOR_16,
+            loginButton,
+            Constants.VERTICAL_SEPARATOR_16,
+            divisiorOuGroup,
+            Constants.VERTICAL_SEPARATOR_16,
+            facebookLoginButton,
+            Constants.VERTICAL_SEPARATOR_16,
+            divisor,
+            registerTextGroup,
+          ],
+        ),
       ),
     );
 

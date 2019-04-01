@@ -16,7 +16,10 @@ class DocumentsAuthScreen extends StatelessWidget {
 
     final logoImage = Container(
       width: 320,
-      child: Image.asset( Constants.ASSETS_NOME_LOGO, fit: BoxFit.fitWidth),
+      height: 100,
+      child: Image.asset(
+          Constants.ASSETS_NOME_LOGO,
+          fit: BoxFit.fitWidth, width: 150, height: 140,),
     );
 
     final imageRow = Row(

@@ -23,17 +23,17 @@ class ProfessionalPerfilScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final actionRatingProfessional = Tooltip(
-      message: "Avaliar Profisisonal",
-      child: IconButton(
-          icon: Icon(Icons.star_half,
-            color: Theme.of(context).accentColor,),
-          onPressed: (){
-            if (_userProData.uid == UserRepository.instance.currentUser.uid){
-              _showSnackbarMessage("Você não pode avaliar a sí próprio!", context);
+        message: "Avaliar Profisisonal",
+        child: IconButton(
+            icon: Icon(Icons.star_half,
+              color: Theme.of(context).accentColor,),
+            onPressed: (){
+              if (_userProData.uid == UserRepository.instance.currentUser.uid){
+                _showSnackbarMessage("Você não pode avaliar a sí próprio!", context);
+              }
+              else
+                _showRatingDialog(context);
             }
-            else
-            _showRatingDialog(context);
-          }
       ),
     );
 
