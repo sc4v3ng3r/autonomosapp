@@ -48,16 +48,6 @@ class _LoginScreenState extends State<LoginScreen> {
     ],
   );
 
-  /*Container(
-    height: 140.0,
-    child: DecoratedBox(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-            image: AssetImage(Constants.ASSETS_NOME_LOGO ),
-            fit: BoxFit.fitHeight),
-      ),
-    ),
-  );*/
 
   @override
   void initState() {
@@ -76,7 +66,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void _initRememberMe(){
     SharedPreferences prefs = UserRepository().preferences;
 
-    _rememberMe = prefs.getBool(ApplicationState.KEY_REMEMBER_ME)?? false;
+    _rememberMe = prefs.getBool(ApplicationState.KEY_REMEMBER_ME) ?? false;
     if (_rememberMe) {
       _email = prefs.getString(ApplicationState.KEY_EMAIL);
       _password = prefs.getString(ApplicationState.KEY_PASSWORD);
@@ -429,7 +419,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ],
     );
 
-    final divisiorOuGroup = Row(
+    final divisorOuGroup = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         divisor1,
@@ -473,7 +463,7 @@ class _LoginScreenState extends State<LoginScreen> {
             Constants.VERTICAL_SEPARATOR_16,
             loginButton,
             Constants.VERTICAL_SEPARATOR_16,
-            divisiorOuGroup,
+            divisorOuGroup,
             Constants.VERTICAL_SEPARATOR_16,
             facebookLoginButton,
             Constants.VERTICAL_SEPARATOR_16,

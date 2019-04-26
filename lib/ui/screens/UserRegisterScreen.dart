@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:autonomosapp/firebase/FirebaseAuthHelper.dart';
+import 'package:autonomosapp/firebase/FirebaseStorageHelper.dart';
 import 'package:autonomosapp/firebase/FirebaseUserHelper.dart';
 import 'package:autonomosapp/ui/widget/ChoosePictureBottomSheetWidget.dart';
 import 'package:autonomosapp/utility/Constants.dart';
@@ -13,6 +14,7 @@ import 'package:autonomosapp/model/User.dart';
 import 'package:autonomosapp/ui/screens/MainScreen.dart';
 import 'package:autonomosapp/ui/widget/ModalRoundedProgressBar.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_full_pdf_viewer/full_pdf_viewer_scaffold.dart';
 
 // TODO metodos do firebase devem sair daqui
 // TODO refatorar o layout
@@ -309,7 +311,7 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
       child: FlatButton(
           padding: EdgeInsets.fromLTRB(2.0, .0, 16.0, .0),
           onPressed: (){
-            print("Termo de uso pressionado");
+            _showUserTerms();
           },
           child: Text("Termos de uso",
             style: TextStyle(
@@ -548,4 +550,21 @@ class UserRegisterScreenState extends State<UserRegisterScreen> {
     });
   }
 
+  void _showUserTerms() async {
+
+    _handler.show(message: 'Carregando Termo de uso');
+    try{
+      File file = await FirebaseStorageHelper.getUserTermFile();
+      if (file != null)
+        Navigator.push(context,
+          MaterialPageRoute(builder: (context) => PDFViewerScaffold(path: file.path))
+        );
+      _handler.dismiss();
+    }
+    catch (ex){
+      _handler.dismiss();
+    }
+
+
+  }
 }

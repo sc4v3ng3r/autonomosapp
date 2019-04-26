@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:autonomosapp/utility/Constants.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
 import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 
 class FirebaseStorageHelper {
 
@@ -67,6 +69,24 @@ class FirebaseStorageHelper {
 
     return pictureDownloadUrl;
 
+  }
+
+  static Future<File> getUserTermFile() async{
+    StorageReference ref = FirebaseStorage.instance.ref();
+    String fileUrl = await ref.child("termoDeUso/Termo_e_politica_de_privacidade_IDO.pdf").getDownloadURL();
+    return _createFileOfPdfUrl(fileUrl);
+  }
+
+
+  static Future<File> _createFileOfPdfUrl(final String url) async {
+    final filename = url.substring(url.lastIndexOf("/") + 1);
+    var request = await HttpClient().getUrl(Uri.parse(url));
+    var response = await request.close();
+    var bytes = await consolidateHttpClientResponseBytes(response);
+    String dir = (await getApplicationDocumentsDirectory()).path;
+    File file = new File('$dir/$filename');
+    await file.writeAsBytes(bytes);
+    return file;
   }
 
 

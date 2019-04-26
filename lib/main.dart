@@ -11,8 +11,6 @@ import 'package:autonomosapp/ui/screens/MainScreen.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:rxdart/rxdart.dart';
 
-
-
 void main() {
   runApp( new MyApp() );
 }
@@ -66,8 +64,7 @@ class _MyAppState extends State<MyApp> {
             case ConnectionState.active:
             case ConnectionState.done:
               if (snapshot.hasData){
-                
-                
+
                 return MainScreen();
               }
               return LoginScreen();
@@ -98,6 +95,7 @@ class MyAppBloc {
 
 
   void _updateUserLocation(){
+    print("updating user position");
     PermissionUtility.hasLocationPermission().then(
             (status){
 
