@@ -11,7 +11,6 @@ The app reach your beta version but unhappily the project and the app was abando
  * Google Maps
  
 # Application Images
-
-![](https://i.ibb.co/2gHYZ4R/cadastro-gif.gif) |
-![](https://i.ibb.co/Dk7c0G3/facebook-login.gif) |
-![](https://i.ibb.co/d4tdS2D/login-comun.gif) 
+![](https://i.ibb.co/KsGb1Jt/cadastro-gif.gif) |
+![](https://i.ibb.co/mGQ3WH5/login-mapa.gif) |
+![](https://i.ibb.co/HB6syJZ/facebook-login.gif) |
