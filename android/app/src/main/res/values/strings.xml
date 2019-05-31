@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">autonomosapp</string>
-    <string name="facebook_app_id">2027906354169518</string>
-    <string name="fb_login_protocol_scheme">fb2027906354169518</string>
+    <string name="facebook_app_id">fb_id</string>
+    <string name="fb_login_protocol_scheme">fb_id</string>
 
 </resources>
